@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+<title>线性回归和逻辑回归 - 陈燊的博客</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="线性回归批量梯度下降法 每次对参数进行一次迭代时，都要扫描一遍输入全集 算法可以收敛到局部最优值 当迭代多次之后，每次迭代参数的改变越小">
+<meta property="og:type" content="article">
+<meta property="og:title" content="线性回归和逻辑回归">
+<meta property="og:url" content="http://chenshen.xyz/categories/machine-learning/线性回归和逻辑回归/index.html">
+<meta property="og:site_name" content="陈燊的博客">
+<meta property="og:description" content="线性回归批量梯度下降法 每次对参数进行一次迭代时，都要扫描一遍输入全集 算法可以收敛到局部最优值 当迭代多次之后，每次迭代参数的改变越小">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://images2017.cnblogs.com/blog/1019353/201708/1019353-20170812133949226-1090227995.png">
+<meta property="og:image" content="http://images2017.cnblogs.com/blog/1019353/201708/1019353-20170812133923398-2103247636.png">
+<meta property="og:image" content="http://images2017.cnblogs.com/blog/1019353/201708/1019353-20170812134109242-261663867.png">
+<meta property="og:updated_time" content="2019-09-04T13:39:51.693Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="线性回归和逻辑回归">
+<meta name="twitter:description" content="线性回归批量梯度下降法 每次对参数进行一次迭代时，都要扫描一遍输入全集 算法可以收敛到局部最优值 当迭代多次之后，每次迭代参数的改变越小">
+<meta name="twitter:image" content="http://images2017.cnblogs.com/blog/1019353/201708/1019353-20170812133949226-1090227995.png">
+
+
+
+
+
+<link rel="icon" href="/images/favicon.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+    
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-2-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="线性回归和逻辑回归" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">主页</a>
+                
+                <a class="navbar-item" href="/archives">归档</a>
+                
+                <a class="navbar-item" href="/categories">分类</a>
+                
+                <a class="navbar-item" href="/tags">标签</a>
+                
+                <a class="navbar-item" href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-9-tablet is-9-desktop is-9-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2017-08-12T08:49:42.000Z">2017-08-12</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/machine-learning/">机器学习</a>
+                </div>
+                
+                
+                
+                <span class="level-item has-text-grey" id="busuanzi_container_page_pv">
+                    <i class="far fa-eye"></i>
+                    <span id="busuanzi_value_page_pv">0</span>次访问
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                线性回归和逻辑回归
+            
+        </h1>
+        <div class="content">
+            <h2 id="线性回归"><a href="#线性回归" class="headerlink" title="线性回归"></a>线性回归</h2><h3 id="批量梯度下降法"><a href="#批量梯度下降法" class="headerlink" title="批量梯度下降法"></a>批量梯度下降法</h3><ul>
+<li>每次对参数进行一次迭代时，都要扫描一遍输入全集</li>
+<li>算法可以收敛到局部最优值</li>
+<li>当迭代多次之后，每次迭代参数的改变越小</li>
+</ul>
+<a id="more"></a>
+<h3 id="随机梯度下降法"><a href="#随机梯度下降法" class="headerlink" title="随机梯度下降法"></a>随机梯度下降法</h3><ul>
+<li>对于一个输入样本，对参数进行一次更新</li>
+<li>算法通常不会收敛到局部最优值，整个过程类似在上山迂回下山，有时可能上山，有时可能下山，但算法的最后都会得到局部最优值附近的一个值</li>
+<li>若输入数据非常多的时候，随机梯度下降比批量梯度下降更加合适</li>
+</ul>
+<h3 id="概率解释"><a href="#概率解释" class="headerlink" title="概率解释"></a>概率解释</h3><p>　　在原式子里加入一个”<em>error term</em>“，之后得到这个“<em>error tem”</em>的正态分布，从而到处输出y和x、θ之间的概率关系。然后通过最大似然估计法，得到若要使得y的概率最大，等价于利用最小二乘法最小化θ。</p>
+<h2 id="局部加权线性回归"><a href="#局部加权线性回归" class="headerlink" title="局部加权线性回归"></a>局部加权线性回归</h2><ol>
+<li>参数θ的数量随着训练数据的增大而变多，但是当训练数据量巨大的时候，每次预测所需要的代价都很高。</li>
+<li>原训练数据需要保留，因为每当对一个新的数据X进行预测时，需要用到X周围的测试数据，从而得出θ的值。对于和测试点靠近的训练点数据，所得权值较高，而对于距离测试点很远的测试数据，所得权值就很小，这就是为什么叫做局部线性回归的原因。</li>
+<li>对于线性回归，，利用训练数据求出θ之后，在对一个新的数据进行预测时，将不会再使用到原训练数据</li>
+<li>局部加权线性回归是一种非参数学习算法，而线性回归是一种参数学习算法。</li>
+</ol>
+<h2 id="逻辑回归"><a href="#逻辑回归" class="headerlink" title="逻辑回归"></a>逻辑回归</h2><ol>
+<li>核心在于使用了sigmod函数，使得函数输出的值分布在[0, 1]区间内。</li>
+<li>在某些特定条件下，为了使得sigmod函数g(z)的输出为两个离散值：0和1.可以使用感知器学习算法。</li>
+<li>逻辑回归推导到最后的公式形式和线性回归中的最小二乘形式几乎相同，但是它们属于不同的算法，因为h(θ)函数不同，导致了根本的差异。</li>
+</ol>
+<h2 id="牛顿法"><a href="#牛顿法" class="headerlink" title="牛顿法"></a>牛顿法</h2><ol>
+<li>在对参数θ进行极大似然估计时，可以采用Newton’s method。这个算法收敛的速度非常快（二次收敛），迭代次数也少，但是在每次迭代时，都需要计算一次Hessian矩阵，计算量和n有关。因此当量级偏少少，牛顿迭代法也是一个相当好的算法。</li>
+<li>参数的数值可以任取，但是一般取为零向量。</li>
+<li>海森价值函数:  $J(\Theta )=\frac{1}{2}\sum_{i=1}^{m}(\Theta ^{T}x^{(a)} - y^{i})^{2}$        $H=X^{T}X$</li>
+<li>无论θ的初始值为什么，牛顿法迭代一次后即可得到：$\Theta^{*}=(X^{T}X)^{-1}X^{T}\vec{y}$, 即最小二乘法的解。</li>
+</ol>
+<h2 id="广义线性模型"><a href="#广义线性模型" class="headerlink" title="广义线性模型"></a>广义线性模型</h2><ol>
+<li>线性回归和逻辑回归中的伯努利分布和高斯分布都可以转换为指数分布的形式。</li>
+<li>在将伯努利分布转换为指数分布的过程中，可以得到sigmod函数，这就是之前为什么Logisitic regression刚好是sigmod函数的原因。（当然，还有更深层次的原因）</li>
+</ol>
+<h2 id="回归问题实战"><a href="#回归问题实战" class="headerlink" title="回归问题实战"></a>回归问题实战</h2><h3 id="线性回归-1"><a href="#线性回归-1" class="headerlink" title="线性回归"></a>线性回归</h3><p><img src="http://images2017.cnblogs.com/blog/1019353/201708/1019353-20170812133949226-1090227995.png" alt></p>
+<h3 id="局部加权回归（参数0-01）"><a href="#局部加权回归（参数0-01）" class="headerlink" title="局部加权回归（参数0.01）"></a>局部加权回归（参数0.01）</h3><p>　　局部加权回归中，参数设定非常重要，可能存在欠拟合和过拟合的情况。</p>
+<p><img src="http://images2017.cnblogs.com/blog/1019353/201708/1019353-20170812133923398-2103247636.png" alt></p>
+<h3 id="逻辑回归-1"><a href="#逻辑回归-1" class="headerlink" title="逻辑回归"></a>逻辑回归</h3><p>　　参数θ的有多种更新方法——梯度下降法和牛顿法等，务必掌握其优缺点，合理选用。</p>
+<p><img src="http://images2017.cnblogs.com/blog/1019353/201708/1019353-20170812134109242-261663867.png" alt></p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.png" alt="支付宝"></div>
+</a>
+
+                
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat.png" alt="微信"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/categories/algorithms/POJ-3176/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">POJ-3176</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/categories/algorithms/POJ-3262/">
+                <span class="level-item">POJ-3262</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<div id="comment-container"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+    var gitalk = new Gitalk({
+        clientID: 'e5eff8aa39f563a204e5',
+        clientSecret: '8adc001af75f722b72813ab2916f65f6b7ba3da0',
+        id: '1166d7df92222d6e1d3555a1ddaefa7a',
+        repo: 'chenshen03.github.io',
+        owner: 'chenshen03',
+        admin: "chenshen03"
+    })
+    gitalk.render('comment-container')
+</script>
+
+    </div>
+</div>
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    
+                        <img class="image is-128x128 has-mb-6" src="/images/avatar.png" alt="陈燊">
+                    
+                    
+                    <p class="is-size-4 is-block">
+                        陈燊
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        Master student of Computer Science
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>Xiamen, China</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/archives','_self')">
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        74
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/categories','_self')">
+                    <p class="heading">
+                        分类
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        8
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/tags','_self')">
+                    <p class="heading">
+                        标签
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        38
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/chenshen03">
+                关注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/chenshen03">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Cnblogs" href="https://www.cnblogs.com/cslaker">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Weibo" href="https://www.weibo.com/cstobeno1">
+                
+                <i class="fab fa-weibo"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://www.facebook.com/chenshen03">
+                
+                <i class="fab fa-facebook-f"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Zhihu" href="https://www.zhihu.com/people/chenshen03">
+                
+                <i class="fab fa-zhihu"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+<div class="card widget" id="toc">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a class="is-flex" href="#线性回归">
+        <span class="has-mr-6">1</span>
+        <span>线性回归</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#批量梯度下降法">
+        <span class="has-mr-6">1.1</span>
+        <span>批量梯度下降法</span>
+        </a></li><li>
+        <a class="is-flex" href="#随机梯度下降法">
+        <span class="has-mr-6">1.2</span>
+        <span>随机梯度下降法</span>
+        </a></li><li>
+        <a class="is-flex" href="#概率解释">
+        <span class="has-mr-6">1.3</span>
+        <span>概率解释</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#局部加权线性回归">
+        <span class="has-mr-6">2</span>
+        <span>局部加权线性回归</span>
+        </a></li><li>
+        <a class="is-flex" href="#逻辑回归">
+        <span class="has-mr-6">3</span>
+        <span>逻辑回归</span>
+        </a></li><li>
+        <a class="is-flex" href="#牛顿法">
+        <span class="has-mr-6">4</span>
+        <span>牛顿法</span>
+        </a></li><li>
+        <a class="is-flex" href="#广义线性模型">
+        <span class="has-mr-6">5</span>
+        <span>广义线性模型</span>
+        </a></li><li>
+        <a class="is-flex" href="#回归问题实战">
+        <span class="has-mr-6">6</span>
+        <span>回归问题实战</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#线性回归-1">
+        <span class="has-mr-6">6.1</span>
+        <span>线性回归</span>
+        </a></li><li>
+        <a class="is-flex" href="#局部加权回归（参数0-01）">
+        <span class="has-mr-6">6.2</span>
+        <span>局部加权回归（参数0.01）</span>
+        </a></li><li>
+        <a class="is-flex" href="#逻辑回归-1">
+        <span class="has-mr-6">6.3</span>
+        <span>逻辑回归</span>
+        </a></li></ul></li></ul>
+        </div>
+    </div>
+</div>
+
+    
+        
+    
+    
+        <div class="column-right-shadow  ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            标签云
+        </h3>
+        <a href="/tags/CUDA/" style="font-size: 10px;">CUDA</a> <a href="/tags/Jupyter/" style="font-size: 10px;">Jupyter</a> <a href="/tags/Leetcode/" style="font-size: 10px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/POJ/" style="font-size: 20px;">POJ</a> <a href="/tags/人脸识别/" style="font-size: 10px;">人脸识别</a> <a href="/tags/fourier-transform/" style="font-size: 10px;">傅里叶变换</a> <a href="/tags/dynamic-planning/" style="font-size: 14.29px;">动态规划</a> <a href="/tags/kalman-filter/" style="font-size: 10px;">卡尔曼滤波</a> <a href="/tags/cnn/" style="font-size: 10px;">卷积神经网络</a> <a href="/tags/hash/" style="font-size: 15.71px;">哈希</a> <a href="/tags/image-feature/" style="font-size: 10px;">图像特征</a> <a href="/tags/graph/" style="font-size: 12.86px;">图论</a> <a href="/tags/mean-shift/" style="font-size: 10px;">均值漂移</a> <a href="/tags/reinforcement-learning/" style="font-size: 10px;">强化学习</a> <a href="/tags/rnn/" style="font-size: 10px;">循环神经网络</a> <a href="/tags/sort/" style="font-size: 10px;">排序</a> <a href="/tags/search/" style="font-size: 17.14px;">搜索</a> <a href="/tags/svm/" style="font-size: 11.43px;">支持向量机</a> <a href="/tags/unsupervised-hash/" style="font-size: 12.86px;">无监督哈希</a> <a href="/tags/temporal-reasoning/" style="font-size: 11.43px;">时序推理</a> <a href="/tags/时序推理，隐马尔可夫/" style="font-size: 10px;">时序推理，隐马尔可夫</a> <a href="/tags/naive-bayes/" style="font-size: 11.43px;">朴素贝叶斯</a> <a href="/tags/kernel-function/" style="font-size: 10px;">核函数</a> <a href="/tags/gradient-descent/" style="font-size: 10px;">梯度下降</a> <a href="/tags/deep-hash/" style="font-size: 11.43px;">深度哈希</a> <a href="/tags/filter/" style="font-size: 12.86px;">滤波</a> <a href="/tags/supervised-hash/" style="font-size: 11.43px;">监督哈希</a> <a href="/tags/object-track/" style="font-size: 10px;">目标跟踪</a> <a href="/tags/neural-network/" style="font-size: 18.57px;">神经网络</a> <a href="/tags/particle-filter/" style="font-size: 10px;">粒子滤波</a> <a href="/tags/nlp/" style="font-size: 10px;">自然语言处理</a> <a href="/tags/semantic-segmentation/" style="font-size: 10px;">语义分割</a> <a href="/tags/bayesian-network/" style="font-size: 10px;">贝叶斯网络</a> <a href="/tags/greedy-lgorithm/" style="font-size: 17.14px;">贪心算法</a> <a href="/tags/edge-detection/" style="font-size: 10px;">边缘检测</a> <a href="/tags/samples/" style="font-size: 11.43px;">采样</a> <a href="/tags/zero-shot-learning/" style="font-size: 10px;">零样本学习</a>
+    </div>
+</div>
+
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分类
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/study/">
+            <span class="level-start">
+                <span class="level-item">学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">5</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/technique/">
+            <span class="level-start">
+                <span class="level-item">技术</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/machine-learning/">
+            <span class="level-start">
+                <span class="level-item">机器学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">11</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/deep-learning/">
+            <span class="level-start">
+                <span class="level-item">深度学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/algorithms/">
+            <span class="level-start">
+                <span class="level-item">算法与数据结构</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">23</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/computer-vision/">
+            <span class="level-start">
+                <span class="level-item">计算机视觉</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/software-engineering/">
+            <span class="level-start">
+                <span class="level-item">软件工程</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">6</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/essay/">
+            <span class="level-start">
+                <span class="level-item">随笔</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">8</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+        
+            
+        
+        </div>
+    
+</div>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="线性回归和逻辑回归" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2019 陈燊&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                
+                <br>
+                <span id="busuanzi_container_site_uv">
+                共<span id="busuanzi_value_site_uv">0</span>个访客
+                </span>
+                
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="GitHub" href="https://github.com/chenshen03">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+    
+    
+
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

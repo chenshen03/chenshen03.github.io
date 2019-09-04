@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+<title>结对编程1：需求分析与原型设计 - 陈燊的博客</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="需求分析（NABCD模型）N（Need，需求） 师生互选，改变导师被动分配学生的局面 每个学生分配到预想的导师，避免分配了志愿以外的导师的情况出现 学生可以了解到所有导师的课题和研究方向">
+<meta property="og:type" content="article">
+<meta property="og:title" content="结对编程1：需求分析与原型设计">
+<meta property="og:url" content="http://chenshen.xyz/categories/software-engineering/结对编程1：需求分析与原型设计/index.html">
+<meta property="og:site_name" content="陈燊的博客">
+<meta property="og:description" content="需求分析（NABCD模型）N（Need，需求） 师生互选，改变导师被动分配学生的局面 每个学生分配到预想的导师，避免分配了志愿以外的导师的情况出现 学生可以了解到所有导师的课题和研究方向">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://images2015.cnblogs.com/blog/1019353/201609/1019353-20160918205919818-211051003.png">
+<meta property="og:image" content="http://images2015.cnblogs.com/blog/1019353/201609/1019353-20160918205943039-1282715350.png">
+<meta property="og:image" content="http://images2015.cnblogs.com/blog/1019353/201609/1019353-20160918210004384-1819138448.png">
+<meta property="og:image" content="http://images2015.cnblogs.com/blog/1019353/201609/1019353-20160918210019588-1395992386.png">
+<meta property="og:image" content="http://images2015.cnblogs.com/blog/1019353/201609/1019353-20160918210045434-1166539963.png">
+<meta property="og:image" content="http://images2015.cnblogs.com/blog/1019353/201609/1019353-20160918210059091-1069587577.png">
+<meta property="og:image" content="http://images2015.cnblogs.com/blog/1019353/201609/1019353-20160918210109795-1355449089.png">
+<meta property="og:image" content="http://images2015.cnblogs.com/blog/1019353/201609/1019353-20160918210159767-158276258.png">
+<meta property="og:updated_time" content="2019-09-04T13:39:51.694Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="结对编程1：需求分析与原型设计">
+<meta name="twitter:description" content="需求分析（NABCD模型）N（Need，需求） 师生互选，改变导师被动分配学生的局面 每个学生分配到预想的导师，避免分配了志愿以外的导师的情况出现 学生可以了解到所有导师的课题和研究方向">
+<meta name="twitter:image" content="http://images2015.cnblogs.com/blog/1019353/201609/1019353-20160918205919818-211051003.png">
+
+
+
+
+
+<link rel="icon" href="/images/favicon.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+    
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-2-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="结对编程1：需求分析与原型设计" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">主页</a>
+                
+                <a class="navbar-item" href="/archives">归档</a>
+                
+                <a class="navbar-item" href="/categories">分类</a>
+                
+                <a class="navbar-item" href="/tags">标签</a>
+                
+                <a class="navbar-item" href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-9-tablet is-9-desktop is-9-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2016-09-18T08:13:43.000Z">2016-09-18</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/software-engineering/">软件工程</a>
+                </div>
+                
+                
+                
+                <span class="level-item has-text-grey" id="busuanzi_container_page_pv">
+                    <i class="far fa-eye"></i>
+                    <span id="busuanzi_value_page_pv">0</span>次访问
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                结对编程1：需求分析与原型设计
+            
+        </h1>
+        <div class="content">
+            <h2 id="需求分析（NABCD模型）"><a href="#需求分析（NABCD模型）" class="headerlink" title="需求分析（NABCD模型）"></a>需求分析（NABCD模型）</h2><h3 id="N（Need，需求）"><a href="#N（Need，需求）" class="headerlink" title="N（Need，需求）"></a>N（Need，需求）</h3><ul>
+<li>师生互选，改变导师被动分配学生的局面</li>
+<li>每个学生分配到预想的导师，避免分配了志愿以外的导师的情况出现</li>
+<li>学生可以了解到所有导师的课题和研究方向</li>
+</ul>
+<a id="more"></a>
+<ul>
+<li>导师可以设定自己想要的学生数</li>
+<li>导师所分配到的学生数尽可能平均</li>
+<li>志愿填写和导师的学生数设置均可在系统里完成</li>
+<li>系统可根据志愿情况以及导师需求，通过一定算法得出最后的分配结果</li>
+</ul>
+<h3 id="A（Approach，做法）"><a href="#A（Approach，做法）" class="headerlink" title="A（Approach，做法）"></a>A（Approach，做法）</h3><p>导师选择每个学生大学四年只需做一次，固开发成单独的一个APP不是很理智的选择，我们小组采用的做法是开发一个基于Android端的导师选择系统，然后整合进现有的APP比如福大易班、福大教务通、福大助手等。这样在开发过程中便可以专注于主要功能模块的设计，而不用浪费精力在边边角角的界面上。    </p>
+<p>导师选择系统大致的运行流程如下：</p>
+<ol>
+<li><p>学生和导师在第一次登录系统时便要完善个人信息，进行实名认证。特别要完善其对应的专业技能兴趣或则课题研究方向，系统将自动这些信息进行匹配，为学生计算出每个导师的推荐度，便于学生更有目的性得进行选择；</p>
+</li>
+<li><p>学生登录系统，在规定期限内填写并提交五个志愿的导师；</p>
+</li>
+<li><p>导师登录系统，在学生列表界面查看相应的学生信息，并选择自己想要的学生；</p>
+</li>
+<li><p>所有导师操作完毕之后，分配算法如下：</p>
+<ul>
+<li><p>学生只有被一名导师所接受，将直接分配</p>
+</li>
+<li><p>多名导师选择同一学生，该学生将被分配给志愿优先级高的导师</p>
+</li>
+<li><p>剩余学生按照绩点进行排序，并依次检索其志愿，若对应志愿的导师已分配的学生数未满其设定值，将直接进行分配；</p>
+</li>
+<li><p>将导师按照已分配学生数升序排序，剩余学生依次分配给对应导师，以求尽可能让所有导师的学生数平均分布；</p>
+</li>
+<li><p>算法运行结束，导师分配完毕。</p>
+</li>
+</ul>
+</li>
+<li><p>学生和导师登录导师选择系统，查看最终的分配结果，并联系其对应的导师或学生</p>
+</li>
+</ol>
+<h3 id="B（Benefit，好处）"><a href="#B（Benefit，好处）" class="headerlink" title="B（Benefit，好处）"></a>B（Benefit，好处）</h3><ul>
+<li>改变被动分配的局面，让每个导师参与学生的选择</li>
+<li>推荐度的设置让学生选择导师时更理性化，更具指导性</li>
+<li>导师分配结果大致符合学生和导师的预期</li>
+<li>学生信息以及导师信息透明化，方便彼此的了解以及沟通</li>
+<li>大大简化了年级负责人以及系负责人繁琐复杂的人工分配</li>
+<li>每名导师所分配到的学生数量尽可能平均</li>
+<li>互联网正在移动化，基于Android端的系统便于用户下载，实时查看导师信息和分配结果</li>
+<li>学习成绩好的学生有更大机会分配到理想的导师，以此鼓励学生努力学习</li>
+</ul>
+<h3 id="C（Competitors，竞争）"><a href="#C（Competitors，竞争）" class="headerlink" title="C（Competitors，竞争）"></a>C（Competitors，竞争）</h3><ul>
+<li>目前学校的导师分配大都采用人工排序分配的做法，尚无成熟的系统可供使用，市场竞争小</li>
+<li>潜在竞争对手可视为目前参加软工实践的学生，其中不乏有拥有丰富项目经验的优秀码农，他们全都在对“导师分配”这块大蛋糕垂涎欲滴</li>
+</ul>
+<h3 id="D（Delivery，推广）"><a href="#D（Delivery，推广）" class="headerlink" title="D（Delivery，推广）"></a>D（Delivery，推广）</h3><ul>
+<li>当原型系统被采纳之后，立马投入精力进行开发</li>
+<li>通过博客以及软工课程进行初期的推广，预期让所有修读软工的学生了解到该系统，并从学生角度出发期望得到建设性的意见</li>
+<li>通过邮箱或则当面交谈，尽可能向学院所有导师推广这一个系统，并从中汲取到更为专业、更全面的建议并加以改进</li>
+</ul>
+<h2 id="结对过程"><a href="#结对过程" class="headerlink" title="结对过程"></a>结对过程</h2><p>我和我的对友在之前便有过合作的经历，我有过一定的Android开发经验，而对友对前端的掌握也很好，故作业发布后不久我们便结对了。在整个导师选择系统的设计过程中，我主要是负责画原型，队友则是进行初期的草稿以及文档的完善。结对让我们效率更为高效，短短几天时间便完成了作业。<br><img src="http://images2015.cnblogs.com/blog/1019353/201609/1019353-20160918205919818-211051003.png" alt><br><img src="http://images2015.cnblogs.com/blog/1019353/201609/1019353-20160918205943039-1282715350.png" alt></p>
+<h2 id="原型设计"><a href="#原型设计" class="headerlink" title="原型设计"></a>原型设计</h2><blockquote>
+<p>原型设计工具：Axure rp 7.0</p>
+</blockquote>
+<h3 id="学生端"><a href="#学生端" class="headerlink" title="学生端"></a>学生端</h3><ul>
+<li><p>主页界面——拥有志愿填写、导师信息、个人信息、结果查询四个功能模块；</p>
+</li>
+<li><p>个人信息——每名学生均要进行实名认证，并完善自己的个人信息，尤其专业兴趣。这些信息在导师选择学生的时候将会起到重要的作用。</p>
+<p><img src="http://images2015.cnblogs.com/blog/1019353/201609/1019353-20160918210004384-1819138448.png" alt></p>
+</li>
+</ul>
+<ul>
+<li><p>志愿填写——学生可以在这个界面填写自己的志愿信息，这些信息将在导师选择学生时起到关键性的作用；另外，在规定期限截止之前，学生可以任意修改志愿信息；</p>
+</li>
+<li><p>结果查询——在规定期限之后，导师选择系统根据算法分配导师成功。每名学生均可在结果查询界面查询到自己的导师以及相同导师的同学，并通过上面的联系方式互相取得联系，更有利于之后毕设工作的指导进行。</p>
+</li>
+</ul>
+<p><img src="http://images2015.cnblogs.com/blog/1019353/201609/1019353-20160918210019588-1395992386.png" alt></p>
+<ul>
+<li><p>导师信息——导师信息界面可以根据推荐度、研究方向、学生数等进行搜索排序，而每一个导师都会根据学生以及导师的兴趣方向自动计算出一个推荐值，可供学生更加理性得进行导师的选择；</p>
+</li>
+<li><p>导师简介界面有着每一位导师完整的资料以及联系方式，学生可以通过联系方式与心仪的导师事先取得沟通，更有利于之后的互选成功率。</p>
+</li>
+</ul>
+<p><img src="http://images2015.cnblogs.com/blog/1019353/201609/1019353-20160918210045434-1166539963.png" alt></p>
+<h3 id="导师端"><a href="#导师端" class="headerlink" title="导师端"></a>导师端</h3><ul>
+<li><p>主页界面——拥有学生列表、个人信息、结果查询等三个界面。</p>
+<p><img src="http://images2015.cnblogs.com/blog/1019353/201609/1019353-20160918210059091-1069587577.png" alt></p>
+</li>
+<li><p>学生列表——拥有待选学生和已选学生两个界面。学生填报志愿完成后，在待选学生界面，每位导师均可查看选中自己的学生信息，并决定是否接受。当学生被导师给选中之后，相应信息会传递到已选学生界面，并在后台进行相应数据得更新，让分配算法的运行更具准确性。而在已选学生界面，导师亦可通过侧滑删除的方法，筛掉先前已接 受的学生。</p>
+<p><img src="http://images2015.cnblogs.com/blog/1019353/201609/1019353-20160918210109795-1355449089.png" alt></p>
+</li>
+<li><p>个人信息——导师可以在这个界面完善自己的个人信息，设定想要的学生数量以及研究方向，这些信息都将为学生选择时提供关键的指导作用。</p>
+</li>
+<li><p>结果查询——在规定期限之后，导师选择系统根据算法分配导师成功。每位均可在结果查询界面查询到自己的学生，并通过上面的联系方式互相取得联系，更有利于之后毕设工作的指导进行。</p>
+</li>
+</ul>
+<p><img src="http://images2015.cnblogs.com/blog/1019353/201609/1019353-20160918210159767-158276258.png" alt></p>
+<h2 id="效能分析"><a href="#效能分析" class="headerlink" title="效能分析"></a>效能分析</h2><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">内容</th>
+<th style="text-align:center">时长</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">需求分析</td>
+<td style="text-align:center">1H</td>
+</tr>
+<tr>
+<td style="text-align:center">导师分配流程设计</td>
+<td style="text-align:center">2H</td>
+</tr>
+<tr>
+<td style="text-align:center">手绘原型草图</td>
+<td style="text-align:center">3H</td>
+</tr>
+<tr>
+<td style="text-align:center">用Axure RP进行原型设计</td>
+<td style="text-align:center">6H</td>
+</tr>
+<tr>
+<td style="text-align:center">用MD进行文档编写</td>
+<td style="text-align:center">4H</td>
+</tr>
+<tr>
+<td style="text-align:center">系统后期完善</td>
+<td style="text-align:center">1H</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>因为客户的需求都比较明确，且自身也经历过导师选择，所以前期的需求分析还是比较明朗的，而导师分配流程则是和对友在互相激烈的辩论出得出来的。整个导师分配系统流程确定后，较为头痛得便是原型的设计，我们在稿纸上画了好多版的原型之后，才最终确定了如上图所示的系统。之后便开始原型设计和文档的编写。</p>
+<p>整个过程大致用了17个小时，基本都是集中在两三天之内，工作连续紧凑，目的性强，期间也参考了许多其他同学的想法。整体的效率还是蛮高的。</p>
+<h2 id="PSP"><a href="#PSP" class="headerlink" title="PSP"></a>PSP</h2><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">PSP</th>
+<th style="text-align:left"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">计划</td>
+<td style="text-align:left">预估时长为一个月左右</td>
+</tr>
+<tr>
+<td style="text-align:center">开发</td>
+<td style="text-align:left">需求分析：师生互选，系统后台自动完成导师分配，减少人工工作量</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:left">生成设计文档：.md文档</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:left">设计复审：多次审核，共同讨论，确保原型的正确性和完整性</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:left">代码规范：大小驼峰命名法；杜绝中文命名；适当采用单词缩写；见名知意</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:left">具体设计：数据库设计、接口设计、界面编写、逻辑跳转等</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:left">具体编码：Android、JavaWeb、PHP</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:left">代码复审：在开发过程中不断对系统进行完善修改</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:left">测试：单元测试、黑白盒测试、BUG修正</td>
+</tr>
+<tr>
+<td style="text-align:center">测试报告</td>
+<td style="text-align:left">利用测试结果进行测试报告的编写</td>
+</tr>
+<tr>
+<td style="text-align:center">工作量计算</td>
+<td style="text-align:left">预估服务器端的任务比较艰巨，需要实时更新信息，并运行分配算法给出最终的分配结果；Android端因为有过开发经验，界面之间的逻辑也较为简单，工作量较小</td>
+</tr>
+<tr>
+<td style="text-align:center">事后总结</td>
+<td style="text-align:left">暂无</td>
+</tr>
+<tr>
+<td style="text-align:center">过程改进</td>
+<td style="text-align:left">暂无</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>导师选择是每个学生大学必将面临的问题，在几个月之前我们也完成了自己导师的选择，但是整个选择过程就如客户需求所述一样，高度不透明，繁琐复杂，分配结果也很难做到让每个人都满意。因此，开发一个透明化、智能化的导师选择系统是时势所趋，这次软工作业正好也给了我们一个时机去认真思考这个问题并努力解决。</p>
+<p>在整个系统的设计过程中，结对的高效率得到了充分的提现，思想的碰撞让我们迅速得到的系统的大致分配流程，而各自的开发经验让我们对原型的设计以及文档的编写也是得心应手。互取其长，互补其短，我们在短短两天的时间内便完成了原型系统的设计。期间对Axure RP软件的使用以及项目的开发流程有了更深层次的理解。</p>
+<p>虽然文档以至尾声，但我们并未将其认定为此次作业的结束，我们期待的是专属于我们的第三次作业的出现。斯是陋室，惟吾德馨。希望我们的原型系统能够得到您的认可！</p>
+<hr>
+<h2 id="附件"><a href="#附件" class="headerlink" title="附件:"></a>附件:</h2><ul>
+<li><a href="http://pan.baidu.com/s/1eR4KheM" target="_blank" rel="noopener">导师选择系统PDF文档</a></li>
+<li><a href="http://pan.baidu.com/s/1dFC3XGP" target="_blank" rel="noopener">导师选择系统MD文档</a></li>
+</ul>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.png" alt="支付宝"></div>
+</a>
+
+                
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat.png" alt="微信"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/categories/software-engineering/结对编程2：毕设选导系统/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">结对编程2：毕设选导系统</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/categories/essay/浅谈教育/">
+                <span class="level-item">浅谈教育</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<div id="comment-container"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+    var gitalk = new Gitalk({
+        clientID: 'e5eff8aa39f563a204e5',
+        clientSecret: '8adc001af75f722b72813ab2916f65f6b7ba3da0',
+        id: 'b2af75c33388c4fbb2a47c7f557c1cb2',
+        repo: 'chenshen03.github.io',
+        owner: 'chenshen03',
+        admin: "chenshen03"
+    })
+    gitalk.render('comment-container')
+</script>
+
+    </div>
+</div>
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    
+                        <img class="image is-128x128 has-mb-6" src="/images/avatar.png" alt="陈燊">
+                    
+                    
+                    <p class="is-size-4 is-block">
+                        陈燊
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        Master student of Computer Science
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>Xiamen, China</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/archives','_self')">
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        74
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/categories','_self')">
+                    <p class="heading">
+                        分类
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        8
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/tags','_self')">
+                    <p class="heading">
+                        标签
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        38
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/chenshen03">
+                关注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/chenshen03">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Cnblogs" href="https://www.cnblogs.com/cslaker">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Weibo" href="https://www.weibo.com/cstobeno1">
+                
+                <i class="fab fa-weibo"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://www.facebook.com/chenshen03">
+                
+                <i class="fab fa-facebook-f"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Zhihu" href="https://www.zhihu.com/people/chenshen03">
+                
+                <i class="fab fa-zhihu"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+<div class="card widget" id="toc">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a class="is-flex" href="#需求分析（NABCD模型）">
+        <span class="has-mr-6">1</span>
+        <span>需求分析（NABCD模型）</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#N（Need，需求）">
+        <span class="has-mr-6">1.1</span>
+        <span>N（Need，需求）</span>
+        </a></li><li>
+        <a class="is-flex" href="#A（Approach，做法）">
+        <span class="has-mr-6">1.2</span>
+        <span>A（Approach，做法）</span>
+        </a></li><li>
+        <a class="is-flex" href="#B（Benefit，好处）">
+        <span class="has-mr-6">1.3</span>
+        <span>B（Benefit，好处）</span>
+        </a></li><li>
+        <a class="is-flex" href="#C（Competitors，竞争）">
+        <span class="has-mr-6">1.4</span>
+        <span>C（Competitors，竞争）</span>
+        </a></li><li>
+        <a class="is-flex" href="#D（Delivery，推广）">
+        <span class="has-mr-6">1.5</span>
+        <span>D（Delivery，推广）</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#结对过程">
+        <span class="has-mr-6">2</span>
+        <span>结对过程</span>
+        </a></li><li>
+        <a class="is-flex" href="#原型设计">
+        <span class="has-mr-6">3</span>
+        <span>原型设计</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#学生端">
+        <span class="has-mr-6">3.1</span>
+        <span>学生端</span>
+        </a></li><li>
+        <a class="is-flex" href="#导师端">
+        <span class="has-mr-6">3.2</span>
+        <span>导师端</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#效能分析">
+        <span class="has-mr-6">4</span>
+        <span>效能分析</span>
+        </a></li><li>
+        <a class="is-flex" href="#PSP">
+        <span class="has-mr-6">5</span>
+        <span>PSP</span>
+        </a></li><li>
+        <a class="is-flex" href="#总结">
+        <span class="has-mr-6">6</span>
+        <span>总结</span>
+        </a></li><li>
+        <a class="is-flex" href="#附件">
+        <span class="has-mr-6">7</span>
+        <span>附件:</span>
+        </a></li></ul>
+        </div>
+    </div>
+</div>
+
+    
+        
+    
+    
+        <div class="column-right-shadow  ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            标签云
+        </h3>
+        <a href="/tags/CUDA/" style="font-size: 10px;">CUDA</a> <a href="/tags/Jupyter/" style="font-size: 10px;">Jupyter</a> <a href="/tags/Leetcode/" style="font-size: 10px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/POJ/" style="font-size: 20px;">POJ</a> <a href="/tags/人脸识别/" style="font-size: 10px;">人脸识别</a> <a href="/tags/fourier-transform/" style="font-size: 10px;">傅里叶变换</a> <a href="/tags/dynamic-planning/" style="font-size: 14.29px;">动态规划</a> <a href="/tags/kalman-filter/" style="font-size: 10px;">卡尔曼滤波</a> <a href="/tags/cnn/" style="font-size: 10px;">卷积神经网络</a> <a href="/tags/hash/" style="font-size: 15.71px;">哈希</a> <a href="/tags/image-feature/" style="font-size: 10px;">图像特征</a> <a href="/tags/graph/" style="font-size: 12.86px;">图论</a> <a href="/tags/mean-shift/" style="font-size: 10px;">均值漂移</a> <a href="/tags/reinforcement-learning/" style="font-size: 10px;">强化学习</a> <a href="/tags/rnn/" style="font-size: 10px;">循环神经网络</a> <a href="/tags/sort/" style="font-size: 10px;">排序</a> <a href="/tags/search/" style="font-size: 17.14px;">搜索</a> <a href="/tags/svm/" style="font-size: 11.43px;">支持向量机</a> <a href="/tags/unsupervised-hash/" style="font-size: 12.86px;">无监督哈希</a> <a href="/tags/temporal-reasoning/" style="font-size: 11.43px;">时序推理</a> <a href="/tags/时序推理，隐马尔可夫/" style="font-size: 10px;">时序推理，隐马尔可夫</a> <a href="/tags/naive-bayes/" style="font-size: 11.43px;">朴素贝叶斯</a> <a href="/tags/kernel-function/" style="font-size: 10px;">核函数</a> <a href="/tags/gradient-descent/" style="font-size: 10px;">梯度下降</a> <a href="/tags/deep-hash/" style="font-size: 11.43px;">深度哈希</a> <a href="/tags/filter/" style="font-size: 12.86px;">滤波</a> <a href="/tags/supervised-hash/" style="font-size: 11.43px;">监督哈希</a> <a href="/tags/object-track/" style="font-size: 10px;">目标跟踪</a> <a href="/tags/neural-network/" style="font-size: 18.57px;">神经网络</a> <a href="/tags/particle-filter/" style="font-size: 10px;">粒子滤波</a> <a href="/tags/nlp/" style="font-size: 10px;">自然语言处理</a> <a href="/tags/semantic-segmentation/" style="font-size: 10px;">语义分割</a> <a href="/tags/bayesian-network/" style="font-size: 10px;">贝叶斯网络</a> <a href="/tags/greedy-lgorithm/" style="font-size: 17.14px;">贪心算法</a> <a href="/tags/edge-detection/" style="font-size: 10px;">边缘检测</a> <a href="/tags/samples/" style="font-size: 11.43px;">采样</a> <a href="/tags/zero-shot-learning/" style="font-size: 10px;">零样本学习</a>
+    </div>
+</div>
+
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分类
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/study/">
+            <span class="level-start">
+                <span class="level-item">学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">5</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/technique/">
+            <span class="level-start">
+                <span class="level-item">技术</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/machine-learning/">
+            <span class="level-start">
+                <span class="level-item">机器学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">11</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/deep-learning/">
+            <span class="level-start">
+                <span class="level-item">深度学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/algorithms/">
+            <span class="level-start">
+                <span class="level-item">算法与数据结构</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">23</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/computer-vision/">
+            <span class="level-start">
+                <span class="level-item">计算机视觉</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/software-engineering/">
+            <span class="level-start">
+                <span class="level-item">软件工程</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">6</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/essay/">
+            <span class="level-start">
+                <span class="level-item">随笔</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">8</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+        
+            
+        
+        </div>
+    
+</div>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="结对编程1：需求分析与原型设计" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2019 陈燊&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                
+                <br>
+                <span id="busuanzi_container_site_uv">
+                共<span id="busuanzi_value_site_uv">0</span>个访客
+                </span>
+                
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="GitHub" href="https://github.com/chenshen03">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+    
+    
+
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

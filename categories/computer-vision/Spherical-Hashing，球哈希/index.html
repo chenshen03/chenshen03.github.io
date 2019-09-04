@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+<title>Spherical Hashing，球哈希 - 陈燊的博客</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="Introduction在传统的LSH、SSH、PCA-ITQ等哈希算法中，本质都是利用超平面对数据点进行划分，但是在D维空间中，至少需要D+1个超平面才能形成一个封闭、紧凑的区域。而球哈希方法利用超球面（hypersphere）对数据进行划分，在任何维度下，只需要1个超球面便可形成一个封闭的区域。利用球哈希方法，每个区域内样本的最大距离的平均值会更小，说明各个区域的样本是更紧凑的。这样更符合邻近">
+<meta name="keywords" content="哈希,无监督哈希">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spherical Hashing，球哈希">
+<meta property="og:url" content="http://chenshen.xyz/categories/computer-vision/Spherical-Hashing，球哈希/index.html">
+<meta property="og:site_name" content="陈燊的博客">
+<meta property="og:description" content="Introduction在传统的LSH、SSH、PCA-ITQ等哈希算法中，本质都是利用超平面对数据点进行划分，但是在D维空间中，至少需要D+1个超平面才能形成一个封闭、紧凑的区域。而球哈希方法利用超球面（hypersphere）对数据进行划分，在任何维度下，只需要1个超球面便可形成一个封闭的区域。利用球哈希方法，每个区域内样本的最大距离的平均值会更小，说明各个区域的样本是更紧凑的。这样更符合邻近">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://pfyat8guy.bkt.clouddn.com/blog/181005/5Jceem41Ii.png?imageslim">
+<meta property="og:image" content="http://pfyat8guy.bkt.clouddn.com/blog/181005/4L0L517ij1.png?imageslim">
+<meta property="og:image" content="http://pfyat8guy.bkt.clouddn.com/blog/181005/if7dbihABg.png?imageslim">
+<meta property="og:image" content="http://pfyat8guy.bkt.clouddn.com/blog/181005/5C9GGiEJ5e.png?imageslim">
+<meta property="og:image" content="http://pfyat8guy.bkt.clouddn.com/blog/181005/aH3jf29kfI.png?imageslim">
+<meta property="og:image" content="http://pfyat8guy.bkt.clouddn.com/blog/181005/kjFEDKKm81.png?imageslim">
+<meta property="og:image" content="http://pfyat8guy.bkt.clouddn.com/blog/181005/dLbEackFFB.png?imageslim">
+<meta property="og:image" content="http://pfyat8guy.bkt.clouddn.com/blog/181005/9K1lJ8Ij1A.png?imageslim">
+<meta property="og:updated_time" content="2019-09-04T13:39:51.680Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spherical Hashing，球哈希">
+<meta name="twitter:description" content="Introduction在传统的LSH、SSH、PCA-ITQ等哈希算法中，本质都是利用超平面对数据点进行划分，但是在D维空间中，至少需要D+1个超平面才能形成一个封闭、紧凑的区域。而球哈希方法利用超球面（hypersphere）对数据进行划分，在任何维度下，只需要1个超球面便可形成一个封闭的区域。利用球哈希方法，每个区域内样本的最大距离的平均值会更小，说明各个区域的样本是更紧凑的。这样更符合邻近">
+<meta name="twitter:image" content="http://pfyat8guy.bkt.clouddn.com/blog/181005/5Jceem41Ii.png?imageslim">
+
+
+
+
+
+<link rel="icon" href="/images/favicon.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+    
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-2-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="Spherical Hashing，球哈希" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">主页</a>
+                
+                <a class="navbar-item" href="/archives">归档</a>
+                
+                <a class="navbar-item" href="/categories">分类</a>
+                
+                <a class="navbar-item" href="/tags">标签</a>
+                
+                <a class="navbar-item" href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-9-tablet is-9-desktop is-9-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-10-05T09:50:27.000Z">2018-10-05</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/computer-vision/">计算机视觉</a>
+                </div>
+                
+                
+                
+                <span class="level-item has-text-grey" id="busuanzi_container_page_pv">
+                    <i class="far fa-eye"></i>
+                    <span id="busuanzi_value_page_pv">0</span>次访问
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                Spherical Hashing，球哈希
+            
+        </h1>
+        <div class="content">
+            <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>在传统的LSH、SSH、PCA-ITQ等哈希算法中，本质都是利用超平面对数据点进行划分，但是在D维空间中，至少需要D+1个超平面才能形成一个封闭、紧凑的区域。而球哈希方法利用<em>超球面（hypersphere）</em>对数据进行划分，在任何维度下，只需要1个超球面便可形成一个封闭的区域。利用球哈希方法，每个区域内样本的最大距离的平均值会更小，说明各个区域的样本是更紧凑的。这样更符合邻近的含义，更适合在进行相似搜索时使用。</p>
+<a id="more"></a>
+<h2 id="Binary-Code-Embedding-Function"><a href="#Binary-Code-Embedding-Function" class="headerlink" title="Binary Code Embedding Function"></a>Binary Code Embedding Function</h2><p>球哈希的函数族$H(x) = (h_1(x), h_2(x), h_3(x), … h_L(x))$。L为哈希编码的位数，其中每个哈希函数事实上就是一个超球面，每个超球面将空间划分为球内和球外两部分。哈希函数如下：</p>
+<p><img src="http://pfyat8guy.bkt.clouddn.com/blog/181005/5Jceem41Ii.png?imageslim" alt="mark"></p>
+<p>其中，$p_k$和$t_k$分别为球心和半径，$d(p_k, x)$表示点x与球心$p_k$之间的欧式距离。如果点到球心的距离大于半径，则编码为-1，否则编码为1。</p>
+<p>为了比较基于超平面的区域和基于超球面的区域，不同紧凑性对结果的影响，论文作了如下两个实验：</p>
+<p><img src="http://pfyat8guy.bkt.clouddn.com/blog/181005/4L0L517ij1.png?imageslim" alt="mark"></p>
+<p>左图中的Y轴表示在相同的编码下的哈希空间里，数据点中最大距离的平均值，X轴为不同的码长。实验结果曲线表明了基于超球面形成的区域更加紧凑，利用较少的码长便可对原始数据进行很好的编码；右图的Y轴为在相同的编码下，所对应的原始空间中数据点的最大距离，X轴为两个数据点的编码中，相同比特位均为+1的个数。实验结果除了超球面区域紧凑性的验证之外，还表明了如果两个数据点具有越多的相同特征，那么这两个数据点距离越近（越相似）。</p>
+<p>对于右图的实验结果，个人直观的理解便是假设有类别A具有a、b、c三个特征，如果数据$x_1$和$x_2$均具有这三个特征（对应比特位均为+1），那么我们大致可以判定$x_1$和$x_2$均属于类别A；但是如果$x_1$和$x_2$均不具有这三个特征（对应比特位均为-1），那么我们只能确定$x_1$和$x_2$均不属于类别A，但是无法得出$x_1$和$x_2$是否属于同类的结论。</p>
+<h2 id="Distance-between-Binary-Codes"><a href="#Distance-between-Binary-Codes" class="headerlink" title="Distance between Binary Codes"></a>Distance between Binary Codes</h2><p>传统的哈希方法使用汉明距离作为衡量数据点中距离的方法，但是汉明距离无法对区域紧凑性进行很好的表征。因此，在球哈希方法中，使用了新的距离度量方法<em>Shpherical Hamming distance，SHD</em>：</p>
+<p><img src="http://pfyat8guy.bkt.clouddn.com/blog/181005/if7dbihABg.png?imageslim" alt="mark"></p>
+<p>其中，分子为两个编码中对应比特位不同的个数，分母则为对应比特位均为+1的个数。显然，当两个数据对应比特位均为+1的个数越多时，其对应的SHD距离越小，反之则越大，很好得体现了利用了基于超球面的区域紧凑型的特点。</p>
+<h2 id="Independence-between-Hashing-Functions"><a href="#Independence-between-Hashing-Functions" class="headerlink" title="Independence between Hashing Functions"></a>Independence between Hashing Functions</h2><p>球哈希方法中同样也对哈希函数的平衡性和独立性进行了限制。</p>
+<p>平衡性：</p>
+<p><img src="http://pfyat8guy.bkt.clouddn.com/blog/181005/5C9GGiEJ5e.png?imageslim" alt="mark"></p>
+<p>独立性：</p>
+<p><img src="http://pfyat8guy.bkt.clouddn.com/blog/181005/aH3jf29kfI.png?imageslim" alt="mark"></p>
+<p>具体的图示如下：</p>
+<p><img src="http://pfyat8guy.bkt.clouddn.com/blog/181005/kjFEDKKm81.png?imageslim" alt="mark"></p>
+<h2 id="Iterative-Optimization"><a href="#Iterative-Optimization" class="headerlink" title="Iterative Optimization"></a>Iterative Optimization</h2><p>在初始化时，从原始数据集中生成一个m大小的子集S，在子集S中随机选择C个数据点作为初始球心，初始球心的选择应该能大致反应数据集在空间中的分布情况，以减少后边的优化开销。在球心选择后，根据平衡性和独立性的限制便可得到半径。之后，球哈希函数训练可分为两个阶段。</p>
+<p><strong>第一阶段：</strong>根据平衡性的限制，调整球心，使得$O_{i,j}$的值尽可能接近$4/m$。在此过程中，定义了两个球心的作用力如下所示：</p>
+<p><img src="http://pfyat8guy.bkt.clouddn.com/blog/181005/dLbEackFFB.png?imageslim" alt="mark"></p>
+<p>为了满足平衡性的条件，当两个球的重合过多时，应产生排斥力将其分开；当两个球距离过远时，应产生吸引力使得互相靠近。而上述公式的原理便是通过利用$(O_{i,j} - m/4)$和$(p_i - p_j)$的符号正负关系实现排斥力和吸引力。而分母中的$4/m$是为了保证力的大小不受数据集大小m的影响。</p>
+<p><strong>第二阶段：</strong>当球心通过作用力更新位置完毕后，我们通过独立性的限制来调整半径$t_k$的大小。</p>
+<p>在第一阶段中，理想情况是$O_{i,j}$的均值和标准差分别为$m/4$和0，但是这样容易产生过拟合，因此我们对均值和标准差设定了两个阈值——10%和15%，在这两个阈值下，算法具有最优的表现。</p>
+<p>综述，整个球哈希算法的过程如下所示：</p>
+<p><img src="http://pfyat8guy.bkt.clouddn.com/blog/181005/9K1lJ8Ij1A.png?imageslim" alt="mark"></p>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/hash/">哈希</a>, <a class="has-link-grey -link" href="/tags/unsupervised-hash/">无监督哈希</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.png" alt="支付宝"></div>
+</a>
+
+                
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat.png" alt="微信"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/categories/computer-vision/Supervised-Hashing-with-Kernels-KSH/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">Supervised Hashing with Kernels, KSH</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/categories/computer-vision/Iterative-Quantization，ITQ/">
+                <span class="level-item">Iterative Quantization，ITQ</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<div id="comment-container"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+    var gitalk = new Gitalk({
+        clientID: 'e5eff8aa39f563a204e5',
+        clientSecret: '8adc001af75f722b72813ab2916f65f6b7ba3da0',
+        id: 'ebe5ac783107c8c08d4d099173bb00e0',
+        repo: 'chenshen03.github.io',
+        owner: 'chenshen03',
+        admin: "chenshen03"
+    })
+    gitalk.render('comment-container')
+</script>
+
+    </div>
+</div>
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    
+                        <img class="image is-128x128 has-mb-6" src="/images/avatar.png" alt="陈燊">
+                    
+                    
+                    <p class="is-size-4 is-block">
+                        陈燊
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        Master student of Computer Science
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>Xiamen, China</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/archives','_self')">
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        74
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/categories','_self')">
+                    <p class="heading">
+                        分类
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        8
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/tags','_self')">
+                    <p class="heading">
+                        标签
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        38
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/chenshen03">
+                关注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/chenshen03">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Cnblogs" href="https://www.cnblogs.com/cslaker">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Weibo" href="https://www.weibo.com/cstobeno1">
+                
+                <i class="fab fa-weibo"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://www.facebook.com/chenshen03">
+                
+                <i class="fab fa-facebook-f"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Zhihu" href="https://www.zhihu.com/people/chenshen03">
+                
+                <i class="fab fa-zhihu"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+<div class="card widget" id="toc">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a class="is-flex" href="#Introduction">
+        <span class="has-mr-6">1</span>
+        <span>Introduction</span>
+        </a></li><li>
+        <a class="is-flex" href="#Binary-Code-Embedding-Function">
+        <span class="has-mr-6">2</span>
+        <span>Binary Code Embedding Function</span>
+        </a></li><li>
+        <a class="is-flex" href="#Distance-between-Binary-Codes">
+        <span class="has-mr-6">3</span>
+        <span>Distance between Binary Codes</span>
+        </a></li><li>
+        <a class="is-flex" href="#Independence-between-Hashing-Functions">
+        <span class="has-mr-6">4</span>
+        <span>Independence between Hashing Functions</span>
+        </a></li><li>
+        <a class="is-flex" href="#Iterative-Optimization">
+        <span class="has-mr-6">5</span>
+        <span>Iterative Optimization</span>
+        </a></li></ul>
+        </div>
+    </div>
+</div>
+
+    
+        
+    
+    
+        <div class="column-right-shadow  ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            标签云
+        </h3>
+        <a href="/tags/CUDA/" style="font-size: 10px;">CUDA</a> <a href="/tags/Jupyter/" style="font-size: 10px;">Jupyter</a> <a href="/tags/Leetcode/" style="font-size: 10px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/POJ/" style="font-size: 20px;">POJ</a> <a href="/tags/人脸识别/" style="font-size: 10px;">人脸识别</a> <a href="/tags/fourier-transform/" style="font-size: 10px;">傅里叶变换</a> <a href="/tags/dynamic-planning/" style="font-size: 14.29px;">动态规划</a> <a href="/tags/kalman-filter/" style="font-size: 10px;">卡尔曼滤波</a> <a href="/tags/cnn/" style="font-size: 10px;">卷积神经网络</a> <a href="/tags/hash/" style="font-size: 15.71px;">哈希</a> <a href="/tags/image-feature/" style="font-size: 10px;">图像特征</a> <a href="/tags/graph/" style="font-size: 12.86px;">图论</a> <a href="/tags/mean-shift/" style="font-size: 10px;">均值漂移</a> <a href="/tags/reinforcement-learning/" style="font-size: 10px;">强化学习</a> <a href="/tags/rnn/" style="font-size: 10px;">循环神经网络</a> <a href="/tags/sort/" style="font-size: 10px;">排序</a> <a href="/tags/search/" style="font-size: 17.14px;">搜索</a> <a href="/tags/svm/" style="font-size: 11.43px;">支持向量机</a> <a href="/tags/unsupervised-hash/" style="font-size: 12.86px;">无监督哈希</a> <a href="/tags/temporal-reasoning/" style="font-size: 11.43px;">时序推理</a> <a href="/tags/时序推理，隐马尔可夫/" style="font-size: 10px;">时序推理，隐马尔可夫</a> <a href="/tags/naive-bayes/" style="font-size: 11.43px;">朴素贝叶斯</a> <a href="/tags/kernel-function/" style="font-size: 10px;">核函数</a> <a href="/tags/gradient-descent/" style="font-size: 10px;">梯度下降</a> <a href="/tags/deep-hash/" style="font-size: 11.43px;">深度哈希</a> <a href="/tags/filter/" style="font-size: 12.86px;">滤波</a> <a href="/tags/supervised-hash/" style="font-size: 11.43px;">监督哈希</a> <a href="/tags/object-track/" style="font-size: 10px;">目标跟踪</a> <a href="/tags/neural-network/" style="font-size: 18.57px;">神经网络</a> <a href="/tags/particle-filter/" style="font-size: 10px;">粒子滤波</a> <a href="/tags/nlp/" style="font-size: 10px;">自然语言处理</a> <a href="/tags/semantic-segmentation/" style="font-size: 10px;">语义分割</a> <a href="/tags/bayesian-network/" style="font-size: 10px;">贝叶斯网络</a> <a href="/tags/greedy-lgorithm/" style="font-size: 17.14px;">贪心算法</a> <a href="/tags/edge-detection/" style="font-size: 10px;">边缘检测</a> <a href="/tags/samples/" style="font-size: 11.43px;">采样</a> <a href="/tags/zero-shot-learning/" style="font-size: 10px;">零样本学习</a>
+    </div>
+</div>
+
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分类
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/study/">
+            <span class="level-start">
+                <span class="level-item">学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">5</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/technique/">
+            <span class="level-start">
+                <span class="level-item">技术</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/machine-learning/">
+            <span class="level-start">
+                <span class="level-item">机器学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">11</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/deep-learning/">
+            <span class="level-start">
+                <span class="level-item">深度学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/algorithms/">
+            <span class="level-start">
+                <span class="level-item">算法与数据结构</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">23</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/computer-vision/">
+            <span class="level-start">
+                <span class="level-item">计算机视觉</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/software-engineering/">
+            <span class="level-start">
+                <span class="level-item">软件工程</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">6</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/essay/">
+            <span class="level-start">
+                <span class="level-item">随笔</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">8</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+        
+            
+        
+        </div>
+    
+</div>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="Spherical Hashing，球哈希" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2019 陈燊&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                
+                <br>
+                <span id="busuanzi_container_site_uv">
+                共<span id="busuanzi_value_site_uv">0</span>个访客
+                </span>
+                
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="GitHub" href="https://github.com/chenshen03">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+    
+    
+
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

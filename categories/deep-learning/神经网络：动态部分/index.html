@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+<title>神经网络：动态部分 - 陈燊的博客</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="训练技巧损失函数可视化损失函数一般都是定义在高维度的空间中，这样要将其可视化就很困难。然而办法还是有的，在1个维度或者2个维度的方向上对高维空间进行切片，例如，随机生成一个权重矩阵W，该矩阵就与高维空间中的一个点对应。然后沿着某个维度方向前进的同时记录损失函数值的变化。换句话说，就是生成一个随机的方向$W_1$并且沿着此方向计算损失值，计算方法是根据不同的$\alpha$值来计算$L(W+aW_1">
+<meta name="keywords" content="神经网络,梯度下降">
+<meta property="og:type" content="article">
+<meta property="og:title" content="神经网络：动态部分">
+<meta property="og:url" content="http://chenshen.xyz/categories/deep-learning/神经网络：动态部分/index.html">
+<meta property="og:site_name" content="陈燊的博客">
+<meta property="og:description" content="训练技巧损失函数可视化损失函数一般都是定义在高维度的空间中，这样要将其可视化就很困难。然而办法还是有的，在1个维度或者2个维度的方向上对高维空间进行切片，例如，随机生成一个权重矩阵W，该矩阵就与高维空间中的一个点对应。然后沿着某个维度方向前进的同时记录损失函数值的变化。换句话说，就是生成一个随机的方向$W_1$并且沿着此方向计算损失值，计算方法是根据不同的$\alpha$值来计算$L(W+aW_1">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://pic4.zhimg.com/94dd0714f65ef94b3cbfff4780b1988d_r.jpg">
+<meta property="og:image" content="http://www.zhihu.com/equation?tex=%5Cdisplaystyle+%5Cfrac%7Bdf%28x%29%7D%7Bdx%7D%3D%5Cfrac%7Bf%28x%2Bh%29-f%28x-h%29%7D%7B2h%7D%28use%5C+instead%29">
+<meta property="og:image" content="http://www.zhihu.com/equation?tex=%5Cdisplaystyle+%5Cfrac%7B%7Cf%27_a-f%27_n%7C%7D%7Bmax%28%7Cf%27_a%7C%2C%7Cf%27_n%7C%29%7D">
+<meta property="og:image" content="http://www.zhihu.com/equation?tex=h">
+<meta property="og:image" content="http://www.zhihu.com/equation?tex=h">
+<meta property="og:image" content="https://pic4.zhimg.com/80/96573094f9d7f4b3b188069726840a2e_hd.jpg">
+<meta property="og:image" content="http://www.zhihu.com/equation?tex=%5Calpha%3D%5Calpha_0e%5E%7B-kt%7D">
+<meta property="og:image" content="http://www.zhihu.com/equation?tex=%5Calpha_0%2Ck">
+<meta property="og:image" content="http://www.zhihu.com/equation?tex=t">
+<meta property="og:image" content="http://www.zhihu.com/equation?tex=%5Calpha%3D%5Calpha_0%2F%281%2Bkt%29">
+<meta property="og:image" content="http://www.zhihu.com/equation?tex=%5Calpha_0%2Ck">
+<meta property="og:image" content="http://img.blog.csdn.net/20170728165011954?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdHN5Y2NuaA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20170803165730092?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdHN5Y2NuaA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="https://pic4.zhimg.com/80/412afb713ddcff0ba9165ab026563304_hd.jpg">
+<meta property="og:updated_time" content="2019-09-04T13:39:51.692Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="神经网络：动态部分">
+<meta name="twitter:description" content="训练技巧损失函数可视化损失函数一般都是定义在高维度的空间中，这样要将其可视化就很困难。然而办法还是有的，在1个维度或者2个维度的方向上对高维空间进行切片，例如，随机生成一个权重矩阵W，该矩阵就与高维空间中的一个点对应。然后沿着某个维度方向前进的同时记录损失函数值的变化。换句话说，就是生成一个随机的方向$W_1$并且沿着此方向计算损失值，计算方法是根据不同的$\alpha$值来计算$L(W+aW_1">
+<meta name="twitter:image" content="https://pic4.zhimg.com/94dd0714f65ef94b3cbfff4780b1988d_r.jpg">
+
+
+
+
+
+<link rel="icon" href="/images/favicon.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+    
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-2-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="神经网络：动态部分" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">主页</a>
+                
+                <a class="navbar-item" href="/archives">归档</a>
+                
+                <a class="navbar-item" href="/categories">分类</a>
+                
+                <a class="navbar-item" href="/tags">标签</a>
+                
+                <a class="navbar-item" href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-9-tablet is-9-desktop is-9-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-02-08T09:22:58.000Z">2018-02-08</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/deep-learning/">深度学习</a>
+                </div>
+                
+                
+                
+                <span class="level-item has-text-grey" id="busuanzi_container_page_pv">
+                    <i class="far fa-eye"></i>
+                    <span id="busuanzi_value_page_pv">0</span>次访问
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                神经网络：动态部分
+            
+        </h1>
+        <div class="content">
+            <h2 id="训练技巧"><a href="#训练技巧" class="headerlink" title="训练技巧"></a>训练技巧</h2><h3 id="损失函数可视化"><a href="#损失函数可视化" class="headerlink" title="损失函数可视化"></a>损失函数可视化</h3><p>损失函数一般都是定义在高维度的空间中，这样要将其可视化就很困难。然而办法还是有的，在1个维度或者2个维度的方向上对高维空间进行切片，例如，随机生成一个权重矩阵W，该矩阵就与高维空间中的一个点对应。然后沿着某个维度方向前进的同时记录损失函数值的变化。换句话说，就是生成一个随机的方向$W_1$并且沿着此方向计算损失值，计算方法是根据不同的$\alpha$值来计算$L(W+aW_1)$。这个过程将生成一个图表，其x轴是$\alpha$值，y轴是损失函数值。同样的方法还可以用在两个维度上，通过改变a,b来计算损失值$L(W+aW_1+bW_2)$，从而给出二维的图像。在图像中，a,b可以分别用x和y轴表示，而损失函数的值可以用颜色变化表示：</p>
+<p><img src="https://pic4.zhimg.com/94dd0714f65ef94b3cbfff4780b1988d_r.jpg" alt="preview"></p>
+<a id="more"></a>
+<ul>
+<li>过低的学习率导致算法的改善是线性的。高一些的学习率会看起来呈几何指数下降，更高的学习率会让损失值很快下降，但是接着就停在一个不好的损失值上（绿线）。这是因为最优化的“能量”太大，参数在混沌中随机震荡，不能最优化到一个很好的点上。</li>
+<li>损失值的震荡程度和批尺寸（batch size）有关，当批尺寸为1，震荡会相对较大。当批尺寸就是整个数据集时震荡就会最小，因为每个梯度更新都是单调地优化损失函数（除非学习率设置得过高）。</li>
+</ul>
+<h3 id="梯度检查"><a href="#梯度检查" class="headerlink" title="梯度检查"></a>梯度检查</h3><ul>
+<li><strong>使用中心化公式。</strong> 用泰勒展开式，该公式的误差近似$O(h^2)$。</li>
+</ul>
+<p><img src="http://www.zhihu.com/equation?tex=%5Cdisplaystyle+%5Cfrac%7Bdf%28x%29%7D%7Bdx%7D%3D%5Cfrac%7Bf%28x%2Bh%29-f%28x-h%29%7D%7B2h%7D%28use%5C+instead%29" alt="\displaystyle \frac{df(x)}{dx}=\frac{f(x+h)-f(x-h)}{2h}(use\ instead)"></p>
+<ul>
+<li><p><strong>使用相对误差比较数值梯度和解析梯度的不同。</strong>若使用绝对值进行比较：当差值为1e-4，若梯度值在1.0左右，则差值较为合适；若梯度值为1e-5或更低时，则1e-4为非常大的差距，梯度实现就会被当成失败的。</p>
+<p><img src="http://www.zhihu.com/equation?tex=%5Cdisplaystyle+%5Cfrac%7B%7Cf%27_a-f%27_n%7C%7D%7Bmax%28%7Cf%27_a%7C%2C%7Cf%27_n%7C%29%7D" alt="\displaystyle \frac{|f&#39;_a-f&#39;_n|}{max(|f&#39;_a|,|f&#39;_n|)}"></p>
+</li>
+<li><p>在实践中：</p>
+<p>相对误差&gt;1e-2：通常就意味着梯度可能出错。</p>
+<p>1e-2&gt;相对误差&gt;1e-4：要对这个值感到不舒服才行。</p>
+<p>1e-4&gt;相对误差：这个值的相对误差对于有不可导点的目标函数是OK的。但如果目标函数中没有kink（使用tanh和softmax），那么相对误差值还是太高。</p>
+<p>1e-7或者更小：结果很好。</p>
+</li>
+<li><p><strong>使用双精度。</strong></p>
+</li>
+<li><p><strong>目标函数的不可导点</strong>。例如在ReLU或SVM损失中，由于max函数的使用，导致某些数据在x = 0时为不可导点。这会使得解析梯度和数值梯度的计算结果出现一定的差距。</p>
+</li>
+<li><p><strong>谨慎设置步长h。</strong>在实践中h并不是越小越好，因为当<img src="http://www.zhihu.com/equation?tex=h" alt="h">特别小的时候，就可能就会遇到数值精度问题。有时候如果梯度检查无法进行，可以试试将<img src="http://www.zhihu.com/equation?tex=h" alt="h">调到1e-4或者1e-6。</p>
+</li>
+<li><p><strong>在操作的特性模式中梯度检查。</strong>梯度检查是在参数空间中的一个特定（往往还是随机的）的单独点进行的。即使是在该点上梯度检查成功了，也不能马上确保全局上梯度的实现都是正确的。因此为了安全起见，最好让网络学习（“预热”）一小段时间，等到损失函数开始下降的之后再进行梯度检查。在第一次迭代就进行梯度检查的危险就在于，此时可能正处在不正常的边界情况，从而掩盖了梯度没有正确实现的事实。</p>
+</li>
+<li><p><strong>不要让正则化吞没数据。</strong> 正则化损失可能吞没掉数据损失，在这种情况下梯度主要来源于正则化部分（正则化部分的梯度表达式通常简单很多）。这样就会掩盖掉数据损失梯度的不正确实现。因此，推荐先关掉正则化对数据损失做单独检查，然后对正则化做单独检查。</p>
+</li>
+<li><p><strong>关闭随机失活（dropout）和数据扩张（augmentation）</strong>。</p>
+</li>
+<li><p><strong>检查少量的维度。</strong>在实际中，梯度可以有上百万的参数，在这种情况下只能检查其中一些维度然后假设其他维度是正确的。</p>
+</li>
+</ul>
+<h3 id="合理性检查的提示与技巧"><a href="#合理性检查的提示与技巧" class="headerlink" title="合理性检查的提示与技巧"></a>合理性检查的提示与技巧</h3><ul>
+<li><strong>寻找特定情况的正确损失值。</strong>在使用小参数进行初始化时，确保得到的损失值与期望一致。最好先单独检查数据损失（让正则化强度为0）。例如，对于Softmax分类器，一般期望它的初始损失值是2.302；对于SVM，假期望损失值是9（因为对于每个错误分类，边界值是1）。</li>
+<li><strong>提高正则化强度时导致损失值变大。</strong></li>
+<li><strong>对小数据子集过拟合。</strong>最后也是最重要的一步，在整个数据集进行训练之前，尝试在一个很小的数据集上进行训练（比如20个数据），然后确保能到达0的损失值。进行这个实验的时候，最好让正则化强度为0，不然正则化会阻止让损失为0。</li>
+</ul>
+<h3 id="权重更新比例"><a href="#权重更新比例" class="headerlink" title="权重更新比例"></a>权重更新比例</h3><p>权重中更新值的数量和全部值的数量之间的比例应该在1e-3左右。如果更低，说明学习率可能太小，如果更高，说明学习率可能太高。</p>
+<h3 id="可视化"><a href="#可视化" class="headerlink" title="可视化"></a>可视化</h3><p>如果数据是图像像素数据，那么把第一层特征可视化会有帮助：</p>
+<p><img src="https://pic4.zhimg.com/80/96573094f9d7f4b3b188069726840a2e_hd.jpg" alt="img"></p>
+<p><strong>左图</strong>中的特征充满了噪音，这暗示了网络可能出现了问题：网络没有收敛，学习率设置不恰当，正则化惩罚的权重过低。<strong>右图</strong>的特征不错，平滑，干净而且种类繁多，说明训练过程进行良好。</p>
+<h3 id="局部最小值"><a href="#局部最小值" class="headerlink" title="局部最小值"></a>局部最小值</h3><p>在使用梯度下降等方法更新权重参数的时候，有时候参数可能会收敛于局部最小值。在小的神经网络中，不同的局部最小值对于模型的影响确实很大，但是在大的神经网络中，随着时间的推移，最优的局部最小值和最差的局部最小值之间的差异会越来愈小。因此在大的神经网络中，通常认为收练的局部最小值等同于全局最小值。</p>
+<h3 id="学习率的选择以及退火"><a href="#学习率的选择以及退火" class="headerlink" title="学习率的选择以及退火"></a>学习率的选择以及退火</h3><p>在开始阶段，应选择较高的lr，这样loss就会较快得下降。但是下降到某一节点之后可能无法达到最小值，此时需要降低lr，以用更低的学校效率到达最低的loss点。</p>
+<ul>
+<li><strong>随步数衰减</strong>：每进行几个周期就根据一些因素降低学习率。典型的值是每过5个周期就将学习率减少一半，或者每20个周期减少到之前的0.1。这些数值的设定是严重依赖具体问题和模型的选择的。在实践中可能看见这么一种经验做法：使用一个固定的学习率来进行训练的同时观察验证集错误率，每当验证集错误率停止下降，就乘以一个常数（比如0.5）来降低学习率。</li>
+<li><strong>指数衰减</strong>。数学公式是<img src="http://www.zhihu.com/equation?tex=%5Calpha%3D%5Calpha_0e%5E%7B-kt%7D" alt="\alpha=\alpha_0e^{-kt}">，其中<img src="http://www.zhihu.com/equation?tex=%5Calpha_0%2Ck" alt="\alpha_0,k">是超参数，<img src="http://www.zhihu.com/equation?tex=t" alt="t">是迭代次数（也可以使用周期作为单位）。</li>
+<li><strong>1/t衰减</strong>的数学公式是<img src="http://www.zhihu.com/equation?tex=%5Calpha%3D%5Calpha_0%2F%281%2Bkt%29" alt="\alpha=\alpha_0/(1+kt)">，其中<img src="http://www.zhihu.com/equation?tex=%5Calpha_0%2Ck" alt="\alpha_0,k">是超参数，t是迭代次数。</li>
+</ul>
+<pre><code>在实践中，发现随步数衰减的随机失活更受欢迎，因为它使用的超参数（衰减系数和以周期为时间单位的步数）比![k](http://www.zhihu.com/equation?tex=k)更有解释性。最后，如果有足够的计算资源，可以让衰减更加缓慢一些，让训练时间更长些。
+</code></pre><h2 id="梯度下降"><a href="#梯度下降" class="headerlink" title="梯度下降"></a>梯度下降</h2><h3 id="SGD"><a href="#SGD" class="headerlink" title="SGD"></a>SGD</h3><p>沿着负梯度方向改变参数（因为梯度指向的是上升方向，但是我们通常希望最小化损失函数）。假设有一个参数向量<strong>x</strong>及其梯度<strong>dx</strong>，那么最简单的更新的形式是：</p>
+<figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment"># 普通更新</span></span><br><span class="line">x += - learning_rate * dx</span><br></pre></td></tr></table></figure>
+<p>其中learning_rate是一个超参数，它是一个固定的常量。当在整个数据集上进行计算时，只要学习率足够低，总是能在损失函数上得到非负的进展。</p>
+<h3 id="Momentum"><a href="#Momentum" class="headerlink" title="Momentum"></a>Momentum</h3><p>如果把梯度下降法想象成一个小球从山坡到山谷的过程，那么前面几篇文章的小球是这样移动的：从A点开始，计算当前A点的坡度，沿着坡度最大的方向走一段路，停下到B。在B点再看一看周围坡度最大的地方，沿着这个坡度方向走一段路，再停下。确切的来说，这并不像一个球，更像是一个正在下山的盲人，每走一步都要停下来，用拐杖来来探探四周的路，再走一步停下来，周而复始，直到走到山谷。而一个真正的小球要比这聪明多了，从A点滚动到B点的时候，小球带有一定的初速度，在当前初速度下继续加速下降，小球会越滚越快，更快的奔向谷底。momentum 动量法就是模拟这一过程来加速神经网络的优化的。</p>
+<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 动量更新</span><br><span class="line">v = mu * v - learning_rate * dx # 与速度融合</span><br><span class="line">x += v # 与位置融合</span><br></pre></td></tr></table></figure>
+<p>A为起始点，首先计算A点的梯度∇a ,然后下降到B点， 到了B点需要加上A点的梯度，这里梯度需要有一个衰减值 ,推荐取0.9。这样的做法可以让早期的梯度对当前梯度的影响越来越小，如果没有衰减值，模型往往会震荡难以收敛，甚至发散。这样一步一步下去，带着初速度的小球就会极速的奔向谷底。</p>
+<p><img src="http://img.blog.csdn.net/20170728165011954?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdHN5Y2NuaA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+<h3 id="Nesterov"><a href="#Nesterov" class="headerlink" title="Nesterov"></a>Nesterov</h3><p>动量法每下降一步都是由前面下降方向的一个累积和当前点的梯度方向组合而成。于是一位大神就开始思考，既然每一步都要将两个梯度方向（历史梯度、当前梯度）做一个合并再下降，那为什么不先按照历史梯度往前走那么一小步，按照前面一小步位置的“超前梯度”来做梯度合并呢？如此一来，小球就可以先不管三七二十一先往前走一步，在靠前一点的位置看到梯度，然后按照那个位置再来修正这一步的梯度方向。如此一来，有了超前的眼光，小球就会更加”聪明“, 这种方法被命名为Nesterov accelerated gradient 简称 NAG。</p>
+<figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">x_ahead = x + mu * v</span><br><span class="line"><span class="hljs-comment"># 计算dx_ahead(在x_ahead处的梯度，而不是在x处的梯度)</span></span><br><span class="line">v = mu * v - learning_rate * dx_ahead</span><br><span class="line">x += v</span><br></pre></td></tr></table></figure>
+<figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">v_prev = v <span class="hljs-comment"># 存储备份</span></span><br><span class="line">v = mu * v - learning_rate * dx <span class="hljs-comment"># 速度更新保持不变</span></span><br><span class="line">x += -mu * v_prev + (<span class="hljs-number">1</span> + mu) * v <span class="hljs-comment"># 位置更新变了形式</span></span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20170803165730092?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdHN5Y2NuaA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+<p><img src="https://pic4.zhimg.com/80/412afb713ddcff0ba9165ab026563304_hd.jpg" alt="img"></p>
+<h3 id="Adagrad"><a href="#Adagrad" class="headerlink" title="Adagrad"></a>Adagrad</h3><p>随着算法不断的迭代，cache会越来越大，整体的学习率会越来越小。所以一般来说adagrad算法一开始是激励收敛，到了后面就慢慢变成惩罚收敛，速度越来越慢。Adagrad的一个缺点是，在深度学习中学习率总是单调减小，被证明通常过于激进且过早停止学习。</p>
+<figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment"># 假设有梯度和参数向量x</span></span><br><span class="line">cache += dx**<span class="hljs-number">2</span></span><br><span class="line">x += - learning_rate * dx / (np.sqrt(cache) + eps)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>cache表示前t步梯度dx的累加；</li>
+<li>用于平滑的式子<strong>eps</strong>（一般设为1e-4到1e-8之间）是防止出现除以0的情况；</li>
+<li>平方根的操作非常重要，如果去掉，算法的表现将会糟糕很多；</li>
+<li>cache的累加为梯度的平方，是因为接下去要进行平方根操作，以防平方根内出现负数。</li>
+</ul>
+<h3 id="RMSprop"><a href="#RMSprop" class="headerlink" title="RMSprop"></a>RMSprop</h3><p>RMSprop用一种很简单的方式修改了Adagrad方法，让它不那么激进，单调地降低了学习率。具体说来，就是它使用了一个梯度平方的滑动平均：</p>
+<figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cache =  decay_rate * cache + (<span class="hljs-number">1</span> - decay_rate) * dx**<span class="hljs-number">2</span></span><br><span class="line">x += - learning_rate * dx / (np.sqrt(cache) + eps)</span><br></pre></td></tr></table></figure>
+<p><em>decay_rate</em>是一个超参数，通常取值为[0.9, 099, 0,999]。<strong>RMSpro</strong>和<strong>Adagrad</strong>主要的区别是在于<em>cache</em>的更新方式，可以将其拆为两个部分：其中0.9部分取决于之前的梯度和，剩下0.1部分取决于当前的梯度。如果当前梯度很大，学习率衰减得就会很快；如果当前梯度小，学习率衰减得就会慢点。利用这个特性，有效得解决了Adagrad方法的缺点。</p>
+<h3 id="Adam"><a href="#Adam" class="headerlink" title="Adam"></a>Adam</h3><p><a href="http://link.zhihu.com/?target=http%3A//arxiv.org/abs/1412.6980" target="_blank" rel="noopener">Adam</a>是最近才提出的一种更新方法，它看起来像是RMSProp的动量版。简化的代码是下面这样：</p>
+<figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">m = beta1*m + (<span class="hljs-number">1</span>-beta1)*dx</span><br><span class="line">v = beta2*v + (<span class="hljs-number">1</span>-beta2)*(dx**<span class="hljs-number">2</span>)</span><br><span class="line">t += <span class="hljs-number">1</span></span><br><span class="line"><span class="hljs-comment">#########</span></span><br><span class="line"><span class="hljs-comment"># 完整版 #</span></span><br><span class="line"><span class="hljs-comment"># 偏置矫正，只有在前几次迭代时（当t较小时）作用比较大</span></span><br><span class="line"><span class="hljs-comment"># 主要是一种针对m、v初始为0的补偿措施，将m、v变大</span></span><br><span class="line">m_bias = m / (<span class="hljs-number">1</span> - beta1**t)</span><br><span class="line">v_bias = v / (<span class="hljs-number">1</span> - beta2**t)</span><br><span class="line"><span class="hljs-comment">#########</span></span><br><span class="line"></span><br><span class="line">x += - learning_rate * m_bias / (np.sqrt(v_bias) + eps)</span><br></pre></td></tr></table></figure>
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/gradient-descent/">梯度下降</a>, <a class="has-link-grey -link" href="/tags/neural-network/">神经网络</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.png" alt="支付宝"></div>
+</a>
+
+                
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat.png" alt="微信"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/categories/deep-learning/神经网络：静态部分/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">神经网络：静态部分</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/categories/deep-learning/softmax分类器/">
+                <span class="level-item">softmax分类器</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<div id="comment-container"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+    var gitalk = new Gitalk({
+        clientID: 'e5eff8aa39f563a204e5',
+        clientSecret: '8adc001af75f722b72813ab2916f65f6b7ba3da0',
+        id: '79d13e704043be6cfda7b63661ebc4a1',
+        repo: 'chenshen03.github.io',
+        owner: 'chenshen03',
+        admin: "chenshen03"
+    })
+    gitalk.render('comment-container')
+</script>
+
+    </div>
+</div>
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    
+                        <img class="image is-128x128 has-mb-6" src="/images/avatar.png" alt="陈燊">
+                    
+                    
+                    <p class="is-size-4 is-block">
+                        陈燊
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        Master student of Computer Science
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>Xiamen, China</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/archives','_self')">
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        74
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/categories','_self')">
+                    <p class="heading">
+                        分类
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        8
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/tags','_self')">
+                    <p class="heading">
+                        标签
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        38
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/chenshen03">
+                关注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/chenshen03">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Cnblogs" href="https://www.cnblogs.com/cslaker">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Weibo" href="https://www.weibo.com/cstobeno1">
+                
+                <i class="fab fa-weibo"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://www.facebook.com/chenshen03">
+                
+                <i class="fab fa-facebook-f"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Zhihu" href="https://www.zhihu.com/people/chenshen03">
+                
+                <i class="fab fa-zhihu"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+<div class="card widget" id="toc">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a class="is-flex" href="#训练技巧">
+        <span class="has-mr-6">1</span>
+        <span>训练技巧</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#损失函数可视化">
+        <span class="has-mr-6">1.1</span>
+        <span>损失函数可视化</span>
+        </a></li><li>
+        <a class="is-flex" href="#梯度检查">
+        <span class="has-mr-6">1.2</span>
+        <span>梯度检查</span>
+        </a></li><li>
+        <a class="is-flex" href="#合理性检查的提示与技巧">
+        <span class="has-mr-6">1.3</span>
+        <span>合理性检查的提示与技巧</span>
+        </a></li><li>
+        <a class="is-flex" href="#权重更新比例">
+        <span class="has-mr-6">1.4</span>
+        <span>权重更新比例</span>
+        </a></li><li>
+        <a class="is-flex" href="#可视化">
+        <span class="has-mr-6">1.5</span>
+        <span>可视化</span>
+        </a></li><li>
+        <a class="is-flex" href="#局部最小值">
+        <span class="has-mr-6">1.6</span>
+        <span>局部最小值</span>
+        </a></li><li>
+        <a class="is-flex" href="#学习率的选择以及退火">
+        <span class="has-mr-6">1.7</span>
+        <span>学习率的选择以及退火</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#梯度下降">
+        <span class="has-mr-6">2</span>
+        <span>梯度下降</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#SGD">
+        <span class="has-mr-6">2.1</span>
+        <span>SGD</span>
+        </a></li><li>
+        <a class="is-flex" href="#Momentum">
+        <span class="has-mr-6">2.2</span>
+        <span>Momentum</span>
+        </a></li><li>
+        <a class="is-flex" href="#Nesterov">
+        <span class="has-mr-6">2.3</span>
+        <span>Nesterov</span>
+        </a></li><li>
+        <a class="is-flex" href="#Adagrad">
+        <span class="has-mr-6">2.4</span>
+        <span>Adagrad</span>
+        </a></li><li>
+        <a class="is-flex" href="#RMSprop">
+        <span class="has-mr-6">2.5</span>
+        <span>RMSprop</span>
+        </a></li><li>
+        <a class="is-flex" href="#Adam">
+        <span class="has-mr-6">2.6</span>
+        <span>Adam</span>
+        </a></li></ul></li></ul>
+        </div>
+    </div>
+</div>
+
+    
+        
+    
+    
+        <div class="column-right-shadow  ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            标签云
+        </h3>
+        <a href="/tags/CUDA/" style="font-size: 10px;">CUDA</a> <a href="/tags/Jupyter/" style="font-size: 10px;">Jupyter</a> <a href="/tags/Leetcode/" style="font-size: 10px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/POJ/" style="font-size: 20px;">POJ</a> <a href="/tags/人脸识别/" style="font-size: 10px;">人脸识别</a> <a href="/tags/fourier-transform/" style="font-size: 10px;">傅里叶变换</a> <a href="/tags/dynamic-planning/" style="font-size: 14.29px;">动态规划</a> <a href="/tags/kalman-filter/" style="font-size: 10px;">卡尔曼滤波</a> <a href="/tags/cnn/" style="font-size: 10px;">卷积神经网络</a> <a href="/tags/hash/" style="font-size: 15.71px;">哈希</a> <a href="/tags/image-feature/" style="font-size: 10px;">图像特征</a> <a href="/tags/graph/" style="font-size: 12.86px;">图论</a> <a href="/tags/mean-shift/" style="font-size: 10px;">均值漂移</a> <a href="/tags/reinforcement-learning/" style="font-size: 10px;">强化学习</a> <a href="/tags/rnn/" style="font-size: 10px;">循环神经网络</a> <a href="/tags/sort/" style="font-size: 10px;">排序</a> <a href="/tags/search/" style="font-size: 17.14px;">搜索</a> <a href="/tags/svm/" style="font-size: 11.43px;">支持向量机</a> <a href="/tags/unsupervised-hash/" style="font-size: 12.86px;">无监督哈希</a> <a href="/tags/temporal-reasoning/" style="font-size: 11.43px;">时序推理</a> <a href="/tags/时序推理，隐马尔可夫/" style="font-size: 10px;">时序推理，隐马尔可夫</a> <a href="/tags/naive-bayes/" style="font-size: 11.43px;">朴素贝叶斯</a> <a href="/tags/kernel-function/" style="font-size: 10px;">核函数</a> <a href="/tags/gradient-descent/" style="font-size: 10px;">梯度下降</a> <a href="/tags/deep-hash/" style="font-size: 11.43px;">深度哈希</a> <a href="/tags/filter/" style="font-size: 12.86px;">滤波</a> <a href="/tags/supervised-hash/" style="font-size: 11.43px;">监督哈希</a> <a href="/tags/object-track/" style="font-size: 10px;">目标跟踪</a> <a href="/tags/neural-network/" style="font-size: 18.57px;">神经网络</a> <a href="/tags/particle-filter/" style="font-size: 10px;">粒子滤波</a> <a href="/tags/nlp/" style="font-size: 10px;">自然语言处理</a> <a href="/tags/semantic-segmentation/" style="font-size: 10px;">语义分割</a> <a href="/tags/bayesian-network/" style="font-size: 10px;">贝叶斯网络</a> <a href="/tags/greedy-lgorithm/" style="font-size: 17.14px;">贪心算法</a> <a href="/tags/edge-detection/" style="font-size: 10px;">边缘检测</a> <a href="/tags/samples/" style="font-size: 11.43px;">采样</a> <a href="/tags/zero-shot-learning/" style="font-size: 10px;">零样本学习</a>
+    </div>
+</div>
+
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分类
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/study/">
+            <span class="level-start">
+                <span class="level-item">学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">5</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/technique/">
+            <span class="level-start">
+                <span class="level-item">技术</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/machine-learning/">
+            <span class="level-start">
+                <span class="level-item">机器学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">11</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/deep-learning/">
+            <span class="level-start">
+                <span class="level-item">深度学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/algorithms/">
+            <span class="level-start">
+                <span class="level-item">算法与数据结构</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">23</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/computer-vision/">
+            <span class="level-start">
+                <span class="level-item">计算机视觉</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/software-engineering/">
+            <span class="level-start">
+                <span class="level-item">软件工程</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">6</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/essay/">
+            <span class="level-start">
+                <span class="level-item">随笔</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">8</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+        
+            
+        
+        </div>
+    
+</div>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="神经网络：动态部分" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2019 陈燊&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                
+                <br>
+                <span id="busuanzi_container_site_uv">
+                共<span id="busuanzi_value_site_uv">0</span>个访客
+                </span>
+                
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="GitHub" href="https://github.com/chenshen03">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+    
+    
+
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

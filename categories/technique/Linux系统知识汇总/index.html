@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+<title>Linux系统知识汇总 - 陈燊的博客</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="系统相关静态IP地址配置 Ubuntu配置和修改IP地址  硬盘分区和挂载 parted分区和挂载及非交互式操作">
+<meta name="keywords" content="Linux,CUDA,Jupyter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux系统知识汇总">
+<meta property="og:url" content="http://chenshen.xyz/categories/technique/Linux系统知识汇总/index.html">
+<meta property="og:site_name" content="陈燊的博客">
+<meta property="og:description" content="系统相关静态IP地址配置 Ubuntu配置和修改IP地址  硬盘分区和挂载 parted分区和挂载及非交互式操作">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-09-04T13:39:51.674Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux系统知识汇总">
+<meta name="twitter:description" content="系统相关静态IP地址配置 Ubuntu配置和修改IP地址  硬盘分区和挂载 parted分区和挂载及非交互式操作">
+
+
+
+
+
+<link rel="icon" href="/images/favicon.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+    
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-2-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="Linux系统知识汇总" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">主页</a>
+                
+                <a class="navbar-item" href="/archives">归档</a>
+                
+                <a class="navbar-item" href="/categories">分类</a>
+                
+                <a class="navbar-item" href="/tags">标签</a>
+                
+                <a class="navbar-item" href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-9-tablet is-9-desktop is-9-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-02-01T06:52:59.000Z">2019-02-01</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/technique/">技术</a>
+                </div>
+                
+                
+                
+                <span class="level-item has-text-grey" id="busuanzi_container_page_pv">
+                    <i class="far fa-eye"></i>
+                    <span id="busuanzi_value_page_pv">0</span>次访问
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                Linux系统知识汇总
+            
+        </h1>
+        <div class="content">
+            <h1 id="系统相关"><a href="#系统相关" class="headerlink" title="系统相关"></a>系统相关</h1><h2 id="静态IP地址配置"><a href="#静态IP地址配置" class="headerlink" title="静态IP地址配置"></a>静态IP地址配置</h2><ul>
+<li><a href="https://www.cnblogs.com/linjiqin/p/3148346.html" target="_blank" rel="noopener">Ubuntu配置和修改IP地址</a></li>
+</ul>
+<h2 id="硬盘分区和挂载"><a href="#硬盘分区和挂载" class="headerlink" title="硬盘分区和挂载"></a>硬盘分区和挂载</h2><ul>
+<li><a href="https://www.cnblogs.com/kaishirenshi/p/7850247.html" target="_blank" rel="noopener">parted分区和挂载及非交互式操作</a></li>
+</ul>
+<a id="more"></a>
+<h2 id="Linux内核升级和降级"><a href="#Linux内核升级和降级" class="headerlink" title="Linux内核升级和降级"></a>Linux内核升级和降级</h2><h3 id="内核升级"><a href="#内核升级" class="headerlink" title="内核升级"></a>内核升级</h3><ul>
+<li><a href="https://blog.csdn.net/wf19930209/article/details/81879777" target="_blank" rel="noopener">Linux升级内核的正确姿势</a></li>
+</ul>
+<h3 id="内核降级"><a href="#内核降级" class="headerlink" title="内核降级"></a>内核降级</h3><ul>
+<li><a href="https://blog.csdn.net/u013431916/article/details/82530523" target="_blank" rel="noopener">Ubuntu 16.04 内核降级</a></li>
+</ul>
+<h2 id="清理缓存cache"><a href="#清理缓存cache" class="headerlink" title="清理缓存cache"></a>清理缓存cache</h2><ul>
+<li><a href="https://blog.csdn.net/hanshileiai/article/details/48375589" target="_blank" rel="noopener">ubuntu 手动释放缓存 (清理内存cache)</a></li>
+</ul>
+<h1 id="JupyterLab"><a href="#JupyterLab" class="headerlink" title="JupyterLab"></a>JupyterLab</h1><h2 id="远程服务器访问"><a href="#远程服务器访问" class="headerlink" title="远程服务器访问"></a>远程服务器访问</h2><ul>
+<li><a href="https://whitepuffer.github.io/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/Ubuntu%E6%9C%8D%E5%8A%A1%E5%99%A8JupyterNotebook%E9%85%8D%E7%BD%AE%E4%B8%8E%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5.html" target="_blank" rel="noopener">Ubuntu服务器JupyterNotebook配置与远程连接</a></li>
+</ul>
+<h2 id="多kernel设置"><a href="#多kernel设置" class="headerlink" title="多kernel设置"></a>多kernel设置</h2><ul>
+<li><a href="https://blog.csdn.net/xfdywy/article/details/80113079" target="_blank" rel="noopener">Jupyter lab 安装及多kernel配置</a></li>
+</ul>
+<h2 id="JuputerLab扩展"><a href="#JuputerLab扩展" class="headerlink" title="JuputerLab扩展"></a>JuputerLab扩展</h2><ul>
+<li><a href="http://blog.rexking6.top/2018/12/20/JupyterLab%E6%8F%92%E4%BB%B6/" target="_blank" rel="noopener">JupyterLab插件</a></li>
+</ul>
+<h1 id="显卡驱动"><a href="#显卡驱动" class="headerlink" title="显卡驱动"></a>显卡驱动</h1><h2 id="cudnn安装"><a href="#cudnn安装" class="headerlink" title="cudnn安装"></a>cudnn安装</h2><ul>
+<li><a href="https://blog.csdn.net/QLULIBIN/article/details/80729570" target="_blank" rel="noopener">Ubuntu16.04上安装cudnn5.1详细教程</a></li>
+</ul>
+<h2 id="CUDA安装及解决图形界面冲突"><a href="#CUDA安装及解决图形界面冲突" class="headerlink" title="CUDA安装及解决图形界面冲突"></a>CUDA安装及解决图形界面冲突</h2><ul>
+<li><a href="https://www.cnblogs.com/fanminhao/p/8902296.html?tdsourcetag=s_pctim_aiomsg" target="_blank" rel="noopener"><a href="https://www.cnblogs.com/fanminhao/p/8902296.html" target="_blank" rel="noopener">Ubuntu16.04安装Nvidia显卡驱动</a></a></li>
+</ul>
+<h2 id="CUDA和cudnn版本查看"><a href="#CUDA和cudnn版本查看" class="headerlink" title="CUDA和cudnn版本查看"></a>CUDA和cudnn版本查看</h2><h3 id="cuda-版本"><a href="#cuda-版本" class="headerlink" title="cuda 版本"></a>cuda 版本</h3><p><code>cat /usr/local/cuda/version.txt</code></p>
+<h3 id="cudnn-版本"><a href="#cudnn-版本" class="headerlink" title="cudnn 版本"></a>cudnn 版本</h3><p><code>cat /usr/local/cuda/include/cudnn.h | grep CUDNN_MAJOR -A 2</code></p>
+<h3 id="Tensorflow与CUDA、cudnn版本对应关系"><a href="#Tensorflow与CUDA、cudnn版本对应关系" class="headerlink" title="Tensorflow与CUDA、cudnn版本对应关系"></a>Tensorflow与CUDA、cudnn版本对应关系</h3><ul>
+<li><a href="https://blog.csdn.net/omodao1/article/details/83241074" target="_blank" rel="noopener">Tensorflow不同版本要求与CUDA及CUDNN版本对应关系</a></li>
+</ul>
+<h1 id="实用工具"><a href="#实用工具" class="headerlink" title="实用工具"></a>实用工具</h1><h2 id="zsh"><a href="#zsh" class="headerlink" title="zsh"></a>zsh</h2><ul>
+<li><a href="https://blog.csdn.net/smallrivers/article/details/78701804" target="_blank" rel="noopener">shell的最佳选择——zsh</a></li>
+<li><a href="https://wdxtub.com/2016/02/18/oh-my-zsh/" target="_blank" rel="noopener">zsh全程指南</a></li>
+</ul>
+<h2 id="Aria2"><a href="#Aria2" class="headerlink" title="Aria2"></a>Aria2</h2><ul>
+<li><a href="https://blog.csdn.net/crazycui/article/details/52205908" target="_blank" rel="noopener">ubuntu安装配置aria2</a></li>
+</ul>
+<h2 id="tldr"><a href="#tldr" class="headerlink" title="tldr"></a>tldr</h2><ul>
+<li><a href="https://www.jianshu.com/p/aeb6bf11e2bc" target="_blank" rel="noopener">linux 终端工具之tldr</a></li>
+</ul>
+<h2 id="远程桌面"><a href="#远程桌面" class="headerlink" title="远程桌面"></a>远程桌面</h2><ul>
+<li><a href="https://blog.csdn.net/zz_1215/article/details/77921405" target="_blank" rel="noopener">Ubuntu 16.04 远程桌面</a></li>
+</ul>
+<h1 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h1><ul>
+<li>[ ] 将所有博客内容整理到该博客下</li>
+</ul>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/CUDA/">CUDA</a>, <a class="has-link-grey -link" href="/tags/Jupyter/">Jupyter</a>, <a class="has-link-grey -link" href="/tags/Linux/">Linux</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.png" alt="支付宝"></div>
+</a>
+
+                
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat.png" alt="微信"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/categories/essay/2018-2019学年研一上学期总结/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">2018-2019学年研一上学期总结</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/categories/computer-vision/计算机视觉顶尖期刊和会议/">
+                <span class="level-item">计算机视觉顶尖期刊和会议</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<div id="comment-container"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+    var gitalk = new Gitalk({
+        clientID: 'e5eff8aa39f563a204e5',
+        clientSecret: '8adc001af75f722b72813ab2916f65f6b7ba3da0',
+        id: 'cb0e9f1b89e97c41eccdb7586bffc78e',
+        repo: 'chenshen03.github.io',
+        owner: 'chenshen03',
+        admin: "chenshen03"
+    })
+    gitalk.render('comment-container')
+</script>
+
+    </div>
+</div>
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    
+                        <img class="image is-128x128 has-mb-6" src="/images/avatar.png" alt="陈燊">
+                    
+                    
+                    <p class="is-size-4 is-block">
+                        陈燊
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        Master student of Computer Science
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>Xiamen, China</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/archives','_self')">
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        74
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/categories','_self')">
+                    <p class="heading">
+                        分类
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        8
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/tags','_self')">
+                    <p class="heading">
+                        标签
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        38
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/chenshen03">
+                关注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/chenshen03">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Cnblogs" href="https://www.cnblogs.com/cslaker">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Weibo" href="https://www.weibo.com/cstobeno1">
+                
+                <i class="fab fa-weibo"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://www.facebook.com/chenshen03">
+                
+                <i class="fab fa-facebook-f"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Zhihu" href="https://www.zhihu.com/people/chenshen03">
+                
+                <i class="fab fa-zhihu"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+<div class="card widget" id="toc">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a class="is-flex" href="#系统相关">
+        <span class="has-mr-6">1</span>
+        <span>系统相关</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#静态IP地址配置">
+        <span class="has-mr-6">1.1</span>
+        <span>静态IP地址配置</span>
+        </a></li><li>
+        <a class="is-flex" href="#硬盘分区和挂载">
+        <span class="has-mr-6">1.2</span>
+        <span>硬盘分区和挂载</span>
+        </a></li><li>
+        <a class="is-flex" href="#Linux内核升级和降级">
+        <span class="has-mr-6">1.3</span>
+        <span>Linux内核升级和降级</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#内核升级">
+        <span class="has-mr-6">1.3.1</span>
+        <span>内核升级</span>
+        </a></li><li>
+        <a class="is-flex" href="#内核降级">
+        <span class="has-mr-6">1.3.2</span>
+        <span>内核降级</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#清理缓存cache">
+        <span class="has-mr-6">1.4</span>
+        <span>清理缓存cache</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#JupyterLab">
+        <span class="has-mr-6">2</span>
+        <span>JupyterLab</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#远程服务器访问">
+        <span class="has-mr-6">2.1</span>
+        <span>远程服务器访问</span>
+        </a></li><li>
+        <a class="is-flex" href="#多kernel设置">
+        <span class="has-mr-6">2.2</span>
+        <span>多kernel设置</span>
+        </a></li><li>
+        <a class="is-flex" href="#JuputerLab扩展">
+        <span class="has-mr-6">2.3</span>
+        <span>JuputerLab扩展</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#显卡驱动">
+        <span class="has-mr-6">3</span>
+        <span>显卡驱动</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#cudnn安装">
+        <span class="has-mr-6">3.1</span>
+        <span>cudnn安装</span>
+        </a></li><li>
+        <a class="is-flex" href="#CUDA安装及解决图形界面冲突">
+        <span class="has-mr-6">3.2</span>
+        <span>CUDA安装及解决图形界面冲突</span>
+        </a></li><li>
+        <a class="is-flex" href="#CUDA和cudnn版本查看">
+        <span class="has-mr-6">3.3</span>
+        <span>CUDA和cudnn版本查看</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#cuda-版本">
+        <span class="has-mr-6">3.3.1</span>
+        <span>cuda 版本</span>
+        </a></li><li>
+        <a class="is-flex" href="#cudnn-版本">
+        <span class="has-mr-6">3.3.2</span>
+        <span>cudnn 版本</span>
+        </a></li><li>
+        <a class="is-flex" href="#Tensorflow与CUDA、cudnn版本对应关系">
+        <span class="has-mr-6">3.3.3</span>
+        <span>Tensorflow与CUDA、cudnn版本对应关系</span>
+        </a></li></ul></li></ul></li><li>
+        <a class="is-flex" href="#实用工具">
+        <span class="has-mr-6">4</span>
+        <span>实用工具</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#zsh">
+        <span class="has-mr-6">4.1</span>
+        <span>zsh</span>
+        </a></li><li>
+        <a class="is-flex" href="#Aria2">
+        <span class="has-mr-6">4.2</span>
+        <span>Aria2</span>
+        </a></li><li>
+        <a class="is-flex" href="#tldr">
+        <span class="has-mr-6">4.3</span>
+        <span>tldr</span>
+        </a></li><li>
+        <a class="is-flex" href="#远程桌面">
+        <span class="has-mr-6">4.4</span>
+        <span>远程桌面</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#TODO">
+        <span class="has-mr-6">5</span>
+        <span>TODO</span>
+        </a></li></ul>
+        </div>
+    </div>
+</div>
+
+    
+        
+    
+    
+        <div class="column-right-shadow  ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            标签云
+        </h3>
+        <a href="/tags/CUDA/" style="font-size: 10px;">CUDA</a> <a href="/tags/Jupyter/" style="font-size: 10px;">Jupyter</a> <a href="/tags/Leetcode/" style="font-size: 10px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/POJ/" style="font-size: 20px;">POJ</a> <a href="/tags/人脸识别/" style="font-size: 10px;">人脸识别</a> <a href="/tags/fourier-transform/" style="font-size: 10px;">傅里叶变换</a> <a href="/tags/dynamic-planning/" style="font-size: 14.29px;">动态规划</a> <a href="/tags/kalman-filter/" style="font-size: 10px;">卡尔曼滤波</a> <a href="/tags/cnn/" style="font-size: 10px;">卷积神经网络</a> <a href="/tags/hash/" style="font-size: 15.71px;">哈希</a> <a href="/tags/image-feature/" style="font-size: 10px;">图像特征</a> <a href="/tags/graph/" style="font-size: 12.86px;">图论</a> <a href="/tags/mean-shift/" style="font-size: 10px;">均值漂移</a> <a href="/tags/reinforcement-learning/" style="font-size: 10px;">强化学习</a> <a href="/tags/rnn/" style="font-size: 10px;">循环神经网络</a> <a href="/tags/sort/" style="font-size: 10px;">排序</a> <a href="/tags/search/" style="font-size: 17.14px;">搜索</a> <a href="/tags/svm/" style="font-size: 11.43px;">支持向量机</a> <a href="/tags/unsupervised-hash/" style="font-size: 12.86px;">无监督哈希</a> <a href="/tags/temporal-reasoning/" style="font-size: 11.43px;">时序推理</a> <a href="/tags/时序推理，隐马尔可夫/" style="font-size: 10px;">时序推理，隐马尔可夫</a> <a href="/tags/naive-bayes/" style="font-size: 11.43px;">朴素贝叶斯</a> <a href="/tags/kernel-function/" style="font-size: 10px;">核函数</a> <a href="/tags/gradient-descent/" style="font-size: 10px;">梯度下降</a> <a href="/tags/deep-hash/" style="font-size: 11.43px;">深度哈希</a> <a href="/tags/filter/" style="font-size: 12.86px;">滤波</a> <a href="/tags/supervised-hash/" style="font-size: 11.43px;">监督哈希</a> <a href="/tags/object-track/" style="font-size: 10px;">目标跟踪</a> <a href="/tags/neural-network/" style="font-size: 18.57px;">神经网络</a> <a href="/tags/particle-filter/" style="font-size: 10px;">粒子滤波</a> <a href="/tags/nlp/" style="font-size: 10px;">自然语言处理</a> <a href="/tags/semantic-segmentation/" style="font-size: 10px;">语义分割</a> <a href="/tags/bayesian-network/" style="font-size: 10px;">贝叶斯网络</a> <a href="/tags/greedy-lgorithm/" style="font-size: 17.14px;">贪心算法</a> <a href="/tags/edge-detection/" style="font-size: 10px;">边缘检测</a> <a href="/tags/samples/" style="font-size: 11.43px;">采样</a> <a href="/tags/zero-shot-learning/" style="font-size: 10px;">零样本学习</a>
+    </div>
+</div>
+
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分类
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/study/">
+            <span class="level-start">
+                <span class="level-item">学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">5</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/technique/">
+            <span class="level-start">
+                <span class="level-item">技术</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/machine-learning/">
+            <span class="level-start">
+                <span class="level-item">机器学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">11</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/deep-learning/">
+            <span class="level-start">
+                <span class="level-item">深度学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/algorithms/">
+            <span class="level-start">
+                <span class="level-item">算法与数据结构</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">23</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/computer-vision/">
+            <span class="level-start">
+                <span class="level-item">计算机视觉</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/software-engineering/">
+            <span class="level-start">
+                <span class="level-item">软件工程</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">6</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/essay/">
+            <span class="level-start">
+                <span class="level-item">随笔</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">8</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+        
+            
+        
+        </div>
+    
+</div>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="Linux系统知识汇总" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2019 陈燊&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                
+                <br>
+                <span id="busuanzi_container_site_uv">
+                共<span id="busuanzi_value_site_uv">0</span>个访客
+                </span>
+                
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="GitHub" href="https://github.com/chenshen03">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+    
+    
+
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+<title>《Structuring Machine Learning Projects》笔记 - 陈燊的博客</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="正交化定义：尽量使得因素之间正交，不互相影响，从而在对模型的某个方面进行优化时，不会影响到模型在其他方面的表现能力。 当你发现一个模型在dev数据集表现不好的时候，你可能会采取某些方法改进模型，但是采取的方法可能会同时影响到模型在其他数据集的表现。例如在dev数据集的表现变好了，但是却造成在test集的表现变差了，改变一个因素可能会同时影响到多个方面。因此，Orthogonalization便是想">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Structuring Machine Learning Projects》笔记">
+<meta property="og:url" content="http://chenshen.xyz/categories/deep-learning/《Structuring-Machine-Learning-Projects》笔记/index.html">
+<meta property="og:site_name" content="陈燊的博客">
+<meta property="og:description" content="正交化定义：尽量使得因素之间正交，不互相影响，从而在对模型的某个方面进行优化时，不会影响到模型在其他方面的表现能力。 当你发现一个模型在dev数据集表现不好的时候，你可能会采取某些方法改进模型，但是采取的方法可能会同时影响到模型在其他数据集的表现。例如在dev数据集的表现变好了，但是却造成在test集的表现变差了，改变一个因素可能会同时影响到多个方面。因此，Orthogonalization便是想">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://images2018.cnblogs.com/blog/1019353/201804/1019353-20180403113901688-1670479536.png">
+<meta property="og:image" content="https://images2018.cnblogs.com/blog/1019353/201804/1019353-20180403143242386-1620095212.png">
+<meta property="og:image" content="https://images2018.cnblogs.com/blog/1019353/201804/1019353-20180404232546625-64982435.png">
+<meta property="og:image" content="https://images2018.cnblogs.com/blog/1019353/201804/1019353-20180404232900286-325117048.png">
+<meta property="og:image" content="https://images2018.cnblogs.com/blog/1019353/201804/1019353-20180406153054151-923235554.png">
+<meta property="og:updated_time" content="2019-09-04T13:39:51.684Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《Structuring Machine Learning Projects》笔记">
+<meta name="twitter:description" content="正交化定义：尽量使得因素之间正交，不互相影响，从而在对模型的某个方面进行优化时，不会影响到模型在其他方面的表现能力。 当你发现一个模型在dev数据集表现不好的时候，你可能会采取某些方法改进模型，但是采取的方法可能会同时影响到模型在其他数据集的表现。例如在dev数据集的表现变好了，但是却造成在test集的表现变差了，改变一个因素可能会同时影响到多个方面。因此，Orthogonalization便是想">
+<meta name="twitter:image" content="https://images2018.cnblogs.com/blog/1019353/201804/1019353-20180403113901688-1670479536.png">
+
+
+
+
+
+<link rel="icon" href="/images/favicon.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+    
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-2-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="《Structuring Machine Learning Projects》笔记" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">主页</a>
+                
+                <a class="navbar-item" href="/archives">归档</a>
+                
+                <a class="navbar-item" href="/categories">分类</a>
+                
+                <a class="navbar-item" href="/tags">标签</a>
+                
+                <a class="navbar-item" href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-9-tablet is-9-desktop is-9-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-04-06T09:37:55.000Z">2018-04-06</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/deep-learning/">深度学习</a>
+                </div>
+                
+                
+                
+                <span class="level-item has-text-grey" id="busuanzi_container_page_pv">
+                    <i class="far fa-eye"></i>
+                    <span id="busuanzi_value_page_pv">0</span>次访问
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                《Structuring Machine Learning Projects》笔记
+            
+        </h1>
+        <div class="content">
+            <h2 id="正交化"><a href="#正交化" class="headerlink" title="正交化"></a>正交化</h2><p><strong>定义：</strong>尽量使得因素之间正交，不互相影响，从而在对模型的某个方面进行优化时，不会影响到模型在其他方面的表现能力。</p>
+<p>当你发现一个模型在dev数据集表现不好的时候，你可能会采取某些方法改进模型，但是采取的方法可能会同时影响到模型在其他数据集的表现。例如在dev数据集的表现变好了，但是却造成在test集的表现变差了，改变一个因素可能会同时影响到多个方面。因此，<strong>Orthogonalization</strong>便是想要使得每一个方法尽可能只影响到一个因素。</p>
+<a id="more"></a>
+<h2 id="模型改进"><a href="#模型改进" class="headerlink" title="模型改进"></a>模型改进</h2><ul>
+<li>Collect more data</li>
+<li>Collect more diverse training set</li>
+<li>Train algorithm longer with gradient descent</li>
+<li>Try Adam instead of gradient descent</li>
+<li>Try bigger network </li>
+<li>Try dropout</li>
+<li>Add $L_2$ regularization</li>
+<li>Network architecture<ul>
+<li>Activation functions</li>
+<li>hidden units</li>
+</ul>
+</li>
+</ul>
+<h2 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h2><p>模型评价的标准有很多，例如<strong>accuracy、precision、recall</strong>等，但是这些标准往往是互相影响的，例如在precision的表现很好，但是在recall上的表现却一般般，因此很能通过这两个指标去评判哪一个模型才是更好的。因此在评价模型的时候，尽量采用单一的统一标准，例如<strong>F1 Score</strong>。在模型在多个维度的误差时，也尽量使用平均误差。当然，根据现实需求不同，每一个标准对模型的影响权重也不一样。因此，我们也可以根据实际需求，选择权重大的作为评判标准。例如，模型的预测精度和所需运行时间之间的权衡。<br>​<br>假如针对猫的分类器A和B的分类误差分别是3%和5%，但是分类器A可能会把色情内容为猫误分类然后推送给用户，而分类器B却不会。因此在这种情况下，分类器B是一个更好的选择。针对这种情况，我们可以在误差项的计算里加入色情图片的权重，如果输入x是色情图片，那么相对应的误差惩罚会大得多，以此来使得色情图片不被误分类为猫而推送给用户。</p>
+<p>当模型在所定义的指标以及dev/test set上表现很好，但是在实际的应用中表现却一般般，此时应该修改模型的评价指标或则修改dev/test set。</p>
+<p><img src="https://images2018.cnblogs.com/blog/1019353/201804/1019353-20180403113901688-1670479536.png" alt></p>
+<h2 id="数据集选择"><a href="#数据集选择" class="headerlink" title="数据集选择"></a>数据集选择</h2><ul>
+<li>dev集和test集必需来自同样的分布，且最好能反映在未来的数据分布。而train集的分布可以允许和dev集、test集的分布不同（当然，分布能相同就尽可能得相同）；</li>
+<li>当数据集较小时（例如100、1000、10000），train集和test集的比例可以为7：3，或则train集与dev集、test集的比例为6：2：2；当数据集很大时（例如1000000），则train集：dev集：test集=9.8：0.1：0.1 。当然，在满足上述条件的前提下，应使得测试集尽可能得大以给与模型的表现能力更高的置信度。</li>
+</ul>
+<h2 id="Human-level表现"><a href="#Human-level表现" class="headerlink" title="Human-level表现"></a>Human-level表现</h2><ul>
+<li>当模型的表现超过<strong>human-level performance</strong>的时候，表现力的上升会慢慢减缓，但是决不可能超过<strong>Bayes optimal error</strong>。</li>
+<li>人类在许多任务上已经可以达到很好的效果， 例如图片识别、语音识别等，如果模型的表现能力人类差时，可以考虑以下方法：<ul>
+<li>Get labeled data from humans;</li>
+<li>Gain insight from manual error analysisi: Why did a persion get this right?</li>
+<li>Better analysis of bias / variance.</li>
+</ul>
+</li>
+<li>假设Training error为8%，Dev error为10%。当<strong>human-level performance</strong>（近似于<strong>Bayes error</strong>）为1%时，明显Training error距离human error还有着7%的差距，而距离Dev error只有2%的差距，因此在这种情况下，我们应该把模型的改进方案聚焦在偏差上，而不是方差；而当<strong>hu man-level performance</strong>为7.5%的时候，Training error距离human error只有0.5%的差距，而距离Dev error有2%的差距，因此此时我们应该聚焦在方差的改进，而不是偏差。</li>
+</ul>
+<p><img src="https://images2018.cnblogs.com/blog/1019353/201804/1019353-20180403143242386-1620095212.png" alt></p>
+<h2 id="误差分析"><a href="#误差分析" class="headerlink" title="误差分析"></a>误差分析</h2><ul>
+<li>检查在DEV集里被误分类的类别是什么、被误分类的原因是燊，并分析各自所占比重，再决定把精力花在解决哪个问题上面；</li>
+<li>在数据集中，可能存在有一些数据集的标签是错误的。因此我们应该查看DEV集，确定是分类器的预测错误，还是由于数据集的标签错误；</li>
+<li>当然被模型正确分类的数据集，也可能存在标签是错误的情况，但是此时你的模型却“正确分类”，这种情况也要考虑。但是一般情况所花费的精力会很多，所以对这种情况进行处理的一般较少；</li>
+<li>在修正错误的标签集时，确保对dev集和test集同时操作，以保证数据分布的一致性；</li>
+</ul>
+<h2 id="数据分布不同"><a href="#数据分布不同" class="headerlink" title="数据分布不同"></a>数据分布不同</h2><h3 id="原因与数据划分"><a href="#原因与数据划分" class="headerlink" title="原因与数据划分"></a>原因与数据划分</h3><p>例：在猫分类器中，所用的训练数据来自于网上，这些图片的质量很非常好，但是这个分类器实际应用是在移动App上，而在移动App上，用户所拍摄的猫的图片往往质量没那么好，因此在训练集上表现很好的分类器，在实际应用中可能就表现很一般。且来自于网上的图片集量级A往往很大，例如1000000，而来自于用户所拍摄的图片集B可能只有10000。针对这种情况，有以下几种可能的解决方案：</p>
+<ol>
+<li>将10000的数据集B加入1000000的数据集A中，然后打乱再重新按照98：1：1的比例分为train/dev/test，但是在这种处理下，很大可能dev和test所包含的数据集大部分来自于A，只有少部分来自于B，这跟设置dev集合的目的是相违背的。dev集和test集的数据分布应当与实际应用中的数据分布尽可能得一致——即与数据集B的分布一致，这样训练出来的模型才能在实际应用中表现很好。</li>
+<li>训练集包含所有的数据集A和部分的数据集B，然后将剩下的数据集B划分为dev集和test集。虽然在这种情况下训练集和dev集、测试集的数据不一致，但是实际的表现效果会优于方案1。</li>
+</ol>
+<h3 id="验证集误差过高"><a href="#验证集误差过高" class="headerlink" title="验证集误差过高"></a>验证集误差过高</h3><p>当训练集和验证机/测试集的分布不一致时，可以将训练集的一小部分抽取出来作为train-dev set，至此，整个数据集包含train、train-dev、dev、test四个集合，作用如下：</p>
+<ul>
+<li>train set：用于模型训练</li>
+<li>train-dev set：具有和train set相同的数据分布，但不用于模型训练，只用于误差测定</li>
+</ul>
+<p>若train-dev set的误差与dev set的误差相近，但比train set的误差高许多时，说明这是一个偏差问题；若若train-dev set的误差与train set的误差相近，但dev set的误差却比train-dev set的误差高许多时，说明这是一个由于训练集和验证集的数据分布不一致所造成的问题。</p>
+<p><img src="https://images2018.cnblogs.com/blog/1019353/201804/1019353-20180404232546625-64982435.png" alt></p>
+<h3 id="数据集关联分析"><a href="#数据集关联分析" class="headerlink" title="数据集关联分析"></a>数据集关联分析</h3><p>假设训练误差为1%，验证误差为10%，如果训练集和验证机/测试集的数据分布一致，则说明这是一个高方差问题;但如果和上述例子类似，训练集和测试集的分布不一致的话，误差产生的原因可能只是因为训练集的图片质量较好分类器容易分辨，而验证集的图片质量普通从而导致分类器无法正确分类，造成了较大的验证误差。</p>
+<p><img src="https://images2018.cnblogs.com/blog/1019353/201804/1019353-20180404232900286-325117048.png" alt></p>
+<p><img src="https://images2018.cnblogs.com/blog/1019353/201804/1019353-20180406153054151-923235554.png" alt></p>
+<h3 id="数据分布不同解决方法"><a href="#数据分布不同解决方法" class="headerlink" title="数据分布不同解决方法"></a>数据分布不同解决方法</h3><ul>
+<li>进行人工错误分析，发掘数据不匹配的缘由。通过分析train集和dev集之间的区别，尝试得到更多和dev集分布累计的train集；</li>
+<li>采用<strong>人工数据合成</strong>的方法。比如在汽车内的语音识别系统，训练集为在安静环境下录制的10000小时的语音数据，但是实际的应用中，汽车内的语音识别系统的输入语音数据是包含的噪音的，比如汽车发送声、周围车辆的喇叭声、汽车内的回响等等。因此，假如你的拥有一小时的汽车噪音数据，为了train集和dev集尽可能得一致，可以通过人工数据合成的方法，把这一小时的噪音数据和10000小时的在安静环境下录制的语音数据进行合成，当然这有可能使得系统对这一小时的噪音数据过拟合。另外一个解决方法是录制10000小时的噪音数据，当然这个方法所耗费的精力会比较大。</li>
+</ul>
+<h2 id="Learning-from-multiple-tasks"><a href="#Learning-from-multiple-tasks" class="headerlink" title="Learning from multiple tasks"></a>Learning from multiple tasks</h2><h3 id="Transfer-learning"><a href="#Transfer-learning" class="headerlink" title="Transfer learning"></a>Transfer learning</h3><p><strong>pre-training和fine tune：</strong> 在深度神经网络训练中，使用先前已经训练好的模型的参数来作为初始化的模型参数，这便是pre-training；在之后的训练中更新模型的参数，这便是fine tuning;</p>
+<p>迁移学习即把从一个数据集A学到的知识应用到另一个数据集B中。但是假如数据集A的量级比数据集B小，此时对B应用迁移学习并不是一个明智的做法，因为数据集A能给数据集B所提供的信息是很少的。此时应当对数据集B重新训练一个模型。</p>
+<h3 id="Muti-task-learning"><a href="#Muti-task-learning" class="headerlink" title="Muti-task learning"></a>Muti-task learning</h3><p><strong>定义：</strong>给定一个输入，可以同时对输入进行多个方面的判断。例如给定在自动驾驶中，给定一个图像，然后同时判断这个图像里是否有人行道、停止标志、骑车、红绿灯等。Y标签通常为[0, 1, 1, 0,……, 1]，其中 1 表示这副图像用于这个属性。</p>
+<p>多分类学习与Muti-task learning的概念有点类似，但是多分类学习（如softmax、SVM）是指对一个输入，判定属于多个分类中的其中一个类别，例如给定一个动物图像，判定属于猫/狗/猪。在多分类学习下，Y标签通常为[0, 1, 2, 3, …..m]，其中m - 1为类别数。</p>
+<p>在Muti-task learning中，训练集的Y标签是否存在某个属性有时是不确定的。例如给定一副图像，Y标签只告诉你这副图像有红绿灯和汽车，但对于是否有人行道、停止标志是不确定的，这些属性在Y标签被对应打上 <strong>？</strong> 号。因此，在计算损失函数时，这些属性未确定的损失是不计算进去的，只计算Y标签中已经指明为 <strong>0</strong> 或 <strong>1</strong> 的位置。</p>
+<p>Muti-task learning只有在网络深度较大时的表现情况才比较好。因为深度神经网络可以学习到图像的某些低维特征，这些特征可以用来共享以同时进行多任务的学习。</p>
+<p>对于需要对一个输入同时进行判定的问题，一个做法就是Muti-task learning，另一个就是针对每一个类别学习一个分类器。在每个类别的样本数据较少时，采用Muti-task learning是比较明智的做法，这样可以更好得学习到图像的特征；而当每个类别的样本数据都很多时，可以采用多分类模型，这样模型预测的准确度一般会较高；</p>
+<h3 id="End-to-end-learning"><a href="#End-to-end-learning" class="headerlink" title="End-to-end learning"></a>End-to-end learning</h3><p>当数据集足够大的时候，end-to-end leraning才适用。</p>
+<p><strong>Pros:</strong></p>
+<ul>
+<li><strong>Let the data speak.</strong> 在非End-to-end的模型中，常常人为得为模型定义一系列的网络层，这些网络层可以提取输入数据的某些特征，例如图像结构或则语音数据的发音等，但是这些提取出来的信息都是人为给定的，而在end-to-end模型中，直接学习从输入到输出的映射，可能可以发现数据里面更深层次潜在的特征信息；</li>
+<li>Less hand-designing of components needed.</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>May need large amount of data;</li>
+<li>Excludes potentially useful hand-designed compoents.</li>
+</ul>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.png" alt="支付宝"></div>
+</a>
+
+                
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat.png" alt="微信"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/categories/deep-learning/Network-in-Network/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">Network in Network</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/categories/machine-learning/PCA，主成分分析/">
+                <span class="level-item">PCA，主成分分析</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<div id="comment-container"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+    var gitalk = new Gitalk({
+        clientID: 'e5eff8aa39f563a204e5',
+        clientSecret: '8adc001af75f722b72813ab2916f65f6b7ba3da0',
+        id: '781bb4390aff993fb43bd36747e60890',
+        repo: 'chenshen03.github.io',
+        owner: 'chenshen03',
+        admin: "chenshen03"
+    })
+    gitalk.render('comment-container')
+</script>
+
+    </div>
+</div>
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    
+                        <img class="image is-128x128 has-mb-6" src="/images/avatar.png" alt="陈燊">
+                    
+                    
+                    <p class="is-size-4 is-block">
+                        陈燊
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        Master student of Computer Science
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>Xiamen, China</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/archives','_self')">
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        74
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/categories','_self')">
+                    <p class="heading">
+                        分类
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        8
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/tags','_self')">
+                    <p class="heading">
+                        标签
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        38
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/chenshen03">
+                关注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/chenshen03">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Cnblogs" href="https://www.cnblogs.com/cslaker">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Weibo" href="https://www.weibo.com/cstobeno1">
+                
+                <i class="fab fa-weibo"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://www.facebook.com/chenshen03">
+                
+                <i class="fab fa-facebook-f"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Zhihu" href="https://www.zhihu.com/people/chenshen03">
+                
+                <i class="fab fa-zhihu"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+<div class="card widget" id="toc">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a class="is-flex" href="#正交化">
+        <span class="has-mr-6">1</span>
+        <span>正交化</span>
+        </a></li><li>
+        <a class="is-flex" href="#模型改进">
+        <span class="has-mr-6">2</span>
+        <span>模型改进</span>
+        </a></li><li>
+        <a class="is-flex" href="#评价指标">
+        <span class="has-mr-6">3</span>
+        <span>评价指标</span>
+        </a></li><li>
+        <a class="is-flex" href="#数据集选择">
+        <span class="has-mr-6">4</span>
+        <span>数据集选择</span>
+        </a></li><li>
+        <a class="is-flex" href="#Human-level表现">
+        <span class="has-mr-6">5</span>
+        <span>Human-level表现</span>
+        </a></li><li>
+        <a class="is-flex" href="#误差分析">
+        <span class="has-mr-6">6</span>
+        <span>误差分析</span>
+        </a></li><li>
+        <a class="is-flex" href="#数据分布不同">
+        <span class="has-mr-6">7</span>
+        <span>数据分布不同</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#原因与数据划分">
+        <span class="has-mr-6">7.1</span>
+        <span>原因与数据划分</span>
+        </a></li><li>
+        <a class="is-flex" href="#验证集误差过高">
+        <span class="has-mr-6">7.2</span>
+        <span>验证集误差过高</span>
+        </a></li><li>
+        <a class="is-flex" href="#数据集关联分析">
+        <span class="has-mr-6">7.3</span>
+        <span>数据集关联分析</span>
+        </a></li><li>
+        <a class="is-flex" href="#数据分布不同解决方法">
+        <span class="has-mr-6">7.4</span>
+        <span>数据分布不同解决方法</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#Learning-from-multiple-tasks">
+        <span class="has-mr-6">8</span>
+        <span>Learning from multiple tasks</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#Transfer-learning">
+        <span class="has-mr-6">8.1</span>
+        <span>Transfer learning</span>
+        </a></li><li>
+        <a class="is-flex" href="#Muti-task-learning">
+        <span class="has-mr-6">8.2</span>
+        <span>Muti-task learning</span>
+        </a></li><li>
+        <a class="is-flex" href="#End-to-end-learning">
+        <span class="has-mr-6">8.3</span>
+        <span>End-to-end learning</span>
+        </a></li></ul></li></ul>
+        </div>
+    </div>
+</div>
+
+    
+        
+    
+    
+        <div class="column-right-shadow  ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            标签云
+        </h3>
+        <a href="/tags/CUDA/" style="font-size: 10px;">CUDA</a> <a href="/tags/Jupyter/" style="font-size: 10px;">Jupyter</a> <a href="/tags/Leetcode/" style="font-size: 10px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/POJ/" style="font-size: 20px;">POJ</a> <a href="/tags/人脸识别/" style="font-size: 10px;">人脸识别</a> <a href="/tags/fourier-transform/" style="font-size: 10px;">傅里叶变换</a> <a href="/tags/dynamic-planning/" style="font-size: 14.29px;">动态规划</a> <a href="/tags/kalman-filter/" style="font-size: 10px;">卡尔曼滤波</a> <a href="/tags/cnn/" style="font-size: 10px;">卷积神经网络</a> <a href="/tags/hash/" style="font-size: 15.71px;">哈希</a> <a href="/tags/image-feature/" style="font-size: 10px;">图像特征</a> <a href="/tags/graph/" style="font-size: 12.86px;">图论</a> <a href="/tags/mean-shift/" style="font-size: 10px;">均值漂移</a> <a href="/tags/reinforcement-learning/" style="font-size: 10px;">强化学习</a> <a href="/tags/rnn/" style="font-size: 10px;">循环神经网络</a> <a href="/tags/sort/" style="font-size: 10px;">排序</a> <a href="/tags/search/" style="font-size: 17.14px;">搜索</a> <a href="/tags/svm/" style="font-size: 11.43px;">支持向量机</a> <a href="/tags/unsupervised-hash/" style="font-size: 12.86px;">无监督哈希</a> <a href="/tags/temporal-reasoning/" style="font-size: 11.43px;">时序推理</a> <a href="/tags/时序推理，隐马尔可夫/" style="font-size: 10px;">时序推理，隐马尔可夫</a> <a href="/tags/naive-bayes/" style="font-size: 11.43px;">朴素贝叶斯</a> <a href="/tags/kernel-function/" style="font-size: 10px;">核函数</a> <a href="/tags/gradient-descent/" style="font-size: 10px;">梯度下降</a> <a href="/tags/deep-hash/" style="font-size: 11.43px;">深度哈希</a> <a href="/tags/filter/" style="font-size: 12.86px;">滤波</a> <a href="/tags/supervised-hash/" style="font-size: 11.43px;">监督哈希</a> <a href="/tags/object-track/" style="font-size: 10px;">目标跟踪</a> <a href="/tags/neural-network/" style="font-size: 18.57px;">神经网络</a> <a href="/tags/particle-filter/" style="font-size: 10px;">粒子滤波</a> <a href="/tags/nlp/" style="font-size: 10px;">自然语言处理</a> <a href="/tags/semantic-segmentation/" style="font-size: 10px;">语义分割</a> <a href="/tags/bayesian-network/" style="font-size: 10px;">贝叶斯网络</a> <a href="/tags/greedy-lgorithm/" style="font-size: 17.14px;">贪心算法</a> <a href="/tags/edge-detection/" style="font-size: 10px;">边缘检测</a> <a href="/tags/samples/" style="font-size: 11.43px;">采样</a> <a href="/tags/zero-shot-learning/" style="font-size: 10px;">零样本学习</a>
+    </div>
+</div>
+
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分类
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/study/">
+            <span class="level-start">
+                <span class="level-item">学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">5</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/technique/">
+            <span class="level-start">
+                <span class="level-item">技术</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/machine-learning/">
+            <span class="level-start">
+                <span class="level-item">机器学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">11</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/deep-learning/">
+            <span class="level-start">
+                <span class="level-item">深度学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/algorithms/">
+            <span class="level-start">
+                <span class="level-item">算法与数据结构</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">23</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/computer-vision/">
+            <span class="level-start">
+                <span class="level-item">计算机视觉</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/software-engineering/">
+            <span class="level-start">
+                <span class="level-item">软件工程</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">6</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/essay/">
+            <span class="level-start">
+                <span class="level-item">随笔</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">8</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+        
+            
+        
+        </div>
+    
+</div>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="《Structuring Machine Learning Projects》笔记" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2019 陈燊&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                
+                <br>
+                <span id="busuanzi_container_site_uv">
+                共<span id="busuanzi_value_site_uv">0</span>个访客
+                </span>
+                
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="GitHub" href="https://github.com/chenshen03">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+    
+    
+
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

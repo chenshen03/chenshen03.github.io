@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+<title>深度人脸识别综述 - 陈燊的博客</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="Introduction人脸识别系统通常由以下构建模块组成：  人脸检测。人脸检测器用于寻找图像中人脸的位置，如果有人脸，就返回包含每张人脸的边界框的坐标。如图 3a 所示。 人脸对齐。人脸对齐的目标是使用一组位于图像中固定位置的参考点来缩放和裁剪人脸图像。这个过程通常需要使用一个特征点检测器来寻找一组人脸特征点，在简单的 2D 对齐情况中，即为寻找最适合参考点的最佳仿射变换。图 3b 和 3c">
+<meta name="keywords" content="人脸识别">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度人脸识别综述">
+<meta property="og:url" content="http://chenshen.xyz/categories/computer-vision/deep-face-recognition/index.html">
+<meta property="og:site_name" content="陈燊的博客">
+<meta property="og:description" content="Introduction人脸识别系统通常由以下构建模块组成：  人脸检测。人脸检测器用于寻找图像中人脸的位置，如果有人脸，就返回包含每张人脸的边界框的坐标。如图 3a 所示。 人脸对齐。人脸对齐的目标是使用一组位于图像中固定位置的参考点来缩放和裁剪人脸图像。这个过程通常需要使用一个特征点检测器来寻找一组人脸特征点，在简单的 2D 对齐情况中，即为寻找最适合参考点的最佳仿射变换。图 3b 和 3c">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/8662e3cegy1g0k1j4up5oj21cb0ik489.jpg">
+<meta property="og:image" content="https://wx3.sinaimg.cn/large/8662e3cegy1g0k1kfbt7kj217u0e8dlk.jpg">
+<meta property="og:image" content="https://wx2.sinaimg.cn/large/8662e3cegy1g0k1kr4sx8j215r0k9wlm.jpg">
+<meta property="og:image" content="https://yqfile.alicdn.com/63b4f06e5361d8c9222f624a6f5b3dcf098e6e25.png">
+<meta property="og:image" content="https://user-images.githubusercontent.com/20432947/54204738-d3b21480-450f-11e9-9e49-a9a71928a027.png">
+<meta property="og:image" content="https://user-images.githubusercontent.com/20432947/54206355-1c1f0180-4513-11e9-8581-161034232fba.png">
+<meta property="og:image" content="https://user-images.githubusercontent.com/20432947/54206377-293bf080-4513-11e9-80c2-f0964c9ecff6.png">
+<meta property="og:image" content="https://user-images.githubusercontent.com/20432947/54206424-3a84fd00-4513-11e9-9a48-df39b84a83c9.png">
+<meta property="og:image" content="https://user-images.githubusercontent.com/20432947/54189129-1eba3080-44ec-11e9-9b9e-29f83d7a3001.png">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/8662e3cegy1g0k1lnsllgj20tr0m1qdq.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/8662e3cegy1g0k1lvxp55j20zt0i4n3g.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/8662e3cegy1g0k1m4b63ij20fv0ib40x.jpg">
+<meta property="og:image" content="https://user-images.githubusercontent.com/20432947/54182352-3ab5d600-44dc-11e9-980d-bedb05dddf21.png">
+<meta property="og:image" content="https://xraft.github.io/images/2018-3/m1m4.png">
+<meta property="og:image" content="https://user-images.githubusercontent.com/20432947/54202175-6c459600-450a-11e9-887f-d9d3367a5e88.png">
+<meta property="og:image" content="https://img-blog.csdn.net/20180318170825516?watermark/2/text/Ly9ibG9nLmNzZG4ubmV0L0ZpcmVfTGlnaHRf/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta property="og:image" content="https://user-images.githubusercontent.com/20432947/54189087-0ba76080-44ec-11e9-89b8-37919c13aff5.png">
+<meta property="og:image" content="https://user-images.githubusercontent.com/20432947/54191083-25e33d80-44f0-11e9-8340-1d47f292a0d0.png">
+<meta property="og:image" content="https://wx3.sinaimg.cn/large/8662e3cegy1g0k1mz40h8j21640ad0wf.jpg">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1019353/201903/1019353-20190312190454453-1386320543.jpg">
+<meta property="og:updated_time" content="2019-09-04T13:39:51.682Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深度人脸识别综述">
+<meta name="twitter:description" content="Introduction人脸识别系统通常由以下构建模块组成：  人脸检测。人脸检测器用于寻找图像中人脸的位置，如果有人脸，就返回包含每张人脸的边界框的坐标。如图 3a 所示。 人脸对齐。人脸对齐的目标是使用一组位于图像中固定位置的参考点来缩放和裁剪人脸图像。这个过程通常需要使用一个特征点检测器来寻找一组人脸特征点，在简单的 2D 对齐情况中，即为寻找最适合参考点的最佳仿射变换。图 3b 和 3c">
+<meta name="twitter:image" content="https://ws3.sinaimg.cn/large/8662e3cegy1g0k1j4up5oj21cb0ik489.jpg">
+
+
+
+
+
+<link rel="icon" href="/images/favicon.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+    
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-2-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="深度人脸识别综述" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">主页</a>
+                
+                <a class="navbar-item" href="/archives">归档</a>
+                
+                <a class="navbar-item" href="/categories">分类</a>
+                
+                <a class="navbar-item" href="/tags">标签</a>
+                
+                <a class="navbar-item" href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-9-tablet is-9-desktop is-9-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-03-15T08:03:21.000Z">2019-03-15</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/computer-vision/">计算机视觉</a>
+                </div>
+                
+                
+                
+                <span class="level-item has-text-grey" id="busuanzi_container_page_pv">
+                    <i class="far fa-eye"></i>
+                    <span id="busuanzi_value_page_pv">0</span>次访问
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                深度人脸识别综述
+            
+        </h1>
+        <div class="content">
+            <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>人脸识别系统通常由以下构建模块组成：</p>
+<ul>
+<li><strong>人脸检测</strong>。人脸检测器用于寻找图像中人脸的位置，如果有人脸，就返回包含每张人脸的边界框的坐标。如图 3a 所示。</li>
+<li><strong>人脸对齐</strong>。人脸对齐的目标是使用一组位于图像中固定位置的参考点来缩放和裁剪人脸图像。这个过程通常需要使用一个特征点检测器来寻找一组人脸特征点，在简单的 2D 对齐情况中，即为寻找最适合参考点的最佳仿射变换。图 3b 和 3c 展示了两张使用了同一组参考点对齐后的人脸图像。更复杂的 3D 对齐算法（如 [16]）还能实现人脸正面化，即将人脸的姿势调整到正面向前。</li>
+<li><strong>人脸表征</strong>。在人脸表征阶段，人脸图像的像素值会被转换成紧凑且可判别的特征向量，这也被称为模板（template）。理想情况下，同一个主体的所有人脸都应该映射到相似的特征向量。</li>
+<li><strong>人脸匹配</strong>。在人脸匹配构建模块中，两个模板会进行比较，从而得到一个相似度分数，该分数给出了两者属于同一个主体的可能性。</li>
+</ul>
+<p><img src="https://ws3.sinaimg.cn/large/8662e3cegy1g0k1j4up5oj21cb0ik489.jpg" alt="image"></p>
+<a id="more"></a>
+<p><strong>人脸识别</strong>相关方法的发展如下图所示：</p>
+<p><img src="https://wx3.sinaimg.cn/large/8662e3cegy1g0k1kfbt7kj217u0e8dlk.jpg" alt></p>
+<p><img src="https://wx2.sinaimg.cn/large/8662e3cegy1g0k1kr4sx8j215r0k9wlm.jpg" alt></p>
+<hr>
+<p>对于基于 CNN 的人脸识别方法，影响准确度的因素主要有三个：训练数据、CNN 架构和损失函数。</p>
+<p>因为在大多数深度学习应用中，都需要大训练集来防止过拟合。一般而言，为分类任务训练的 CNN 的准确度会随每类的样本数量的增长而提升。这是因为当类内差异更多时，CNN 模型能够学习到更稳健的特征。<strong>但是，对于人脸识别，我们感兴趣的是提取出能够泛化到训练集中未曾出现过的主体上的特征。因此，用于人脸识别的数据集还需要包含大量主体，这样模型也能学习到更多类间差异。</strong></p>
+<p>人脸识别实验中常用到<em>close-set</em>和<em>open-set</em>：</p>
+<ul>
+<li><strong>close-set：</strong>就是所有的测试集都在训练集中出现过。所以预测结果是图片的ID，如果想要测试两张图片是否是同一个，那么就看这两张图片的预测ID是否一样即可。</li>
+<li><strong>open-set：</strong>就是测试的图片并没有在训练集中出现过，那么每张测试图片的预测结果是特征向量，如果想要比较两张图片的人脸是否属于同一个人，需要测试图像特征向量的距离。</li>
+</ul>
+<hr>
+<p>在光照较差，遮挡，形变（大笑），侧脸等诸多条件下，神经网络很难提取出与“标准脸”相似的特征，<strong>异常脸在特征空间里落到错误的位置，导致识别和验证失败</strong>。这是现代人脸识别系统的局限，一定程度上也是深度学习（深度神经网络）的局限。</p>
+<p>面对这种局限，<strong>通常采取三种应对措施，使人脸识别系统能正常运作</strong>：</p>
+<p><strong>1. 工程角度</strong>：研发质量模型，对检测到人脸质量进行评价，质量较差则不识别/检验。</p>
+<p><strong>2. 应用角度</strong>：施加场景限制，比如刷脸解锁，人脸闸机，会场签到时，都要求用户在良好的光照条件下正对摄像头，以避免采集到质量差的图片。</p>
+<p><strong>3. 算法角度</strong>：提升人脸识别模型性能，在训练数据里添加更多复杂场景和质量的照片，以增强模型的抗干扰能力。</p>
+<p><img src="https://yqfile.alicdn.com/63b4f06e5361d8c9222f624a6f5b3dcf098e6e25.png" alt></p>
+<hr>
+<h1 id="Euclidean-Based-Metric-Learning"><a href="#Euclidean-Based-Metric-Learning" class="headerlink" title="Euclidean Based Metric Learning"></a>Euclidean Based Metric Learning</h1><h2 id="Contrastive-loss"><a href="#Contrastive-loss" class="headerlink" title="Contrastive loss"></a>Contrastive loss</h2><blockquote>
+<p><strong>DeepID1并不属于contrastive loss系列，只是作为DeepID系列的开山之作而放在这里。</strong></p>
+<p>DeepID1:《Deep Learning Face Representation from Predicting 10,000 Classes》</p>
+<p>DeepID2:《Deep learning face representation by joint identification-verification》</p>
+<p>DeepID2+:《Deeply learned face representations are sparse, selective, and robust》</p>
+<p>DeepID3:《Deepid3: Face recognition with very deep neural networks》</p>
+</blockquote>
+<script type="math/tex; mode=display">
+\operatorname{Ident}\left(f, t, \theta_{i d}\right)=-\sum_{i=1}^{n} p_{i} \log \hat{p}_{i}=-\log \hat{p}_{t}</script><script type="math/tex; mode=display">
+\operatorname{Verif}\left(f_{i}, f_{j}, y_{i j}, \theta_{v e}\right)=\left\{\begin{array}{ll}{\frac{1}{2}\left\|f_{i}-f_{j}\right\|_{2}^{2}} & {\text { if } y_{i j}=1} \\ {\frac{1}{2} \max \left(0, m-\left\|f_{i}-f_{j}\right\|_{2}\right)^{2}} & {\text { if } y_{i j}=-1}\end{array}\right.</script><p><strong>DeepID1:</strong></p>
+<p><img src="https://user-images.githubusercontent.com/20432947/54204738-d3b21480-450f-11e9-9e49-a9a71928a027.png" alt="image"></p>
+<p><strong>DeepID2:</strong></p>
+<p><img src="https://user-images.githubusercontent.com/20432947/54206355-1c1f0180-4513-11e9-8581-161034232fba.png" alt="image"></p>
+<p><strong>DeepID2+:</strong></p>
+<p><img src="https://user-images.githubusercontent.com/20432947/54206377-293bf080-4513-11e9-80c2-f0964c9ecff6.png" alt="image"></p>
+<p><strong>DeepID3:</strong></p>
+<p><img src="https://user-images.githubusercontent.com/20432947/54206424-3a84fd00-4513-11e9-9a48-df39b84a83c9.png" alt="image"></p>
+<hr>
+<h2 id="Triplet-Loss"><a href="#Triplet-Loss" class="headerlink" title="Triplet Loss"></a>Triplet Loss</h2><blockquote>
+<p>《Facenet: A unified embedding for face recognition and clustering》</p>
+</blockquote>
+<script type="math/tex; mode=display">
+\sum_{i}^{N}\left[\left\|f\left(x_{i}^{a}\right)-f\left(x_{i}^{p}\right)\right\|_{2}^{2}-\left\|f\left(x_{i}^{a}\right)-f\left(x_{i}^{n}\right)\right\|_{2}^{2}+\alpha\right]</script><p><img src="https://user-images.githubusercontent.com/20432947/54189129-1eba3080-44ec-11e9-9b9e-29f83d7a3001.png" alt="image"></p>
+<hr>
+<h2 id="Center-Loss"><a href="#Center-Loss" class="headerlink" title="Center Loss"></a>Center Loss</h2><blockquote>
+<p>《A Discriminative Feature Learning Approach for Deep Face Recognition》</p>
+</blockquote>
+<script type="math/tex; mode=display">
+\begin{aligned} \mathcal{L} &=\mathcal{L}_{S}+\lambda \mathcal{L}_{C} \\ &=-\sum_{i=1}^{m} \log \frac{e^{W_{y_{i}}^{T} \boldsymbol{x}_{i}+b_{y_{i}}}}{\sum_{j=1}^{n} e^{W_{j}^{T} \boldsymbol{x}_{i}+b_{j}}}+\frac{\lambda}{2} \sum_{i=1}^{m}\left\|\boldsymbol{x}_{i}-\boldsymbol{c}_{y_{i}}\right\|_{2}^{2} \end{aligned}</script><p>$c_{y_i}$代表样本$i$对应类别$y_i$所属的类中心。理想情况下，这个类中心在每次迭代时都需要利用整个数据集的特征来更新，但是这会需要巨大的计算量。因此，在实际使用中，做了如下修改：</p>
+<ul>
+<li>由整个训练集更新center改为mini-batch更新center；</li>
+<li>避免错误分类的样本的干扰，使用scalar α 来控制center的学习率；</li>
+</ul>
+<p>虽然center loss取得了良好的结果，但是也有一些不足之处。Center Loss考虑到了使得类内紧凑，却不能使类间可分；另外训练样本对的选择也较为麻烦。在论文中，作者也提到了，选取合适的样本对对于模型的性能至关重要，论文中采用的方法是每次选择比较难以分类的样本对重新训练，类似于hard-mining。同时，合适的训练样本还可以加快收敛速度。</p>
+<p><img src="https://ws3.sinaimg.cn/large/8662e3cegy1g0k1lnsllgj20tr0m1qdq.jpg" alt></p>
+<hr>
+<h2 id="Center-Invariant-Loss"><a href="#Center-Invariant-Loss" class="headerlink" title="Center-Invariant Loss"></a>Center-Invariant Loss</h2><blockquote>
+<p>《Deep face recognition with center invariant loss》</p>
+</blockquote>
+<script type="math/tex; mode=display">
+\begin{aligned} L=& L_{s}+\gamma L_{I}+\lambda L_{c} \\=&-\log \left(\frac{e^{\mathbf{w}_{y}^{T} \mathbf{x}_{i}+b_{y}}}{\sum_{j=1}^{m} e^{\mathbf{w}_{j}^{T} \mathbf{x}_{i}+b_{j}}}\right)+\frac{\gamma}{4}\left(\left\|\mathbf{c}_{y}\right\|_{2}^{2}-\frac{1}{m} \sum_{k=1}^{m}\left\|\mathbf{c}_{k}\right\|_{2}^{2}\right)^{2} \\ &+\frac{\lambda}{2}\left\|\mathbf{x}_{i}-\mathbf{c}_{y}\right\|^{2} \end{aligned}</script><p><img src="https://ws3.sinaimg.cn/large/8662e3cegy1g0k1lvxp55j20zt0i4n3g.jpg" alt></p>
+<hr>
+<h2 id="Range-Loss"><a href="#Range-Loss" class="headerlink" title="Range Loss"></a>Range Loss</h2><blockquote>
+<p>《Range loss for deep face recognition with long-tail》</p>
+</blockquote>
+<script type="math/tex; mode=display">
+\mathcal{L}_{R}=\alpha \mathcal{L}_{R_{i n t r a}}+\beta \mathcal{L}_{R_{i n t e r}}</script><script type="math/tex; mode=display">
+\mathcal{L}_{R_{i n t r a}}=\sum_{i \subseteq I} \mathcal{L}_{R_{i n t r a}}^{i}=\sum_{i \subseteq I} \frac{k}{\sum_{j=1}^{k} \frac{1}{\mathcal{D}_{j}}}</script><script type="math/tex; mode=display">
+\begin{aligned} \mathcal{L}_{R_{\text { inter }}} &=\max \left(m-\mathcal{D}_{\text {Center}}, 0\right) \\ &=\max \left(m-\left\|\overline{x}_{Q}-\overline{x}_{\mathcal{R}}\right\|_{2}^{2}, 0\right) \end{aligned}</script><script type="math/tex; mode=display">
+\mathcal{L}=\mathcal{L}_{M}+\lambda \mathcal{L}_{R}=-\sum_{i=1}^{M} \log \frac{e^{W_{y_{i}}^{T} x_{i}+b_{v_{i}}}}{\sum_{j=1}^{n} e^{W_{j}^{T} x_{i}+b_{j}}}+\lambda \mathcal{L}_{R}</script><hr>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>基于欧式距离的Metric Learning符合人的认知规律，在实际应用中也取得了不错的效果，但是它有非常致命的两个问题：</p>
+<ul>
+<li>模型需要很长时间才能拟合，contrastive loss和triplet loss的训练样本都基于pair或者triplet的，可能的样本数是O(N2)或者O(N3)的。当训练集很大时，基本不可能遍历到所有可能的样本，所以一般来说需要很长时间才能拟合；</li>
+<li>模型好坏很依赖训练数据的sample方式，理想的sample方式不仅能提升算法最后的性能，更能略微加快训练速度。</li>
+</ul>
+<h1 id="Margin-Based-Classification"><a href="#Margin-Based-Classification" class="headerlink" title="Margin Based Classification"></a>Margin Based Classification</h1><h2 id="Softmax-Loss"><a href="#Softmax-Loss" class="headerlink" title="Softmax Loss"></a>Softmax Loss</h2><script type="math/tex; mode=display">
+L=\frac{1}{N} \sum_{i} L_{i}=\frac{1}{N} \sum_{i}-\log \left(\frac{e^{f_{y_{i}}}}{\sum_{j} e^{f_{j}}}\right)</script><script type="math/tex; mode=display">
+L_{i}=-\log \left(\frac{e^{\left\|\mathbf{W}_{y_{i}}\right\|\left\|\mathbf{x}_{i}\right\| \cos \left(\theta_{y_{i}}\right)}}{\sum_{j} e^{\left\|\mathbf{W}_{j}\right\|\left\|\mathbf{x}_{\mathbf{i}}\right\| \cos \left(\theta_{j}\right)})}\right)</script><p>这里的W可以理解为一组基向量，每一个维度对应一个类别。$W_iX_i$即将数据$X_i$映射到类别$i$对应的维度上，$X_i$与基向量$W_i$的夹角越小，则数据$X_i$属于类别$i$的概率越大。因此，对于一个二分类问题而言，只要$X_i$与其中一个基向量$W_i$的夹角小于45°，则$X_i$即被分类为类别$i$。</p>
+<p>从上述分析可以看出，基于Softmax的分类只要求能够得到正确的分类结果，但是这种形式并不能够有效地学习得到使得类内较为紧凑、类间较离散的特征。</p>
+<hr>
+<h2 id="L-Softmax-Loss"><a href="#L-Softmax-Loss" class="headerlink" title="L-Softmax Loss"></a>L-Softmax Loss</h2><blockquote>
+<p>《Large-margin softmax loss for convolutional neural networks》</p>
+</blockquote>
+<script type="math/tex; mode=display">
+L_{i}=-\log \left(\frac{e^{\left\|\mathbf{W}_{y_{i}}\right\|\left\|\mathbf{x}_{i}\right\| \psi\left(\theta_{y_{i}}\right)}}{\left\|\mathbf{W}_{y_{i}}\right\|\left\|\mathbf{x}_{i}\right\| \psi\left(\theta_{y_{i}}\right)+\sum_{j \neq y_{i}} e^{\left\|\mathbf{W}_{j}\right\|\left\|\mathbf{x}_{i}\right\| \cos \left(\theta_{j}\right)})}\right)</script><p>其中，$\psi(\theta)$可以表示为：</p>
+<script type="math/tex; mode=display">
+\psi(\theta)=\left\{\begin{array}{l}{\cos (m \theta), 0 \leq \theta \leq \frac{\pi}{m}} \\ {\mathcal{D}(\theta), \frac{\pi}{m}<\theta \leq \pi}\end{array}\right.</script><p>公式中的$\mathcal{D}(\theta)$必须是一个单调减函数，且$\mathcal{D}\left(\frac{\pi}{m}\right)=\cos \left(\frac{\pi}{m}\right)$， 以保证 $\psi(\theta)$是一个连续函数。</p>
+<p>为了简化前向和后向传播的计算，作者构建了一种等价的函数形式 $\psi(\theta)$：</p>
+<script type="math/tex; mode=display">
+\psi(\theta)=(-1)^{k} \cos (m \theta)-2 k, \theta \in\left[\frac{k \pi}{m}, \frac{(k+1) \pi}{m}\right]</script><p>Large-Margin Softmax Loss是Softmax Loss引入margin思想的改进版本。即要是数据$X_i$不仅能够正确分类，而且与正确类别对应基向量的夹角要大于不同类别基向量的夹角一定的margin角度。因此在学习同类样本时，增强了同类学习的难度，这个难度要比不同类的难度要大些。这样的区别对待使得特征的可区分性增强。</p>
+<p>为了简单明了地表明L-Softmax Loss的有效性，作者讨论了一个二分类问题，只包含$W_1$和$W_2$。分析结果如下图所示：</p>
+<p><img src="https://ws2.sinaimg.cn/large/8662e3cegy1g0k1m4b63ij20fv0ib40x.jpg" alt></p>
+<hr>
+<h2 id="A-Softmax-Loss"><a href="#A-Softmax-Loss" class="headerlink" title="A-Softmax Loss"></a>A-Softmax Loss</h2><blockquote>
+<p>《Sphereface: Deep hypersphere embedding for face recognition》</p>
+</blockquote>
+<script type="math/tex; mode=display">
+L_{a n g}=\frac{1}{N} \sum_{i}-\log \left(\frac{\exp \left(\left\|x_{i}\right\| \psi\left(\theta_{y i, i}\right)\right)}{\exp \left(\left\|x_{i}\right\| \psi\left(\theta_{y i}, i\right)\right)+\sum_{j \neq y_{i}} \exp \left(\left\|x_{i}\right\| \cos \left(\theta_{j, i}\right)\right)}\right)</script><p>A-Softmax与L-Softmax的最大区别在于A-Softmax的权重归一化了，而L-Softmax则没有。A-Softmax权重的归一化导致特征上的点映射到单位超球面上，而L-Softmax则不没有这个限制，这个特性使得两者在几何的解释上是不一样的。如图1所示，如果在训练时两个类别的特征输入在同一个区域时，如下图10所示。A-Softmax只能从角度上分度这两个类别，也就是说它仅从方向上区分类，分类的结果如图2所示；而L-Softmax，不仅可以从角度上区别两个类，还能从权重的模（长度）上区别这两个类，分类的结果如图3所示。在数据集合大小固定的条件下，L-Softmax能有两个方法分类，训练可能没有使得它在角度与长度方向都分离，导致它的精确可能不如A-Softmax。</p>
+<p><img src="https://user-images.githubusercontent.com/20432947/54182352-3ab5d600-44dc-11e9-980d-bedb05dddf21.png" alt="A-loss_L-loss"></p>
+<p><strong>问题：</strong></p>
+<p>A-Softmax虽然效果很好，但是存在着显著的问题。在测试阶段，A-Softmax通过特征间的余弦值来衡量相似性，即以角度为相似性的度量；但在训练阶段，A-Softmax并不是直接优化特征与类中心的角度，而是优化特征与类中心的角度再乘上一个特征的长度。因此，优化的方向还有一部分是去增大特征的长度。下图是A-Softmax在Mnist数据集上的实验，分别对应m=1和m=4时的特征可视化。注意坐标的尺度，就能验证上述观点。</p>
+<p><img src="https://xraft.github.io/images/2018-3/m1m4.png" alt></p>
+<hr>
+<h2 id="NormFace"><a href="#NormFace" class="headerlink" title="NormFace"></a>NormFace</h2><blockquote>
+<p>NormFace: $L_2$ Hypersphere Embedding for Face Verification Feng</p>
+</blockquote>
+<script type="math/tex; mode=display">
+\mathcal{L}_{\mathcal{S},}=-\frac{1}{m} \sum_{i=1}^{m} \log \frac{e^{s \tilde{W}_{y_{i}}^{T} \tilde{\mathrm{f}}_{i}}}{\sum_{j=1}^{n} e^{s \tilde{W}_{j}^{T} \tilde{\mathrm{f}}_{i}}}</script><p><img src="https://user-images.githubusercontent.com/20432947/54202175-6c459600-450a-11e9-887f-d9d3367a5e88.png" alt="image"></p>
+<hr>
+<h2 id="AM-Softmax-Loss"><a href="#AM-Softmax-Loss" class="headerlink" title="AM-Softmax Loss"></a>AM-Softmax Loss</h2><blockquote>
+<p>《Additive Margin Softmax for Face Verification 》</p>
+</blockquote>
+<script type="math/tex; mode=display">
+L_{A M S}=-\frac{1}{n} \sum_{i=1}^{n} \log \frac{e^{s \cdot\left(\cos \theta_{y_{i}}-m\right)}}{e^{s\left(\cos \theta_{y_{i}}-m\right)}+\sum_{j=1, j \neq y_{i}}^{c} e^{s \cdot \cos \left(\theta_{j}\right)}}</script><p>AM-Softmax令$||x||=1, ||W||=1, b=0$。$s$为缩放因子，论文里固定为30。</p>
+<p><strong>角度距离和与余弦距离：</strong></p>
+<p>A-Softmax中为$\cos m\theta<em>{y</em>{i}}$，而AM-Softmax为$\cos\theta<em>{y</em>{i}}-m$。一个是角度距离（angular margin），一个是余弦距离（cosine margin）。当使用传统的softmax作为损失函数时，角度距离和余弦距离是等价的，即：$\cos \left(\theta<em>{1}\right)=\cos \left(\theta</em>{2}\right) \Rightarrow \theta<em>{1}=\theta</em>{2}$。但当试图改变决策边界时，角度距离和余弦距离便不再等价。最终的决策边界是和余弦相关的，根据cos的性质，优化角度距离比优化余弦距离更有效果，因为余弦距离相对更密集。<strong>（为什么论文采用优化余弦距离？）</strong></p>
+<p>AM-Softmax的好处在于A-Softmax的倍角计算是要通过倍角公式，反向传播时不方便求导，而只减m反向传播时导数不用变化。</p>
+<p><strong>特征归一化：</strong></p>
+<p>高质量的图片提取出来的特征范数大，低质量的图片提取出来的特征范数小，如图：</p>
+<p><img src="https://img-blog.csdn.net/20180318170825516?watermark/2/text/Ly9ibG9nLmNzZG4ubmV0L0ZpcmVfTGlnaHRf/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt></p>
+<p>Softmax的目标是尽可能最大化正确分类的概率。它会忽略掉一些比较难分辨的图片（低质量的图片），优先拟合高质量的图片。而L2-Softmax中提到，质量较差的人脸图片的特征范数越小。在进行了<strong>特征归一化</strong>后，这些质量较差的图片特征会产生更大的梯度，导致网络在训练过程中将更多的注意力集中在这些样本上。因此，对于数据集图片质量较差时，更适合采用特征归一化。</p>
+<p>如下图所示，对一个具有二维的特征，正则化后，特征被表示在一个圆中。传统softmax的决策边界即是向量$P<em>0$，则有$W</em>{1}^{T} P<em>{0}=W</em>{2}^{T} P<em>{0}$；而AM-softmax是以决策区域替代决策边界，对于类别1的边界为向量$P_1$，定义$W</em>{1}^{T} P<em>{1}-m=W</em>{2}^{T} P<em>{1}$，那么$m=\left(W</em>{1}-W<em>{2}\right)^{T} P</em>{1}=\cos \left(\theta<em>{W</em>{1}}, P<em>{1}\right)-\cos \left(\theta</em>{W<em>{2}}, P</em>{1}\right)$。更进一步假设所有的类别都具有相同的方差，$P<em>2$是类别2的边界向量，那么$\cos \left(\theta</em>{W<em>{2}}, P</em>{1}\right)=\cos \left(\theta<em>{W</em>{1}}, P<em>{2}\right)$，所以$m=\cos \left(\theta</em>{W<em>{1}}, P</em>{1}\right)-\cos \left(\theta<em>{W</em>{1}}, P_{2}\right)$。</p>
+<p><img src="https://user-images.githubusercontent.com/20432947/54189087-0ba76080-44ec-11e9-89b8-37919c13aff5.png" alt="image"></p>
+<hr>
+<h2 id="CosFace"><a href="#CosFace" class="headerlink" title="CosFace"></a>CosFace</h2><blockquote>
+<p>CosFace: Large Margin Cosine Loss for Deep Face Recognition</p>
+</blockquote>
+<script type="math/tex; mode=display">
+L_{l m c}=\frac{1}{N} \sum_{i}-\log \frac{e^{s\left(\cos \left(\theta_{y_{i}, i}\right)-m\right)}}{e^{s\left(\cos \left(\theta_{y_{i}, i}\right)-m\right)}+\sum_{j \neq y_{i}} e^{s \cos \left(\theta_{j, i}\right)}}</script><p>subject to：</p>
+<script type="math/tex; mode=display">
+\begin{aligned} W &=\frac{W^{*}}{\left\|W^{*}\right\|} \\ x &=\frac{x^{*}}{\left\|x^{*}\right\|} \\ \cos \left(\theta_{j}, i\right) &=W_{j}^{T} x_{i} \end{aligned}</script><p><img src="https://user-images.githubusercontent.com/20432947/54191083-25e33d80-44f0-11e9-8340-1d47f292a0d0.png" alt="image"></p>
+<hr>
+<h2 id="ArcFace"><a href="#ArcFace" class="headerlink" title="ArcFace"></a>ArcFace</h2><blockquote>
+<p>ArcFace: Additive Angular Margin Loss for Deep Face Recognition</p>
+</blockquote>
+<script type="math/tex; mode=display">
+L_{3}=-\frac{1}{N} \sum_{i=1}^{N} \log \frac{e^{s\left(\cos \left(\theta_{y_{i}}+m\right)\right)}}{e^{s\left(\cos \left(\theta_{y_{i}}+m\right)\right)}+\sum_{j=1, j \neq y_{i}}^{n} e^{s \cos \theta_{j}}}</script><p>$\cos \left(\theta<em>{y</em>{i}}+m\right)$相当于原始的余弦函数在x轴上向左偏移。论文中将余弦余量$m$设置为 0.35(AM-Softmax, CosFace)。与 SphereFace 相比，附加余弦余量（CosineFace）有三个优点：</p>
+<ul>
+<li>非常容易实现，没有棘手的超参数;</li>
+<li>没有Softmax监督，更清晰，更易收敛;</li>
+<li>性能有明显改善。</li>
+</ul>
+<p><img src="https://wx3.sinaimg.cn/large/8662e3cegy1g0k1mz40h8j21640ad0wf.jpg" alt></p>
+<hr>
+<h2 id="Summary-1"><a href="#Summary-1" class="headerlink" title="Summary"></a>Summary</h2><p><strong>L-Softmax</strong>（$\cos m\theta<em>{y</em>{i}}$）、<strong>A-Softmax</strong>（$\cos m\theta<em>{y</em>{i}}$）、<strong>AM-Softmax</strong>（$\cos\theta<em>{y</em>{i}}-m$）、<strong>CosFace</strong>（$\cos\theta<em>{y</em>{i}}-m$）、<strong>ArcFace</strong>（$\cos \left(\theta<em>{y</em>{i}}+m\right)$）的本质都是对<strong>cosine函数</strong>以及<strong>margin</strong>形式进行改进。区别在于不同的函数形式在前向传播和反向传播时所需的计算量有所不同。</p>
+<p>cosine函数的图像为：</p>
+<p><img src="https://img2018.cnblogs.com/blog/1019353/201903/1019353-20190312190454453-1386320543.jpg" alt></p>
+<p>但是上述所有损失函数严格要求每个类别都有相同的margin，没有考虑到类别间的<strong>语义相关性</strong>，使得训练的难度较大。语义相关性即：部分类别的相似程度高于其他类别，如：猫和狗的相似度高于猫和猴子的相似度。在人脸识别任务中，虽然所有的类别都是<strong>人</strong>，但是世界上存在着不同的人种：肤色、五官等都有着显著的区别，且不同地区的长相也趋向于不同。而上述损失函数均没有考虑到人种间的差异性和相似性。</p>
+<hr>
+<h1 id="References"><a href="#References" class="headerlink" title="References"></a>References</h1><h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><ul>
+<li><a href="https://www.jiqizhixin.com/articles/2019-02-10-4?from=synced&amp;keyword=%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB" target="_blank" rel="noopener">人脸识别技术全面总结：从传统方法到深度学习</a></li>
+<li><a href="https://xraft.github.io/2018/03/21/FaceRecognition/" target="_blank" rel="noopener">深度学习人脸识别综述</a></li>
+<li><a href="https://orzyt.cn/posts/deep-face-recognition/" target="_blank" rel="noopener">深度人脸识别综述</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/34404607?edition=yidianzixun&amp;utm_source=yidianzixun&amp;yidian_docid=0IVwLvyO" target="_blank" rel="noopener">人脸识别的LOSS（上）</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/34436551" target="_blank" rel="noopener">人脸识别的LOSS（下）</a></li>
+</ul>
+<h2 id="Blogs"><a href="#Blogs" class="headerlink" title="Blogs"></a>Blogs</h2><ul>
+<li><a href="https://www.cnblogs.com/venus024/p/5632243.html" target="_blank" rel="noopener">DeepID1,DeepID2</a></li>
+<li><a href="https://www.cnblogs.com/mfrbuaa/p/5394742.html" target="_blank" rel="noopener">DeepID人脸识别算法之三代</a></li>
+<li><a href="https://blog.csdn.net/lucifer_zzq/article/details/81236174" target="_blank" rel="noopener">深度学习干货学习—center loss</a></li>
+<li><a href="https://blog.csdn.net/fire_light_/article/details/79592804" target="_blank" rel="noopener">人脸识别系列（六）：FaceNet</a></li>
+<li><a href="https://blog.csdn.net/shaoxiaohu1/article/details/53325945" target="_blank" rel="noopener">【论文笔记】Large-Margin Softmax Loss for Convolutional Neural Networks</a></li>
+<li><a href="https://www.cnblogs.com/heguanyou/p/7503025.html" target="_blank" rel="noopener">A-Softmax的总结及与L-Softmax的对比—SphereFace</a></li>
+<li><a href="https://blog.csdn.net/wfei101/article/details/82890444" target="_blank" rel="noopener">人脸识别：NormFace</a></li>
+<li><a href="https://blog.csdn.net/weixin_42111770/article/details/80690657" target="_blank" rel="noopener">人脸识别之AM-Softmax</a></li>
+<li><a href="https://blog.csdn.net/u014380165/article/details/80645489" target="_blank" rel="noopener">ArcFace算法笔记</a></li>
+<li><a href="https://blog.csdn.net/Wuzebiao2016/article/details/81839452" target="_blank" rel="noopener">论文阅读之Arcface</a></li>
+</ul>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/人脸识别/">人脸识别</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.png" alt="支付宝"></div>
+</a>
+
+                
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat.png" alt="微信"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/categories/machine-learning/naive-bayes/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">朴素贝叶斯</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/categories/essay/2018-2019学年研一上学期总结/">
+                <span class="level-item">2018-2019学年研一上学期总结</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<div id="comment-container"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+    var gitalk = new Gitalk({
+        clientID: 'e5eff8aa39f563a204e5',
+        clientSecret: '8adc001af75f722b72813ab2916f65f6b7ba3da0',
+        id: 'bd85a61f020b3b2fdbb3baa9d9f8db8d',
+        repo: 'chenshen03.github.io',
+        owner: 'chenshen03',
+        admin: "chenshen03"
+    })
+    gitalk.render('comment-container')
+</script>
+
+    </div>
+</div>
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    
+                        <img class="image is-128x128 has-mb-6" src="/images/avatar.png" alt="陈燊">
+                    
+                    
+                    <p class="is-size-4 is-block">
+                        陈燊
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        Master student of Computer Science
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>Xiamen, China</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/archives','_self')">
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        74
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/categories','_self')">
+                    <p class="heading">
+                        分类
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        8
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/tags','_self')">
+                    <p class="heading">
+                        标签
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        38
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/chenshen03">
+                关注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/chenshen03">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Cnblogs" href="https://www.cnblogs.com/cslaker">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Weibo" href="https://www.weibo.com/cstobeno1">
+                
+                <i class="fab fa-weibo"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://www.facebook.com/chenshen03">
+                
+                <i class="fab fa-facebook-f"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Zhihu" href="https://www.zhihu.com/people/chenshen03">
+                
+                <i class="fab fa-zhihu"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+<div class="card widget" id="toc">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a class="is-flex" href="#Introduction">
+        <span class="has-mr-6">1</span>
+        <span>Introduction</span>
+        </a></li><li>
+        <a class="is-flex" href="#Euclidean-Based-Metric-Learning">
+        <span class="has-mr-6">2</span>
+        <span>Euclidean Based Metric Learning</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#Contrastive-loss">
+        <span class="has-mr-6">2.1</span>
+        <span>Contrastive loss</span>
+        </a></li><li>
+        <a class="is-flex" href="#Triplet-Loss">
+        <span class="has-mr-6">2.2</span>
+        <span>Triplet Loss</span>
+        </a></li><li>
+        <a class="is-flex" href="#Center-Loss">
+        <span class="has-mr-6">2.3</span>
+        <span>Center Loss</span>
+        </a></li><li>
+        <a class="is-flex" href="#Center-Invariant-Loss">
+        <span class="has-mr-6">2.4</span>
+        <span>Center-Invariant Loss</span>
+        </a></li><li>
+        <a class="is-flex" href="#Range-Loss">
+        <span class="has-mr-6">2.5</span>
+        <span>Range Loss</span>
+        </a></li><li>
+        <a class="is-flex" href="#Summary">
+        <span class="has-mr-6">2.6</span>
+        <span>Summary</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#Margin-Based-Classification">
+        <span class="has-mr-6">3</span>
+        <span>Margin Based Classification</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#Softmax-Loss">
+        <span class="has-mr-6">3.1</span>
+        <span>Softmax Loss</span>
+        </a></li><li>
+        <a class="is-flex" href="#L-Softmax-Loss">
+        <span class="has-mr-6">3.2</span>
+        <span>L-Softmax Loss</span>
+        </a></li><li>
+        <a class="is-flex" href="#A-Softmax-Loss">
+        <span class="has-mr-6">3.3</span>
+        <span>A-Softmax Loss</span>
+        </a></li><li>
+        <a class="is-flex" href="#NormFace">
+        <span class="has-mr-6">3.4</span>
+        <span>NormFace</span>
+        </a></li><li>
+        <a class="is-flex" href="#AM-Softmax-Loss">
+        <span class="has-mr-6">3.5</span>
+        <span>AM-Softmax Loss</span>
+        </a></li><li>
+        <a class="is-flex" href="#CosFace">
+        <span class="has-mr-6">3.6</span>
+        <span>CosFace</span>
+        </a></li><li>
+        <a class="is-flex" href="#ArcFace">
+        <span class="has-mr-6">3.7</span>
+        <span>ArcFace</span>
+        </a></li><li>
+        <a class="is-flex" href="#Summary-1">
+        <span class="has-mr-6">3.8</span>
+        <span>Summary</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#References">
+        <span class="has-mr-6">4</span>
+        <span>References</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#Overview">
+        <span class="has-mr-6">4.1</span>
+        <span>Overview</span>
+        </a></li><li>
+        <a class="is-flex" href="#Blogs">
+        <span class="has-mr-6">4.2</span>
+        <span>Blogs</span>
+        </a></li></ul></li></ul>
+        </div>
+    </div>
+</div>
+
+    
+        
+    
+    
+        <div class="column-right-shadow  ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            标签云
+        </h3>
+        <a href="/tags/CUDA/" style="font-size: 10px;">CUDA</a> <a href="/tags/Jupyter/" style="font-size: 10px;">Jupyter</a> <a href="/tags/Leetcode/" style="font-size: 10px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/POJ/" style="font-size: 20px;">POJ</a> <a href="/tags/人脸识别/" style="font-size: 10px;">人脸识别</a> <a href="/tags/fourier-transform/" style="font-size: 10px;">傅里叶变换</a> <a href="/tags/dynamic-planning/" style="font-size: 14.29px;">动态规划</a> <a href="/tags/kalman-filter/" style="font-size: 10px;">卡尔曼滤波</a> <a href="/tags/cnn/" style="font-size: 10px;">卷积神经网络</a> <a href="/tags/hash/" style="font-size: 15.71px;">哈希</a> <a href="/tags/image-feature/" style="font-size: 10px;">图像特征</a> <a href="/tags/graph/" style="font-size: 12.86px;">图论</a> <a href="/tags/mean-shift/" style="font-size: 10px;">均值漂移</a> <a href="/tags/reinforcement-learning/" style="font-size: 10px;">强化学习</a> <a href="/tags/rnn/" style="font-size: 10px;">循环神经网络</a> <a href="/tags/sort/" style="font-size: 10px;">排序</a> <a href="/tags/search/" style="font-size: 17.14px;">搜索</a> <a href="/tags/svm/" style="font-size: 11.43px;">支持向量机</a> <a href="/tags/unsupervised-hash/" style="font-size: 12.86px;">无监督哈希</a> <a href="/tags/temporal-reasoning/" style="font-size: 11.43px;">时序推理</a> <a href="/tags/时序推理，隐马尔可夫/" style="font-size: 10px;">时序推理，隐马尔可夫</a> <a href="/tags/naive-bayes/" style="font-size: 11.43px;">朴素贝叶斯</a> <a href="/tags/kernel-function/" style="font-size: 10px;">核函数</a> <a href="/tags/gradient-descent/" style="font-size: 10px;">梯度下降</a> <a href="/tags/deep-hash/" style="font-size: 11.43px;">深度哈希</a> <a href="/tags/filter/" style="font-size: 12.86px;">滤波</a> <a href="/tags/supervised-hash/" style="font-size: 11.43px;">监督哈希</a> <a href="/tags/object-track/" style="font-size: 10px;">目标跟踪</a> <a href="/tags/neural-network/" style="font-size: 18.57px;">神经网络</a> <a href="/tags/particle-filter/" style="font-size: 10px;">粒子滤波</a> <a href="/tags/nlp/" style="font-size: 10px;">自然语言处理</a> <a href="/tags/semantic-segmentation/" style="font-size: 10px;">语义分割</a> <a href="/tags/bayesian-network/" style="font-size: 10px;">贝叶斯网络</a> <a href="/tags/greedy-lgorithm/" style="font-size: 17.14px;">贪心算法</a> <a href="/tags/edge-detection/" style="font-size: 10px;">边缘检测</a> <a href="/tags/samples/" style="font-size: 11.43px;">采样</a> <a href="/tags/zero-shot-learning/" style="font-size: 10px;">零样本学习</a>
+    </div>
+</div>
+
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分类
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/study/">
+            <span class="level-start">
+                <span class="level-item">学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">5</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/technique/">
+            <span class="level-start">
+                <span class="level-item">技术</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/machine-learning/">
+            <span class="level-start">
+                <span class="level-item">机器学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">11</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/deep-learning/">
+            <span class="level-start">
+                <span class="level-item">深度学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/algorithms/">
+            <span class="level-start">
+                <span class="level-item">算法与数据结构</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">23</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/computer-vision/">
+            <span class="level-start">
+                <span class="level-item">计算机视觉</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/software-engineering/">
+            <span class="level-start">
+                <span class="level-item">软件工程</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">6</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/essay/">
+            <span class="level-start">
+                <span class="level-item">随笔</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">8</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+        
+            
+        
+        </div>
+    
+</div>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="深度人脸识别综述" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2019 陈燊&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                
+                <br>
+                <span id="busuanzi_container_site_uv">
+                共<span id="busuanzi_value_site_uv">0</span>个访客
+                </span>
+                
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="GitHub" href="https://github.com/chenshen03">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+    
+    
+
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

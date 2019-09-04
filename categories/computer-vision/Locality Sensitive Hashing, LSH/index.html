@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+<title>Locality Sensitive Hashing, LSH - 陈燊的博客</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="LSH局部敏感（Locality Senstitive）：即空间中距离较近的点映射后发生冲突的概率高，空间中距离较远的点映射后发生冲突的概率低。 局部敏感哈希的基本思想类似于一种空间域转换思想，LSH算法基于一个假设，如果两个文本在原有的数据空间是相似的，那么分别经过哈希函数转换以后的它们也具有很高的相似度；相反，如果它们本身是不相似的，那么经过转换后它们应仍不具有相似性。">
+<meta name="keywords" content="哈希,无监督哈希">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Locality Sensitive Hashing, LSH">
+<meta property="og:url" content="http://chenshen.xyz/categories/computer-vision/Locality Sensitive Hashing, LSH/index.html">
+<meta property="og:site_name" content="陈燊的博客">
+<meta property="og:description" content="LSH局部敏感（Locality Senstitive）：即空间中距离较近的点映射后发生冲突的概率高，空间中距离较远的点映射后发生冲突的概率低。 局部敏感哈希的基本思想类似于一种空间域转换思想，LSH算法基于一个假设，如果两个文本在原有的数据空间是相似的，那么分别经过哈希函数转换以后的它们也具有很高的相似度；相反，如果它们本身是不相似的，那么经过转换后它们应仍不具有相似性。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1019353/201809/1019353-20180928194814742-466897192.png">
+<meta property="og:updated_time" content="2019-09-04T13:39:51.674Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Locality Sensitive Hashing, LSH">
+<meta name="twitter:description" content="LSH局部敏感（Locality Senstitive）：即空间中距离较近的点映射后发生冲突的概率高，空间中距离较远的点映射后发生冲突的概率低。 局部敏感哈希的基本思想类似于一种空间域转换思想，LSH算法基于一个假设，如果两个文本在原有的数据空间是相似的，那么分别经过哈希函数转换以后的它们也具有很高的相似度；相反，如果它们本身是不相似的，那么经过转换后它们应仍不具有相似性。">
+<meta name="twitter:image" content="https://img2018.cnblogs.com/blog/1019353/201809/1019353-20180928194814742-466897192.png">
+
+
+
+
+
+<link rel="icon" href="/images/favicon.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+    
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-2-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="Locality Sensitive Hashing, LSH" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">主页</a>
+                
+                <a class="navbar-item" href="/archives">归档</a>
+                
+                <a class="navbar-item" href="/categories">分类</a>
+                
+                <a class="navbar-item" href="/tags">标签</a>
+                
+                <a class="navbar-item" href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-9-tablet is-9-desktop is-9-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-09-28T05:42:13.000Z">2018-09-28</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/computer-vision/">计算机视觉</a>
+                </div>
+                
+                
+                
+                <span class="level-item has-text-grey" id="busuanzi_container_page_pv">
+                    <i class="far fa-eye"></i>
+                    <span id="busuanzi_value_page_pv">0</span>次访问
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                Locality Sensitive Hashing, LSH
+            
+        </h1>
+        <div class="content">
+            <h2 id="LSH"><a href="#LSH" class="headerlink" title="LSH"></a>LSH</h2><p><strong>局部敏感（Locality Senstitive）：</strong>即空间中距离较近的点映射后发生冲突的概率高，空间中距离较远的点映射后发生冲突的概率低。</p>
+<p>局部敏感哈希的基本思想类似于一种空间域转换思想，LSH算法基于一个假设，如果两个文本在原有的数据空间是相似的，那么分别经过哈希函数转换以后的它们也具有很高的相似度；相反，如果它们本身是不相似的，那么经过转换后它们应仍不具有相似性。</p>
+<a id="more"></a>
+<p>假设一个局部敏感哈希函数具有10个不同的输出值，而现在我们具有11个完全没有相似度的数据，那么它们经过这个哈希函数必然至少存在两个不相似的数据变为了相似数据。从这个假设中，我们应该意识到局部敏感哈希是<strong>相对的</strong>，而且我们所说的保持数据的相似度不是说保持100%的相似度，而是<strong>保持最大可能的相似度</strong>。</p>
+<p>对于局部敏感哈希<strong>保持最大可能的相似度</strong>的这一点，我们也可以从数据降维的角度去考虑。数据对应的维度越高，信息量也就越大，相反，如果数据进行了降维，那么毫无疑问数据所反映的信息必然会有损失。哈希函数从本质上来看就是一直在扮演数据降维的角色。</p>
+<h2 id="Min-Hash"><a href="#Min-Hash" class="headerlink" title="Min-Hash"></a>Min-Hash</h2><p><strong>定义：</strong>特征矩阵按行进行一个随机的置换后，第一个列值为1的行的行号。 </p>
+<p>对于两个数据$C_1$和$C_2$，在Min-Hashing方法中，hash值相等的概率等于这两个数据降维前的<em>Jaccard相似度</em>（两个集合的交比两个集合的并）。用公式描述即：</p>
+<script type="math/tex; mode=display">
+Pr[h_\pi(C_1) = h_\pi (C_2)] = sim(C_1, C_2)</script><p>每一个置换等同于一个hash函数，多个置换构成一个hash函数族。假设我们拥有n个hash函数，要求在原始空间相似的两个数据在hash之后得到的n个值均相等的条件过于苛刻，所得到的精确率是很高，但是同样的召回率也会非常低。因此，我们放松了要求，在n个hash函数划分为b个hash函数族，只要两个数据在某一个hash函数族的值均相等，就认为这两个数据相似。</p>
+<p>在上述定义下，两个数据在低维空间相似的概率为：$1−(1−s^r)^b$。解释如下：</p>
+<ul>
+<li>对于两个数据的任意一个函数族来说，这两个函数族值相同的概率是：$s^r$，其中s∈[0,1]是这两个文档的相似度d，r是函数族中的函数个数。</li>
+<li>也就是说，这两个函数族不相同的概率是$1−s^r$</li>
+<li>这两个文档一共存在b个函数族，这bb个函数族都不相同的概率是$(1−s^r)^b$</li>
+<li>所以说，这b个函数族至少有一个相同的概率是$1-(1−s^r)^b$</li>
+</ul>
+<p>以上过程可以为一个简单的<em>AND-OR</em>逻辑，这个逻辑同样也应用于下述基于p稳定分布的LSH中。</p>
+<h2 id="E2LSH：p稳定分布"><a href="#E2LSH：p稳定分布" class="headerlink" title="E2LSH：p稳定分布"></a>E2LSH：p稳定分布</h2><p><strong>定义：</strong>对于一个实数集R上的分布D，如果存在P&gt;=0，对任何n个实数v1,…,vn和n个满足D分布的变量X1,…,Xn，随机变量$\sum_iv_ix_i$和$(\sum_i|v_i|^{p})^{1/p}x$有相同的分布，其中$x$是服从D分布的一个随机变量，则称D为一个p稳定分布。 </p>
+<p>利用p稳定分布可以有效的近似高维特征向量，并在保证度量距离的同时，对高维特征向量进行降维，其关键思想是，产生一个d维的随机向量$X$，随机向量$X$中的每一维随机、独立得从p稳定分布中产生。对于一个d维的特征向量$V$，如定义，随机变量$X.V$具有和$(\sum_i|v_i|^{p})^{1/p}X$一样的分布，因此可以用$X.V$表示向量$V$来估算$||V||_p$ 。</p>
+<p>p-稳定 LSH通过涉入p稳定分布和点积的概念，实现了LSH算法在欧几里得空间下的直接应用，而不需要嵌入Hamming空间。p-stable LSH中，度量是欧几里得空间下的lp准则，即向量<strong>v1</strong>与<strong>v2</strong>的距离定义为||<strong>v1</strong>-<strong>v2</strong>||p，然后通过设定的哈希函数将原始点映射到直线的等长线段上，每条线段便相当于一个哈希桶，与LSH方法类似，距离较近的点映射到同一哈希桶（线段）中的概率大，距离较远的点映射到同一哈希桶中的概率小，正好符合局部敏感的定义。 </p>
+<p><strong>hash函数：</strong>p稳定分布下的hash函数为$h_{x, b} (v) = \left \lfloor \frac{x.v + b}{w} \right \rfloor$，用于将d维的特征向量映射到整数集。其中$x$为d维向量，每一维都独立取自于p稳定分布，b为[0，w]范围内的随机数。其作用效果图如下：</p>
+<p><img src="https://img2018.cnblogs.com/blog/1019353/201809/1019353-20180928194814742-466897192.png" alt></p>
+<p><strong>哈希表的设计：</strong>将哈希过后的向量直接存入hash表，占用内存又不便于查找。因此论文定义了额外两个hash函数：</p>
+<script type="math/tex; mode=display">
+h_1(x_1, x_2, ..., x_k) = ((\sum_{i=1}^{k} r_i a_i) mod C) mod tableSize</script><script type="math/tex; mode=display">
+h_2(x_1, x_2, ..., x_k) = ((\sum_{i=1}^{k} r_i a_i) mod C)</script><p>其中，h1的值作为哈希表索引，h2的值作为链表中的关键字，$r_1$和$r_2$为随机整数，$C$的取值为$2^{32} - 5$。</p>
+<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><h3 id="LSH-1"><a href="#LSH-1" class="headerlink" title="LSH"></a>LSH</h3><ul>
+<li>典型的基于概率模型生成索引编码的结果并不稳定。虽然编码位数增加，但是查询准确率的提高确十分缓慢；</li>
+<li>需要大量的存储空间，不适合于大规模数据的索引。</li>
+</ul>
+<h3 id="E2LSH"><a href="#E2LSH" class="headerlink" title="E2LSH"></a>E2LSH</h3><ul>
+<li>E2LSH方法的目标是保证查询结果的准确率和查全率，并不关注索引结构需要的存储空间的大小；</li>
+<li>E2LSH使用多个索引空间以及多次哈希表查询，生成的索引文件的大小是原始数据大小的数十倍甚至数百倍。</li>
+</ul>
+<h2 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h2><p><strong>$\sum_iv_ix_i$和$(\sum_i|v_i|^{p})^{1/p}X$在满足相同分布的前提下，有什么特点？或则说如果$X$不符合p稳定分布，对结果有什么影响？</strong></p>
+<ul>
+<li>向量距离的度量可以用范数表示，假设向量$V = V_1 - V_2$，那么$||V||_p$即表示向量$V_1$和$V_2$的原始空间下的p范数距离；</li>
+<li>点乘的几何意义表示一个向量在另一个向量下的投影表示，因此$V_1.X - V_2.X = X.V = \sum_iv_ix_i$表示的是向量$V_1$和$V_2$在向量$X$下投影的距离；</li>
+<li>在$X$满足p稳定分布的前提下，可知（1）和（2）下的两个距离具有相同的分布，即满足了<strong>局部敏感</strong>的特点。</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://blog.csdn.net/guoziqing506/article/details/53019049" target="_blank" rel="noopener">LSH(Locality Sensitive Hashing)原理与实现</a></li>
+<li><a href="http://blog.sina.com.cn/s/blog_67914f2901019p3v.html" target="_blank" rel="noopener">LSH和p-stable LSH</a></li>
+<li><a href="https://blog.csdn.net/tcorpion/article/details/78508614" target="_blank" rel="noopener">LSH系列一：p稳定分布LSH算法初探</a></li>
+<li><a href="https://www.cnblogs.com/bourneli/archive/2013/04/04/2999767.html" target="_blank" rel="noopener">利用Minhash和LSH寻找相似的集合</a></li>
+<li><a href="https://github.com/guoziqingbupt/Locality-sensitive-hashing" target="_blank" rel="noopener">【代码】min-hash和E2LSH</a></li>
+</ul>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/hash/">哈希</a>, <a class="has-link-grey -link" href="/tags/unsupervised-hash/">无监督哈希</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.png" alt="支付宝"></div>
+</a>
+
+                
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat.png" alt="微信"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/categories/computer-vision/Iterative-Quantization，ITQ/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">Iterative Quantization，ITQ</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/categories/deep-learning/RNN，循环神经网络/">
+                <span class="level-item">RNN，循环神经网络</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<div id="comment-container"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+    var gitalk = new Gitalk({
+        clientID: 'e5eff8aa39f563a204e5',
+        clientSecret: '8adc001af75f722b72813ab2916f65f6b7ba3da0',
+        id: 'ef6d00dc09670bbd91f806e4e475fcd7',
+        repo: 'chenshen03.github.io',
+        owner: 'chenshen03',
+        admin: "chenshen03"
+    })
+    gitalk.render('comment-container')
+</script>
+
+    </div>
+</div>
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    
+                        <img class="image is-128x128 has-mb-6" src="/images/avatar.png" alt="陈燊">
+                    
+                    
+                    <p class="is-size-4 is-block">
+                        陈燊
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        Master student of Computer Science
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>Xiamen, China</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/archives','_self')">
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        74
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/categories','_self')">
+                    <p class="heading">
+                        分类
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        8
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/tags','_self')">
+                    <p class="heading">
+                        标签
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        38
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/chenshen03">
+                关注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/chenshen03">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Cnblogs" href="https://www.cnblogs.com/cslaker">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Weibo" href="https://www.weibo.com/cstobeno1">
+                
+                <i class="fab fa-weibo"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://www.facebook.com/chenshen03">
+                
+                <i class="fab fa-facebook-f"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Zhihu" href="https://www.zhihu.com/people/chenshen03">
+                
+                <i class="fab fa-zhihu"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+<div class="card widget" id="toc">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a class="is-flex" href="#LSH">
+        <span class="has-mr-6">1</span>
+        <span>LSH</span>
+        </a></li><li>
+        <a class="is-flex" href="#Min-Hash">
+        <span class="has-mr-6">2</span>
+        <span>Min-Hash</span>
+        </a></li><li>
+        <a class="is-flex" href="#E2LSH：p稳定分布">
+        <span class="has-mr-6">3</span>
+        <span>E2LSH：p稳定分布</span>
+        </a></li><li>
+        <a class="is-flex" href="#缺点">
+        <span class="has-mr-6">4</span>
+        <span>缺点</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#LSH-1">
+        <span class="has-mr-6">4.1</span>
+        <span>LSH</span>
+        </a></li><li>
+        <a class="is-flex" href="#E2LSH">
+        <span class="has-mr-6">4.2</span>
+        <span>E2LSH</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#疑问">
+        <span class="has-mr-6">5</span>
+        <span>疑问</span>
+        </a></li><li>
+        <a class="is-flex" href="#参考">
+        <span class="has-mr-6">6</span>
+        <span>参考</span>
+        </a></li></ul>
+        </div>
+    </div>
+</div>
+
+    
+        
+    
+    
+        <div class="column-right-shadow  ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            标签云
+        </h3>
+        <a href="/tags/CUDA/" style="font-size: 10px;">CUDA</a> <a href="/tags/Jupyter/" style="font-size: 10px;">Jupyter</a> <a href="/tags/Leetcode/" style="font-size: 10px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/POJ/" style="font-size: 20px;">POJ</a> <a href="/tags/人脸识别/" style="font-size: 10px;">人脸识别</a> <a href="/tags/fourier-transform/" style="font-size: 10px;">傅里叶变换</a> <a href="/tags/dynamic-planning/" style="font-size: 14.29px;">动态规划</a> <a href="/tags/kalman-filter/" style="font-size: 10px;">卡尔曼滤波</a> <a href="/tags/cnn/" style="font-size: 10px;">卷积神经网络</a> <a href="/tags/hash/" style="font-size: 15.71px;">哈希</a> <a href="/tags/image-feature/" style="font-size: 10px;">图像特征</a> <a href="/tags/graph/" style="font-size: 12.86px;">图论</a> <a href="/tags/mean-shift/" style="font-size: 10px;">均值漂移</a> <a href="/tags/reinforcement-learning/" style="font-size: 10px;">强化学习</a> <a href="/tags/rnn/" style="font-size: 10px;">循环神经网络</a> <a href="/tags/sort/" style="font-size: 10px;">排序</a> <a href="/tags/search/" style="font-size: 17.14px;">搜索</a> <a href="/tags/svm/" style="font-size: 11.43px;">支持向量机</a> <a href="/tags/unsupervised-hash/" style="font-size: 12.86px;">无监督哈希</a> <a href="/tags/temporal-reasoning/" style="font-size: 11.43px;">时序推理</a> <a href="/tags/时序推理，隐马尔可夫/" style="font-size: 10px;">时序推理，隐马尔可夫</a> <a href="/tags/naive-bayes/" style="font-size: 11.43px;">朴素贝叶斯</a> <a href="/tags/kernel-function/" style="font-size: 10px;">核函数</a> <a href="/tags/gradient-descent/" style="font-size: 10px;">梯度下降</a> <a href="/tags/deep-hash/" style="font-size: 11.43px;">深度哈希</a> <a href="/tags/filter/" style="font-size: 12.86px;">滤波</a> <a href="/tags/supervised-hash/" style="font-size: 11.43px;">监督哈希</a> <a href="/tags/object-track/" style="font-size: 10px;">目标跟踪</a> <a href="/tags/neural-network/" style="font-size: 18.57px;">神经网络</a> <a href="/tags/particle-filter/" style="font-size: 10px;">粒子滤波</a> <a href="/tags/nlp/" style="font-size: 10px;">自然语言处理</a> <a href="/tags/semantic-segmentation/" style="font-size: 10px;">语义分割</a> <a href="/tags/bayesian-network/" style="font-size: 10px;">贝叶斯网络</a> <a href="/tags/greedy-lgorithm/" style="font-size: 17.14px;">贪心算法</a> <a href="/tags/edge-detection/" style="font-size: 10px;">边缘检测</a> <a href="/tags/samples/" style="font-size: 11.43px;">采样</a> <a href="/tags/zero-shot-learning/" style="font-size: 10px;">零样本学习</a>
+    </div>
+</div>
+
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分类
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/study/">
+            <span class="level-start">
+                <span class="level-item">学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">5</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/technique/">
+            <span class="level-start">
+                <span class="level-item">技术</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/machine-learning/">
+            <span class="level-start">
+                <span class="level-item">机器学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">11</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/deep-learning/">
+            <span class="level-start">
+                <span class="level-item">深度学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/algorithms/">
+            <span class="level-start">
+                <span class="level-item">算法与数据结构</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">23</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/computer-vision/">
+            <span class="level-start">
+                <span class="level-item">计算机视觉</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/software-engineering/">
+            <span class="level-start">
+                <span class="level-item">软件工程</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">6</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/essay/">
+            <span class="level-start">
+                <span class="level-item">随笔</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">8</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+        
+            
+        
+        </div>
+    
+</div>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="Locality Sensitive Hashing, LSH" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2019 陈燊&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                
+                <br>
+                <span id="busuanzi_container_site_uv">
+                共<span id="busuanzi_value_site_uv">0</span>个访客
+                </span>
+                
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="GitHub" href="https://github.com/chenshen03">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+    
+    
+
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+<title>Zero-shot Learning - 陈燊的博客</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="介绍在传统的分类模型中，为了解决多分类问题（例如三个类别：猫、狗和猪），就需要提供大量的猫、狗和猪的图片用以模型训练，然后给定一张新的图片，就能判定属于猫、狗或猪的其中哪一类。但是对于之前训练图片未出现的类别（例如牛），这个模型便无法将牛识别出来，而ZSL就是为了解决这种问题。在ZSL中，某一类别在训练样本中未出现，但是我们知道这个类别的特征，然后通过语料知识库，便可以将这个类别识别出来。  ze">
+<meta name="keywords" content="零样本学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Zero-shot Learning">
+<meta property="og:url" content="http://chenshen.xyz/categories/computer-vision/Zero-shot Learning/index.html">
+<meta property="og:site_name" content="陈燊的博客">
+<meta property="og:description" content="介绍在传统的分类模型中，为了解决多分类问题（例如三个类别：猫、狗和猪），就需要提供大量的猫、狗和猪的图片用以模型训练，然后给定一张新的图片，就能判定属于猫、狗或猪的其中哪一类。但是对于之前训练图片未出现的类别（例如牛），这个模型便无法将牛识别出来，而ZSL就是为了解决这种问题。在ZSL中，某一类别在训练样本中未出现，但是我们知道这个类别的特征，然后通过语料知识库，便可以将这个类别识别出来。  ze">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://user-images.githubusercontent.com/20432947/52462565-89571400-2bae-11e9-9806-a0e35b84dc48.png">
+<meta property="og:image" content="https://user-images.githubusercontent.com/20432947/52462545-75abad80-2bae-11e9-9bed-4c82fe12c25f.png">
+<meta property="og:updated_time" content="2019-09-04T13:39:51.682Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Zero-shot Learning">
+<meta name="twitter:description" content="介绍在传统的分类模型中，为了解决多分类问题（例如三个类别：猫、狗和猪），就需要提供大量的猫、狗和猪的图片用以模型训练，然后给定一张新的图片，就能判定属于猫、狗或猪的其中哪一类。但是对于之前训练图片未出现的类别（例如牛），这个模型便无法将牛识别出来，而ZSL就是为了解决这种问题。在ZSL中，某一类别在训练样本中未出现，但是我们知道这个类别的特征，然后通过语料知识库，便可以将这个类别识别出来。  ze">
+<meta name="twitter:image" content="https://user-images.githubusercontent.com/20432947/52462565-89571400-2bae-11e9-9806-a0e35b84dc48.png">
+
+
+
+
+
+<link rel="icon" href="/images/favicon.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+    
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-2-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="Zero-shot Learning" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">主页</a>
+                
+                <a class="navbar-item" href="/archives">归档</a>
+                
+                <a class="navbar-item" href="/categories">分类</a>
+                
+                <a class="navbar-item" href="/tags">标签</a>
+                
+                <a class="navbar-item" href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-9-tablet is-9-desktop is-9-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-07-07T04:39:00.000Z">2018-07-07</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/computer-vision/">计算机视觉</a>
+                </div>
+                
+                
+                
+                <span class="level-item has-text-grey" id="busuanzi_container_page_pv">
+                    <i class="far fa-eye"></i>
+                    <span id="busuanzi_value_page_pv">0</span>次访问
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                Zero-shot Learning
+            
+        </h1>
+        <div class="content">
+            <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>在传统的分类模型中，为了解决多分类问题（例如三个类别：猫、狗和猪），就需要提供大量的猫、狗和猪的图片用以模型训练，然后给定一张新的图片，就能判定属于猫、狗或猪的其中哪一类。但是对于之前训练图片未出现的类别（例如牛），这个模型便无法将牛识别出来，而ZSL就是为了解决这种问题。在ZSL中，某一类别在训练样本中未出现，但是我们知道这个类别的特征，然后通过语料知识库，便可以将这个类别识别出来。</p>
+<blockquote>
+<p>zero-shot learning的一个重要理论基础就是利用高维语义特征代替样本的低维特征，使得训练出来的模型具有迁移性。语义向量就是高维语义特征，比如一个物体的高维语义为“四条腿，有尾巴，会汪汪叫，宠物的一种”，那我们就可以判断它是狗，高维语义对它没有细节描述，但是能够很好的对其分类，分类是我们的目的，所以可以舍去低维特征，不需要“全面”。</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="DAP模型"><a href="#DAP模型" class="headerlink" title="DAP模型"></a>DAP模型</h2><blockquote>
+<p><a href="http://xueshu.baidu.com/s?wd=paperuri%3A%2880a762e1901f08efd29c4d6d1942ebd9%29&amp;filter=sc_long_sign&amp;tn=SE_xueshusource_2kduw22v&amp;sc_vurl=http%3A%2F%2Fieeexplore.ieee.org%2Fstamp%2Fstamp.jsp%3Farnumber%3D5206594&amp;ie=utf-8&amp;sc_us=4413520042349602003" target="_blank" rel="noopener">《Learning To Detect Unseen Object Classes by Between-Class Attribute Transfer》 </a></p>
+</blockquote>
+<p>DAP可以理解为一个三层模型：第一层是原始输入层，例如一张电子图片（可以用像素的方式进行描述）；第二层是p维特征空间，每一维代表一个特征（例如是否有尾巴、是否有毛等等）；第三层是输出层，输出模型对输出样本的类别判断。在第一层和第二层中间，训练p个分类器，用于对一张图片判断是否符合p维特征空间各个维度所对应的特征；在第二层和第三层间，有一个语料知识库，用于保存p维特征空间和输出y的对应关系，<em>这个语料知识库是事先人为设定的</em>（暂时理解是这样？）。</p>
+<p>假设我们已经训练好了一个DAP模型，第一层和第二层间的分类器可以判断 <strong>是否黑眼圈、是否喜欢吃竹子</strong> 之类的特征，然后在语料知识库里面包含一个映射：<em>黑眼圈 喜欢吃竹子—&gt; 熊猫</em>，那么即使我们的模型在训练时没有见过熊猫的图片，在遇到熊猫的图片时，我们可以直接通过对图片的特征进行分析，然后结合知识语料库判断出这张图片是熊猫。假设即使语料知识库里面不包含 <em>黑眼圈 喜欢吃竹子—&gt; 熊猫</em> 的映射，我们也可以通过计算熊猫图片的特征与其他训练样本的特征的汉明距离度量，得到熊猫和什么动物比较类似的信息。整个DAP的运作思想就是类似于上述过程。</p>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ul>
+<li>算法引入了中间层，核心在于尽可能得判定好每幅图像所对应的特征，而不是直接去预测出类别；因此DAP模型在判定属性时可能会做得很好，但是在预测类别时却不一定；</li>
+<li>无法利用新的样本逐步改善分类器的功能；</li>
+<li>无法利用额外的属性信息（如Wordnet等)</li>
+</ul>
+<h2 id="ALE模型"><a href="#ALE模型" class="headerlink" title="ALE模型"></a>ALE模型</h2><blockquote>
+<p><a href="http://xueshu.baidu.com/s?wd=paperuri%3A%282a1f6a6a8b8ce1d1eb195ca38d01f719%29&amp;filter=sc_long_sign&amp;tn=SE_xueshusource_2kduw22v&amp;sc_vurl=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Ficp.jsp%3Farnumber%3D6618955&amp;ie=utf-8&amp;sc_us=4026396564311602789" target="_blank" rel="noopener">《Label-Embedding for Attribute-Based Classification》</a></p>
+</blockquote>
+<h3 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h3><p>在分类问题中，每个类别被映射到属性空间中，即每个类别可用一个属性向量来表示（例如：熊猫—&gt;（黑眼圈，爱吃竹子，猫科动物……））。ALE模型即学习一个函数F，该函数用于衡量每一幅图像和每个属性向量之间的匹配度. ALE模型确保对于每幅图像，和分类正确的类别的相容性比和其他类别的匹配度高。通过在AWA和CUB数据集上的实验表明，ALE模型比DAP等模型在ZSL问题上的表现更好，而且ALE可以利用额外的类别信息来提高模型表现，以及可以从零样本学习迁移到其他拥有大量数据的学习问题中。</p>
+<p><img src="https://user-images.githubusercontent.com/20432947/52462565-89571400-2bae-11e9-9806-a0e35b84dc48.png" alt="image"></p>
+<p>在CV领域，大部分的工作都集中与如何从一幅图像里抽取出合适的特征信息（即上图左侧），而在ALE中，研究的重心在于如何把一个类别映射到合适的欧几里得属性空间。</p>
+<h3 id="模型推导"><a href="#模型推导" class="headerlink" title="模型推导"></a>模型推导</h3><p>定义f(x; w）为预测函数，定义F(x, y; w)为输入x和类别y之间的匹配度。则当给定一个需要预测类别的数据x时，预测函数f所做的便是从所有类别y中，找到一个类别y使得F(x, y; w)的值最大。</p>
+<p>对于模型的参数w的求解过程为：对于所有样本（x, y），尽可能得最大化 $\frac{1}{n} \sum_{n=1}^{N}{F(x,y;\omega)}$ ，但是对于这个目标函数，在图像分类问题中无法直接优化得出我们的最终目标（<strong>具体为什么我也不知道。。。</strong>）因此作者从<strong>WSABIE</strong>算法中得到灵感，并借此来实现<strong>ALE算法</strong>。</p>
+<p><strong>Zero-shot learning：</strong></p>
+<p>文中借鉴<strong>WSABIE</strong>算法，得到我们的目标函数为：$\frac {1}{N} \sum<em>{n=1}^{N} \max</em>{y∈Y}l(x_n, y_n, y)$.该目标函数和SSVM很类似，对此解释如下：</p>
+<ul>
+<li>对于每一个样本，计算对应每个类别的得分。然后从其他所有不是正确类别的得分中找出最大的得分；</li>
+<li>逐样本累加后即得到损失函数的值，然后利用SGD等方法对参数进行更新即可；</li>
+<li>算法的核心思想和SVM很像，即让错误分类的得分得尽可能得比正确分类的得分小。</li>
+</ul>
+<p><strong>Few-shots learning：</strong></p>
+<p>在上述的<strong>Zero-shot learning</strong>下对应的模型中，每个类别通过映射$\phi(y)$得到语义空间的值是实现通过先验信息固定的，但是在使用模型预测的过程中，可能会逐步遇到之前训练样本中不存在对应类别的数据，那么ALE就具有能逐步利用新的训练样本来改善模型的作用。在此问题下，模型的目标函数变为：</p>
+<script type="math/tex; mode=display">
+\frac {1}{N} \sum_{n=1}^{N} \max_{y∈Y}l(x_n, y_n, y) + \frac{\mu }{2}\begin{Vmatrix} \Phi - \Phi ^{\Lambda }\end{Vmatrix}^{2}</script><p>在上述公式中，参数$\Phi$为在一定维度随机初始化的参数。在使用SGD等方法进行参数更新的时候，为使该损失函数的值尽可能得小，显然$\Phi$要尽可能得接近$\Phi^{\Lambda}$，同时也利用了训练样本中存在的部分信息。从而使得AEL模型达到可以逐步利用新的训练样本（之前的训练样本中不存在的类别）的信息来改善模型。</p>
+<p><strong>ALE模型如何利用额外的属性等信息来源？</strong></p>
+<p>DAP模型针对每一个属性训练一个分类器，再从属性向量空间里面找到和测试样本最接近的类别。然后ALE并没有特别针对语义向量空间的每一个维度进行学习，ALE直接学习了从特征空间到语义向量空间的映射。其中$\theta(x)$表示从图像得到的特征，$\varphi (y)$则是从类别到语义向量空间的映射。</p>
+<p>因为$\varphi (y)$是独立于训练数据的，因此可以根据需要变换为其他种类的先验信息，例如<strong>HLE模型</strong>，而在DAP模型中，因为模型限定了只能对单一属性进行训练，因为就无法利用其他种类的先验信息了。</p>
+<h3 id="模型如何对ZS类进行预测"><a href="#模型如何对ZS类进行预测" class="headerlink" title="模型如何对ZS类进行预测"></a>模型如何对ZS类进行预测</h3><p>ALE模型利用属性等语义信息，将每个类别标签嵌入到维度为85的语义空间内（假设使用85个属性描述类别）。ALE模型所做的就是学习到一个从特征空间到语义空间的映射，该映射确保得到语义空间内的点与正确类别的语义向量更近，尽可能得与错误类别的语义向量更远。这样，在对ZS进行预测时，映射所得到的在语义空间上的点与在训练时出现过的那些类别所对应点会很远，从而使得与正确的ZS类对应的语义向量更近，从而进行预测。</p>
+<h3 id="DAP与ALE"><a href="#DAP与ALE" class="headerlink" title="DAP与ALE"></a>DAP与ALE</h3><p>针对每个测试样本，DAP利用分类器得到一个属性向量，然后直接从预定义好的属性空间里找到一个与该属性向量最近的类别作为预测结果输出。而ALE在训练时利用映射函数衡量每个输入与语义向量之间的得分，损失函数的训练过程确保正确类别的得分都比错误类别的得分高出一定值（类似SVM），因此ALE的训练过程是直接以类别预测为指导的。</p>
+<p>DAP的模型结构其实和ALE模型的结构大体上是一致的，甚至连映射矩阵、语义空间的矩阵维度都是相同的，但是区别在于两者的监督方式不同。DAP针对是在属性上进行 监督学习的，针对每个属性维度学习一个分类器；而ALE是针对类别进行监督学习的，从而导致映射层的参数不同。</p>
+<p>DAP的监督方式没有学习到属性之间的相关性，而ALE训练之后确保类别相似的在语义空间内都具有类似的分布，且类别相似大都具有相同的特征，导致了具有不同特征的类别在语义空间内具有不同的分布，从而学习到属性间的相关性。</p>
+<h2 id="SAE模型"><a href="#SAE模型" class="headerlink" title="SAE模型"></a>SAE模型</h2><blockquote>
+<p><a href="https://arxiv.org/pdf/1704.08345.pdf" target="_blank" rel="noopener">《Semantic Autoencoder for Zero-Shot learning》</a></p>
+</blockquote>
+<h3 id="概要-1"><a href="#概要-1" class="headerlink" title="概要"></a>概要</h3><p>传统的ZSL问题，经常遇到<em>映射领域漂移</em>问题，在SAE模型中，为了解决这个问题，要求输入x经过变换生成的属性层S，拥有恢复到原来输入层x的功能，并且添加了映射层必须具有具体的语义意思的限制，通过加入这个限制，确保了映射函数必须尽可能得保留原输入层的所有信息。</p>
+<blockquote>
+<p><strong>映射领域漂移（Projection domain shift）</strong></p>
+<p>对于zero-shot learning问题，由于训练模型时，对于测试数据类别是不可见的，因此，当训练集和测试集的类别相差很大的时候，比如一个里面全是动物，另一个全是家具，在这种情况下，传统zero-shot learning的效果将受到很大的影响。</p>
+</blockquote>
+<p>为什么SAE模型可以解决映射领域漂移问题?</p>
+<h3 id="介绍-1"><a href="#介绍-1" class="headerlink" title="介绍"></a>介绍</h3><p>如今CV的研究方向已经逐步朝着大规模的分类问题发展了，但是由于在大数据集（如ImageNet）的21814个类别里，有296个类别的图像仅仅只有一个图像数据，因此可扩展性还是一个严峻的问题。</p>
+<p>SAE模型的输入特征空间是通过<strong>GoogleNet</strong>或则<strong>AlexNet</strong>从图像数据里提取出来的特征，而输出语义空间是头ing过<strong>Skip-gram</strong>在<strong>Wikipedia</strong>训练得到的<strong>word2vec</strong>向量。</p>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><ul>
+<li>SAE模型在预测的时候，是从<strong>unseen classes</strong>的语义空间向量里找到一个和当前测试样本距离最近的作为预测结果。那么在实际应用中，当一个新的样本进来，我们怎么确定这个样本是属于<strong>seen classes</strong>还是<strong>unseen classes</strong>的语义空间里进行预测呢？</li>
+</ul>
+<h2 id="SCoRE"><a href="#SCoRE" class="headerlink" title="SCoRE"></a>SCoRE</h2><blockquote>
+<p><a href="http://svcl.ucsd.edu/~pedro-morgado/score/score-cvpr17.pdf" target="_blank" rel="noopener">《Semantically Consistent Regularization for Zero-Shot Recognition》</a></p>
+</blockquote>
+<h3 id="Deep-RIS"><a href="#Deep-RIS" class="headerlink" title="Deep-RIS"></a>Deep-RIS</h3><p>要学习样本X到属性向量S的映射W，设训练集：</p>
+<script type="math/tex; mode=display">
+\mathcal{D}=\left\{\left(\mathbf{x}^{(i)}, \mathbf{s}^{(\hat{i})}\right)_{i=1}^{N}\right\}</script><p>其中x为输入样本，y为样本标签；属性集合为：</p>
+<script type="math/tex; mode=display">
+\mathbf{s}^{(i)}=\left(s_{1}^{(i)}, \ldots, s_{Q}^{(i)}\right)</script><p>对于Q个属性，为每个属性建立一个CNN，作为属性分类器：</p>
+<script type="math/tex; mode=display">
+a_{k}\left(\mathbf{x} ; \mathbf{t}_{k}, \Theta\right)=\sigma\left(\mathbf{t}_{k}^{T} \theta(\mathbf{x} ; \Theta)\right)</script><p>其中，$\sigma$为sigmoid函数。损失函数可以定义为交叉熵损失。</p>
+<h3 id="Deep-RULE"><a href="#Deep-RULE" class="headerlink" title="Deep-RULE"></a>Deep-RULE</h3><p>假设有Q个属性，用二值表示；有C个类别，则可以将每个类别转换为one-hot的形式：</p>
+<script type="math/tex; mode=display">
+\phi_{k}(y)=\left\{\begin{array}{ll}{1} & {\text { if class } y \text { contains attribute } k} \\ {-1} & {\text { if class } y \text { lacks attribute } k}\end{array}\right.</script><p>即为类别y的语义编码，则分类器可以定义为：</p>
+<script type="math/tex; mode=display">
+h(\mathbf{x} ; \mathbf{T}, \Theta)=\Phi^{T} a(\mathbf{x})=\Phi^{T} \mathbf{T}^{T} \theta(\mathbf{x} ; \Theta)</script><p>其中$ \theta(x ; \Theta) $表示输入图片的特征表示；T为一个映射矩阵，$\Theta^{T}$表示类别的one-hot表示。若使用神经网络结构实现上述目标函数，只需要先用CNN提取图片的特征，通过一个全连接层将特征映射到语义空间中（也就是学习映射矩阵T），输出时为类别y的形式即可。损失函数直接采用网络输出和真实样本之间的交叉熵损失即可。</p>
+<h3 id="Deep-RIS和Deep-RULE之间的关系"><a href="#Deep-RIS和Deep-RULE之间的关系" class="headerlink" title="Deep-RIS和Deep-RULE之间的关系"></a>Deep-RIS和Deep-RULE之间的关系</h3><p>可以从两者的损失函数，来说明它们之间的关系。Deep-RIS对每一个单独的属性ak(x)进行了监督学习，这是一种很强的约束，它把属性向量的表达限制在一个固定的范围内；反观Deep-RULE，它建立了一个语义空间SV，将样本和类别属性化之后，投影到该语义空间中。这样做的结果是：属性向量之间有了相关关系，使得属性向量的表达更加丰富；但同时，会产生冗余空间，这个冗余空间的问题在于，它会加重semantic domain shift的问题。更详细的解释是：设训练集中样本的属性向量所构成的语义空间XV的往往要小于SV，令NV=SV-XV，如果在测试集中，测试样本的属性向量处于NV中，则由训练样本训练出来的分类器将无法对该测试样本进行分类。在Deep-RIS中，对于样本到属性向量之间的映射有着非常强的约束，使得XV和SV相近。在同样的属性定义的前提下，由于NV的存在，使得Deep-RULE更有可能无法处理测试集中的类别。</p>
+<blockquote>
+<p><strong>论述：</strong>但同时，会产生冗余空间，这个冗余空间的问题在于，它会加重semantic domain shift的问题</p>
+<p><strong>解释：</strong>假设有a b c d四个特征，训练集的类别A和B分别具有ab和ac特征，即使测试集的类别是bc，也能进行预测，因为训练时已经都对abc的语义空间进行了监督学习，但是如果测试集包含d特征，这是类别A和B都不具有的特征（领域漂移问题），这就会使得模型无法正常得进行预测。</p>
+</blockquote>
+<p>通过上面的论述其实可以知道，<strong>如果NV很小，几乎没有测试集类别的属性向量位于其中，则Deep-RULE的方法会取得更好的效果；如果NV很大，测试集中很多类别的属性向量位于其中，则Deep-RIS的方法可能会更好。</strong></p>
+<p>通过对上述两类方法的分析，可以发现，两种方法存在互补性。如果能够将Deep-RIS对于单个属性的约束融入到Deep-RULE中，就可以一定程度上使得NV变小，从而得到更好的结果。</p>
+<p>以DAP和ALE两种典型的模型为例，当采用属性作为语义空间的表达时，两者属性空间的构成基本是一致的，都是由一系列的属性构成（例如有尾巴、会飞等）。最核心的不同在于DAP针对每一个属性监督学习一个分类器（如SVM），因此训练样本所包含的属性空间信息往往和整个属性空间差别很小。DAP对于每一个测试类别，输出一个维度为D（属性的个数）的向量。且DAP没有学习到属性之间的依赖关系，比如“水中动物”和“有翅膀”这两个属性就有着很强的负相关，则表明了我们可以利用更少的属性维度去表达和之前一样的信息。</p>
+<p>而ALE直接从输入的特征空间学习一个到属性空间的映射，在训练过程中采用rank函数——确保所有正确类别的得分都比错误类别高。模型的输出是一个维度为C（类别个数）的变量，表示测试数据在每一个类别上的得分情况。因此ALE是从类别C的维度去进行监督学习的。在ALE训练完成后，训练样本里存在的类别在测试时对应的得分也会最大，但是对于训练样本中不存在的类别（ZS类），因为在训练时没有数据可以用于ZS类的监督学习，所有在测试时ZS类的得分表现就没有那么好。</p>
+<p>因为属性空间是利用先验知识对所有类别映射而成的，因此存在一些属性只有在ZS类别里存在，而在训练类别里不存在。</p>
+<p>以googlenet、CUB、attribute为例。pool5的输出是1024维，相当于visual feature；然后接一个312维的fc1，（fc1参数shape为1024 <em> 312，相当于公式中的T），fc1的输出fc_sem，用来做属性预测，也就是RIS; fc_sem再接一个150维的 fc2，(fc2参数shape为312</em>150，相当于公式中的W），fc2的输出fc_obj，用来做类别预测，也就是RULE。fc2的参数，才是wc，用来跟事先定义好的codeword做L2约束。如果wc，直接使用事先定义好的codeword，W不学习，只学习T，那么这个流程将会是是经典的套路：visual space投影到semantic space，然后投影后的visual feature和semantic feature，使用dot product度量类别之间的相似性。根据Train set上的类别信息，使用分类loss，学习T。这篇工作相当于把用于dot product的codeword，也改成可以学习的了，放松了约束，可以看成是一种正则，用于增加模型在测试集上的泛化能力。</p>
+<p><img src="https://user-images.githubusercontent.com/20432947/52462545-75abad80-2bae-11e9-9bed-4c82fe12c25f.png" alt="image"></p>
+<h3 id="问题-1"><a href="#问题-1" class="headerlink" title="问题"></a>问题</h3><ul>
+<li><strong>Abstract:</strong> The latter addresses this issue but leaves part of the semantic space unsupervised.  </li>
+<li>ALE和DAP中两个参数W之间的区别？</li>
+</ul>
+<h2 id="迁移学习"><a href="#迁移学习" class="headerlink" title="迁移学习"></a>迁移学习</h2><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><p><a href="http://blog.csdn.net/KangRoger/article/details/55681469" target="_blank" rel="noopener">cs231n-(9)迁移学习和Fine-tune网络</a></p>
+</li>
+<li><p><a href="https://www.zhihu.com/question/49534423" target="_blank" rel="noopener">迁移学习与fine-tuning有什么区别？</a></p>
+</li>
+<li><p><a href="https://www.zhihu.com/question/41979241" target="_blank" rel="noopener">什么是迁移学习 (Transfer Learning)？这个领域历史发展前景如何？</a></p>
+</li>
+<li><p><a href="https://www.jiqizhixin.com/articles/2017-05-28-7" target="_blank" rel="noopener">GMIS 2017大会杨强演讲：迁移学习的挑战和六大突破点</a></p>
+</li>
+</ul>
+<p>目前ZSL还是不能摆脱对其他模态信息的依赖：比如标注的属性，或者用wordvec去提语义特征，多数做法是将视觉特征嵌入到其他模态空间，或者将多个模态特征映射到一个公共latent空间，利用最近邻思想实现对未见类的分类，本质上也是一种知识迁移。</p>
+<p>Transfer Learning涉及的范围就很大了，最近我也在看，涉及的细分领域比如Domain Adaptation等等，许多Transfer Learning中的技术也用于提高ZSL的性能，比如将Self-taughting Learning，Self-Paced Learning的思想可以用到Transductive ZSL中提高ZSL的算法性能。</p>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/zero-shot-learning/">零样本学习</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.png" alt="支付宝"></div>
+</a>
+
+                
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat.png" alt="微信"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/categories/machine-learning/MDP，马尔可夫决策/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">MDP，马尔可夫决策</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/categories/essay/一群可爱的人/">
+                <span class="level-item">一群可爱的人</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<div id="comment-container"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.4.1/dist/gitalk.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+    var gitalk = new Gitalk({
+        clientID: 'e5eff8aa39f563a204e5',
+        clientSecret: '8adc001af75f722b72813ab2916f65f6b7ba3da0',
+        id: 'bf67680b6fe8f494049af1ed11874b14',
+        repo: 'chenshen03.github.io',
+        owner: 'chenshen03',
+        admin: "chenshen03"
+    })
+    gitalk.render('comment-container')
+</script>
+
+    </div>
+</div>
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    
+                        <img class="image is-128x128 has-mb-6" src="/images/avatar.png" alt="陈燊">
+                    
+                    
+                    <p class="is-size-4 is-block">
+                        陈燊
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        Master student of Computer Science
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>Xiamen, China</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/archives','_self')">
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        74
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/categories','_self')">
+                    <p class="heading">
+                        分类
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        8
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div style="cursor: pointer;" onclick="window.open('/tags','_self')">
+                    <p class="heading">
+                        标签
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        38
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/chenshen03">
+                关注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/chenshen03">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Cnblogs" href="https://www.cnblogs.com/cslaker">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Weibo" href="https://www.weibo.com/cstobeno1">
+                
+                <i class="fab fa-weibo"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://www.facebook.com/chenshen03">
+                
+                <i class="fab fa-facebook-f"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Zhihu" href="https://www.zhihu.com/people/chenshen03">
+                
+                <i class="fab fa-zhihu"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+<div class="card widget" id="toc">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a class="is-flex" href="#介绍">
+        <span class="has-mr-6">1</span>
+        <span>介绍</span>
+        </a></li><li>
+        <a class="is-flex" href="#DAP模型">
+        <span class="has-mr-6">2</span>
+        <span>DAP模型</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#缺点">
+        <span class="has-mr-6">2.1</span>
+        <span>缺点</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#ALE模型">
+        <span class="has-mr-6">3</span>
+        <span>ALE模型</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#概要">
+        <span class="has-mr-6">3.1</span>
+        <span>概要</span>
+        </a></li><li>
+        <a class="is-flex" href="#模型推导">
+        <span class="has-mr-6">3.2</span>
+        <span>模型推导</span>
+        </a></li><li>
+        <a class="is-flex" href="#模型如何对ZS类进行预测">
+        <span class="has-mr-6">3.3</span>
+        <span>模型如何对ZS类进行预测</span>
+        </a></li><li>
+        <a class="is-flex" href="#DAP与ALE">
+        <span class="has-mr-6">3.4</span>
+        <span>DAP与ALE</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#SAE模型">
+        <span class="has-mr-6">4</span>
+        <span>SAE模型</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#概要-1">
+        <span class="has-mr-6">4.1</span>
+        <span>概要</span>
+        </a></li><li>
+        <a class="is-flex" href="#介绍-1">
+        <span class="has-mr-6">4.2</span>
+        <span>介绍</span>
+        </a></li><li>
+        <a class="is-flex" href="#问题">
+        <span class="has-mr-6">4.3</span>
+        <span>问题</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#SCoRE">
+        <span class="has-mr-6">5</span>
+        <span>SCoRE</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#Deep-RIS">
+        <span class="has-mr-6">5.1</span>
+        <span>Deep-RIS</span>
+        </a></li><li>
+        <a class="is-flex" href="#Deep-RULE">
+        <span class="has-mr-6">5.2</span>
+        <span>Deep-RULE</span>
+        </a></li><li>
+        <a class="is-flex" href="#Deep-RIS和Deep-RULE之间的关系">
+        <span class="has-mr-6">5.3</span>
+        <span>Deep-RIS和Deep-RULE之间的关系</span>
+        </a></li><li>
+        <a class="is-flex" href="#问题-1">
+        <span class="has-mr-6">5.4</span>
+        <span>问题</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#迁移学习">
+        <span class="has-mr-6">6</span>
+        <span>迁移学习</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#参考">
+        <span class="has-mr-6">6.1</span>
+        <span>参考</span>
+        </a></li></ul></li></ul>
+        </div>
+    </div>
+</div>
+
+    
+        
+    
+    
+        <div class="column-right-shadow  ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            标签云
+        </h3>
+        <a href="/tags/CUDA/" style="font-size: 10px;">CUDA</a> <a href="/tags/Jupyter/" style="font-size: 10px;">Jupyter</a> <a href="/tags/Leetcode/" style="font-size: 10px;">Leetcode</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/POJ/" style="font-size: 20px;">POJ</a> <a href="/tags/人脸识别/" style="font-size: 10px;">人脸识别</a> <a href="/tags/fourier-transform/" style="font-size: 10px;">傅里叶变换</a> <a href="/tags/dynamic-planning/" style="font-size: 14.29px;">动态规划</a> <a href="/tags/kalman-filter/" style="font-size: 10px;">卡尔曼滤波</a> <a href="/tags/cnn/" style="font-size: 10px;">卷积神经网络</a> <a href="/tags/hash/" style="font-size: 15.71px;">哈希</a> <a href="/tags/image-feature/" style="font-size: 10px;">图像特征</a> <a href="/tags/graph/" style="font-size: 12.86px;">图论</a> <a href="/tags/mean-shift/" style="font-size: 10px;">均值漂移</a> <a href="/tags/reinforcement-learning/" style="font-size: 10px;">强化学习</a> <a href="/tags/rnn/" style="font-size: 10px;">循环神经网络</a> <a href="/tags/sort/" style="font-size: 10px;">排序</a> <a href="/tags/search/" style="font-size: 17.14px;">搜索</a> <a href="/tags/svm/" style="font-size: 11.43px;">支持向量机</a> <a href="/tags/unsupervised-hash/" style="font-size: 12.86px;">无监督哈希</a> <a href="/tags/temporal-reasoning/" style="font-size: 11.43px;">时序推理</a> <a href="/tags/时序推理，隐马尔可夫/" style="font-size: 10px;">时序推理，隐马尔可夫</a> <a href="/tags/naive-bayes/" style="font-size: 11.43px;">朴素贝叶斯</a> <a href="/tags/kernel-function/" style="font-size: 10px;">核函数</a> <a href="/tags/gradient-descent/" style="font-size: 10px;">梯度下降</a> <a href="/tags/deep-hash/" style="font-size: 11.43px;">深度哈希</a> <a href="/tags/filter/" style="font-size: 12.86px;">滤波</a> <a href="/tags/supervised-hash/" style="font-size: 11.43px;">监督哈希</a> <a href="/tags/object-track/" style="font-size: 10px;">目标跟踪</a> <a href="/tags/neural-network/" style="font-size: 18.57px;">神经网络</a> <a href="/tags/particle-filter/" style="font-size: 10px;">粒子滤波</a> <a href="/tags/nlp/" style="font-size: 10px;">自然语言处理</a> <a href="/tags/semantic-segmentation/" style="font-size: 10px;">语义分割</a> <a href="/tags/bayesian-network/" style="font-size: 10px;">贝叶斯网络</a> <a href="/tags/greedy-lgorithm/" style="font-size: 17.14px;">贪心算法</a> <a href="/tags/edge-detection/" style="font-size: 10px;">边缘检测</a> <a href="/tags/samples/" style="font-size: 11.43px;">采样</a> <a href="/tags/zero-shot-learning/" style="font-size: 10px;">零样本学习</a>
+    </div>
+</div>
+
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分类
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/study/">
+            <span class="level-start">
+                <span class="level-item">学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">5</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/technique/">
+            <span class="level-start">
+                <span class="level-item">技术</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/machine-learning/">
+            <span class="level-start">
+                <span class="level-item">机器学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">11</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/deep-learning/">
+            <span class="level-start">
+                <span class="level-item">深度学习</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/algorithms/">
+            <span class="level-start">
+                <span class="level-item">算法与数据结构</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">23</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/computer-vision/">
+            <span class="level-start">
+                <span class="level-item">计算机视觉</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">10</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/software-engineering/">
+            <span class="level-start">
+                <span class="level-item">软件工程</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">6</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/essay/">
+            <span class="level-start">
+                <span class="level-item">随笔</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">8</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+        
+            
+        
+        </div>
+    
+</div>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="Zero-shot Learning" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2019 陈燊&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                
+                <br>
+                <span id="busuanzi_container_site_uv">
+                共<span id="busuanzi_value_site_uv">0</span>个访客
+                </span>
+                
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="GitHub" href="https://github.com/chenshen03">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+    
+    
+
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
