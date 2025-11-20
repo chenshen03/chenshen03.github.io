@@ -2,7 +2,7 @@ export const profileData = {
   name: "Shen Chen (陈燊)",
   title: "Researcher at Tencent Youtu Lab",
   university: "Tencent Youtu Lab",
-  avatar: "https://public.youware.com/image/44700868-1896-4d1d-9ba7-2fd39ba2c445/2h0hwfs009.png",
+  avatar: "src/assets/avatar.jpg",
   about: {
     en: "I am a Researcher at Tencent Youtu Lab, where I work on computer vision and machine learning. My research interests include image forensics, deepfake detection and face anti-spoofing. I have published over 20 papers in top-tier conferences and journals (CVPR, ICCV, ECCV, AAAI, IJCV, etc.) with 2000+ citations.",
     zh: "我是腾讯优图实验室的研究员，从事计算机视觉和机器学习方面的研究。我的研究兴趣包括图像取证、深度伪造检测和人脸活体检测。我在顶级会议和期刊（CVPR, ICCV, ECCV, AAAI, IJCV 等）发表了 20 多篇论文，引用次数超过 2000 次。"
