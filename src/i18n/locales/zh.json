@@ -1,0 +1,28 @@
+{
+  "header": {
+    "home": "首页",
+    "publications": "论文发表",
+    "awards": "获奖情况",
+    "services": "学术服务"
+  },
+  "profile": {
+    "role": "高级研究员",
+    "about": "关于我",
+    "interests": "研究兴趣",
+    "education": "教育背景",
+    "email": "邮箱",
+    "github": "GitHub",
+    "scholar": "谷歌学术"
+  },
+  "sections": {
+    "activity": "近期动态",
+    "publications": "精选论文",
+    "awards": "荣誉奖项",
+    "services": "学术服务",
+    "view_more": "查看更多",
+    "collapse": "收起"
+  },
+  "footer": {
+    "copyright": "© 2024 Your Name. 保留所有权利。"
+  }
+}

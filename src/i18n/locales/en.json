@@ -1,0 +1,28 @@
+{
+  "header": {
+    "home": "Home",
+    "publications": "Publications",
+    "awards": "Awards",
+    "services": "Services"
+  },
+  "profile": {
+    "role": "Senior Researcher",
+    "about": "About Me",
+    "interests": "Research Interests",
+    "education": "Education",
+    "email": "Email",
+    "github": "GitHub",
+    "scholar": "Google Scholar"
+  },
+  "sections": {
+    "activity": "Recent Activity",
+    "publications": "Selected Publications",
+    "awards": "Honors & Awards",
+    "services": "Academic Services",
+    "view_more": "View More",
+    "collapse": "Show Less"
+  },
+  "footer": {
+    "copyright": "© 2024 Your Name. All rights reserved."
+  }
+}
