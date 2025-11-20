@@ -37,193 +37,195 @@ export const activities = [
     id: 1,
     date: "2025",
     title: {
-      en: "ACMMM 2025 Acceptance",
-      zh: "ACMMM 2025 论文接收"
+      en: "1 paper accepted by ACMMM 2025",
+      zh: "1 篇论文被 ACMMM 2025 接收"
     },
-    description: {
-      en: "1 paper accepted by ACMMM 2025.",
-      zh: "1 篇论文被 ACMMM 2025 接收。"
-    }
+    papers: [
+      {
+        en: "DITL2: Dual-Stage Invariance Transfer Learning for Generalizable Document Image Tampering Localization",
+        zh: "DITL2：双阶段不变性迁移学习用于通用文档图像篡改定位"
+      }
+    ]
   },
   {
     id: 2,
     date: "2025",
     title: {
-      en: "ICML 2025 Acceptance",
-      zh: "ICML 2025 论文接收"
+      en: "1 paper accepted by TCSVT 2025",
+      zh: "1 篇论文被 TCSVT 2025 接收"
     },
-    description: {
-      en: "1 paper accepted by ICML 2025.",
-      zh: "1 篇论文被 ICML 2025 接收。"
-    }
+    papers: [
+      {
+        en: "Generalized Document Tampering Localization via Color and Semantic Disentanglement",
+        zh: "通过颜色和语义解耦的通用文档篡改定位"
+      }
+    ]
   },
   {
     id: 3,
     date: "2025",
     title: {
-      en: "CVPR 2025 Acceptance",
-      zh: "CVPR 2025 论文接收"
+      en: "1 paper accepted by TIP 2025",
+      zh: "1 篇论文被 TIP 2025 接收"
     },
-    description: {
-      en: "1 paper accepted by CVPR 2025.",
-      zh: "1 篇论文被 CVPR 2025 接收。"
-    }
+    papers: [
+      {
+        en: "Faces Blind Your Eyes: Unveiling the Content-Irrelevant Synthetic Artifacts for Deepfake Detection",
+        zh: "人脸蒙蔽双眼：揭示深度伪造检测中与内容无关的合成伪影"
+      }
+    ]
   },
   {
     id: 4,
     date: "2025",
     title: {
-      en: "IJCV 2025 Acceptance",
-      zh: "IJCV 2025 论文接收"
+      en: "1 paper accepted by ICML 2025",
+      zh: "1 篇论文被 ICML 2025 接收"
     },
-    description: {
-      en: "2 papers accepted by IJCV 2025.",
-      zh: "2 篇论文被 IJCV 2025 接收。"
-    }
+    papers: [
+      {
+        en: "Effort: Efficient orthogonal modeling for generalizable ai-generated image detection",
+        zh: "Effort：高效正交建模用于通用AI生成图像检测"
+      }
+    ]
   },
   {
     id: 5,
-    date: "2024",
+    date: "2025",
     title: {
-      en: "NeurIPS 2024 Acceptance",
-      zh: "NeurIPS 2024 论文接收"
+      en: "2 papers accepted by CVPR 2025",
+      zh: "2 篇论文被 CVPR 2025 接收"
     },
-    description: {
-      en: "2 papers accepted by NeurIPS 2024.",
-      zh: "2 篇论文被 NeurIPS 2024 接收。"
-    }
+    papers: [
+      {
+        en: "Generalizing Deepfake Video Detection with Plug-and-Play: Video-Level Blending and Spatiotemporal Adapter Tuning",
+        zh: "通过即插即用泛化深度伪造视频检测：视频级混合和时空适配器调优"
+      },
+      {
+        en: "Towards general visual-linguistic face forgery detection",
+        zh: "面向通用视觉-语言人脸伪造检测"
+      }
+    ]
   },
   {
     id: 6,
-    date: "2024",
+    date: "2025",
     title: {
-      en: "ECCV 2024 Acceptance",
-      zh: "ECCV 2024 论文接收"
+      en: "2 papers accepted by IJCV 2025",
+      zh: "2 篇论文被 IJCV 2025 接收"
     },
-    description: {
-      en: "1 paper accepted by ECCV 2024.",
-      zh: "1 篇论文被 ECCV 2024 接收。"
-    }
+    papers: [
+      {
+        en: "Continual face forgery detection via historical distribution preserving",
+        zh: "通过保留历史分布进行持续人脸伪造检测"
+      },
+      {
+        en: "Rethinking open-world deepfake attribution with multi-perspective sensory learning",
+        zh: "利用多视角感知学习重新思考开放世界深度伪造归因"
+      }
+    ]
   },
   {
     id: 7,
-    date: "2023",
+    date: "2024",
     title: {
-      en: "Second Place, The 4th China AI Competition",
-      zh: "第四届中国人工智能大赛二等奖"
+      en: "2 papers accepted by NeurIPS 2024",
+      zh: "2 篇论文被 NeurIPS 2024 接收"
     },
-    description: {
-      en: "Deepfake Video Generation Methods Identify Track (Team Leader & First Contributor).",
-      zh: "深度伪造视频生成方法识别赛道（队长）。"
-    }
+    papers: [
+      {
+        en: "Df40: Toward next-generation deepfake detection",
+        zh: "Df40：迈向下一代深度伪造检测"
+      },
+      {
+        en: "Diffusionfake: Enhancing generalization in deepfake detection via guided stable diffusion",
+        zh: "Diffusionfake：通过引导稳定扩散增强深度伪造检测的泛化能力"
+      }
+    ]
   },
   {
     id: 8,
-    date: "2022",
+    date: "2024",
     title: {
-      en: "CVPR 2022 Acceptance",
-      zh: "CVPR 2022 论文接收"
+      en: "1 paper accepted by ECCV 2024",
+      zh: "1 篇论文被 ECCV 2024 接收"
     },
-    description: {
-      en: "1 paper accepted by CVPR 2022.",
-      zh: "1 篇论文被 CVPR 2022 接收。"
-    }
+    papers: [
+      {
+        en: "Enhancing tampered text detection through frequency feature fusion and decomposition",
+        zh: "通过频率特征融合和分解增强篡改文本检测"
+      }
+    ]
   },
   {
     id: 9,
     date: "2022",
     title: {
-      en: "First Place, Deepfake Security Challenge",
-      zh: "深度伪造安全挑战赛一等奖"
+      en: "1 paper accepted by CVPR 2022",
+      zh: "1 篇论文被 CVPR 2022 接收"
     },
-    description: {
-      en: "Team Leader.",
-      zh: "队长。"
-    }
+    papers: [
+      {
+        en: "End-to-end reconstruction-classification learning for face forgery detection",
+        zh: "用于人脸伪造检测的端到端重建-分类学习"
+      }
+    ]
   },
   {
     id: 10,
-    date: "2021",
+    date: "2023",
     title: {
-      en: "AAAI 2021 Acceptance",
-      zh: "AAAI 2021 论文接收"
+      en: "1 paper accepted by ICCV 2023",
+      zh: "1 篇论文被 ICCV 2023 接收"
     },
-    description: {
-      en: "1 paper accepted by AAAI 2021.",
-      zh: "1 篇论文被 AAAI 2021 接收。"
-    }
+    papers: [
+      {
+        en: "Contrastive pseudo learning for open-world deepfake attribution",
+        zh: "用于开放世界深度伪造归因的对比伪学习"
+      }
+    ]
   },
   {
     id: 11,
     date: "2021",
     title: {
-      en: "Third Place, ForgeryNet Challenge",
-      zh: "ForgeryNet 挑战赛三等奖"
+      en: "1 paper accepted by AAAI 2021",
+      zh: "1 篇论文被 AAAI 2021 接收"
     },
-    description: {
-      en: "Track 1: Forgery Image Analysis (Team Leader).",
-      zh: "赛道 1：伪造图像分析（队长）。"
-    }
+    papers: [
+      {
+        en: "Local Relation Learning for Deepfake Detection",
+        zh: "用于人脸伪造检测的局部关系学习"
+      }
+    ]
   },
   {
     id: 12,
-    date: "2021",
+    date: "2020",
     title: {
-      en: "Second Place, ForgeryNet Challenge",
-      zh: "ForgeryNet 挑战赛二等奖"
+      en: "1 paper accepted by IJCV 2020",
+      zh: "1 篇论文被 IJCV 2020 接收"
     },
-    description: {
-      en: "Track 2: Forgery Video Analysis.",
-      zh: "赛道 2：伪造视频分析。"
-    }
+    papers: [
+      {
+        en: "Hadamard Matrix Guided Online Hashing",
+        zh: "基于Hadamard矩阵的在线哈希"
+      }
+    ]
   },
   {
     id: 13,
-    date: "2021",
-    title: {
-      en: "Second Place, 3D High-Fidelity Mask Attack Detection Challenge",
-      zh: "3D 高保真面具攻击检测挑战赛二等奖"
-    },
-    description: {
-      en: "Team Leader.",
-      zh: "队长。"
-    }
-  },
-  {
-    id: 14,
     date: "2020",
     title: {
-      en: "IJCV 2020 Acceptance",
-      zh: "IJCV 2020 论文接收"
+      en: "1 paper accepted by TIP 2020",
+      zh: "1 篇论文被 TIP 2020 接收"
     },
-    description: {
-      en: "1 paper accepted by IJCV 2020.",
-      zh: "1 篇论文被 IJCV 2020 接收。"
-    }
-  },
-  {
-    id: 15,
-    date: "2020",
-    title: {
-      en: "TIP 2020 Acceptance",
-      zh: "TIP 2020 论文接收"
-    },
-    description: {
-      en: "1 paper accepted by TIP 2020.",
-      zh: "1 篇论文被 TIP 2020 接收。"
-    }
-  },
-  {
-    id: 16,
-    date: "2019",
-    title: {
-      en: "Gold Medal, Deepfake Detection Challenge",
-      zh: "Deepfake 检测挑战赛金牌"
-    },
-    description: {
-      en: "Team Leader.",
-      zh: "队长。"
-    }
+    papers: [
+      {
+        en: "Similarity-preserving linkage hashing for online image retrieval",
+        zh: "用于在线图像检索的相似性保持链接哈希"
+      }
+    ]
   }
 ];
 
@@ -469,73 +471,103 @@ export const awards = [
   {
     id: 1,
     title: {
-      en: "Second Place, The 4th China AI Competition 2023",
-      zh: "第四届中国人工智能大赛二等奖"
+      en: "Second Place, Video Generation Method Recognition Track",
+      zh: "视频生成方法识别赛道二等奖"
     },
-    year: "2023",
-    description: {
-      en: "Deepfake Video Generation Methods Identify Track (Team Leader & First Contributor).",
-      zh: "深度伪造视频生成方法识别赛道（队长）。"
+    authors: "S Chen, Z Sun, B Yin, T Yao",
+    organization: "The 4th China AI Competition",
+    year: 2023,
+    abstract: {
+      en: "",
+      zh: ""
+    },
+    links: {
+      website: "https://ai.xm.gov.cn/competition/project-detail.html?id=45a538a0e9e248c29a03c2b8aa66361b&competeId=2022c40dbb2347fba8b3c9a6294efa5b",
     }
   },
   {
     id: 2,
     title: {
-      en: "First Place, Deepfake Security Challenge (AISC 2022)",
-      zh: "深度伪造安全挑战赛（AISC 2022）一等奖"
+      en: "First Place, Deepfake Attribution Challenge",
+      zh: "深度伪造溯源挑战赛冠军"
     },
-    year: "2022",
-    description: {
-      en: "Team Leader.",
-      zh: "队长。"
+    authors: "S Chen, Z Sun, J Cao, T Yao",
+    organization: "AISC 2022",
+    year: 2022,
+    abstract: {
+      en: "",
+      zh: ""
+    },
+    links: {
+      website: "https://compete.zgc-aisc.com/activity/1/format",
     }
   },
   {
     id: 3,
     title: {
-      en: "Third Place, ForgeryNet Challenge (CVPR 2021)",
-      zh: "ForgeryNet 挑战赛（CVPR 2021）三等奖"
+      en: "Third Place, Track 1: Forgery Image Detection of ForgeryNet Challenge",
+      zh: "ForgeryNet挑战赛-伪造图像检测赛道季军"
     },
-    year: "2021",
-    description: {
-      en: "Track 1: Forgery Image Analysis (Team Leader).",
-      zh: "赛道 1：伪造图像分析（队长）。"
+    authors: "S Chen, Y Chen",
+    organization: "ICCV 2021",
+    year: 2021,
+    abstract: {
+      en: "",
+      zh: ""
+    },
+    links: {
+      website: "https://competitions.codalab.org/competitions/33386",
     }
   },
   {
     id: 4,
     title: {
-      en: "Second Place, ForgeryNet Challenge (CVPR 2021)",
-      zh: "ForgeryNet 挑战赛（CVPR 2021）二等奖"
+      en: "Second Place, Track 2: Forgery Video Detection of ForgeryNet Challenge",
+      zh: "ForgeryNet挑战赛-伪造视频检测赛道亚军"
     },
-    year: "2021",
-    description: {
-      en: "Track 2: Forgery Video Analysis.",
-      zh: "赛道 2：伪造视频分析。"
+    authors: "Y Chen, S Chen",
+    organization: "ICCV 2021",
+    year: 2021,
+    abstract: {
+      en: "",
+      zh: ""
+    },
+    links: {
+      website: "https://competitions.codalab.org/competitions/33386",
     }
   },
   {
     id: 5,
     title: {
-      en: "Second Place, 3D High-Fidelity Mask Attack Detection Challenge (ICCV 2021)",
-      zh: "3D 高保真面具攻击检测挑战赛（ICCV 2021）二等奖"
+      en: "Second Place, 3D High-Fidelity Mask Attack Detection Challenge",
+      zh: "3D 高保真面具攻击检测挑战赛二等奖"
     },
-    year: "2021",
-    description: {
-      en: "Team Leader.",
-      zh: "队长。"
+    authors: "S Chen, K Zhang, Y Chen, T Yao",
+    organization: "ICCV 2021",
+    year: 2021,
+    abstract: {
+      en: "",
+      zh: ""
+    },
+    links: {
+      website: "https://competitions.codalab.org/competitions/30910",
     }
   },
   {
     id: 6,
     title: {
-      en: "Gold Medal, Deepfake Detection Challenge (Kaggle 2019)",
-      zh: "Deepfake 检测挑战赛（Kaggle 2019）金牌"
+      en: "Gold Medal, Deepfake Detection Challenge",
+      zh: "Deepfake 检测挑战赛金牌"
     },
-    year: "2019",
-    description: {
-      en: "Team Leader.",
-      zh: "队长。"
+    authors: "S Chen, K Sun, H Liu, T Yao",
+    organization: "Kaggle 2019",
+    year: 2019,
+    abstract: {
+      en: "Identify videos with facial or voice manipulations",
+      zh: "识别包含面部或语音操作的视频"
+    },
+    links: {
+      website: "https://www.kaggle.com/c/deepfake-detection-challenge",
     }
   }
 ];

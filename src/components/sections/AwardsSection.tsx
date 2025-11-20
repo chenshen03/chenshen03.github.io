@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { awards } from '../../store/mockData';
 import Collapse from '../Collapse';
-import { Trophy } from 'lucide-react';
+import { Trophy, ExternalLink } from 'lucide-react';
 
 const AwardsSection: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -16,30 +16,70 @@ const AwardsSection: React.FC = () => {
       </h2>
       
       <div className="space-y-4">
-        {awards.map((award) => (
-          <Collapse 
-            key={award.id}
-            title={
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full text-yellow-600 dark:text-yellow-400">
-                  <Trophy size={18} />
+        {awards.map((award) => {
+          const titleText = award.title[lang] || award.title.en;
+          const organizationInfo = award.organization ? `${award.organization} · ${award.year}` : String(award.year);
+          
+          return (
+            <Collapse 
+              key={award.id}
+              title={
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full text-yellow-600 dark:text-yellow-400 flex-shrink-0">
+                      <Trophy size={18} />
+                    </div>
+                    <span className="text-gray-900 dark:text-white font-semibold text-lg leading-tight">
+                      {titleText}
+                    </span>
+                  </div>
+                  {award.authors && (
+                    <div className="text-sm text-gray-500 dark:text-gray-400 font-normal ml-11">
+                      {award.authors}
+                    </div>
+                  )}
+                  <div className="text-sm text-yellow-600 dark:text-yellow-400 font-medium ml-11">
+                    {organizationInfo}
+                  </div>
                 </div>
-                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 w-full">
-                  <span className="text-gray-900 dark:text-white font-semibold">
-                    {award.title[lang] || award.title.en}
-                  </span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400 sm:ml-auto bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">
-                    {award.year}
-                  </span>
-                </div>
+              }
+            >
+              <div className="space-y-4 ml-11">
+                {award.abstract && (
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                    <span className="font-semibold text-gray-900 dark:text-white mr-2">Details:</span>
+                    {award.abstract[lang] || award.abstract.en}
+                  </p>
+                )}
+
+                {award.links && (
+                  <div className="flex flex-wrap gap-3 pt-2">
+                    {award.links.website && (
+                      <a 
+                        href={award.links.website} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        <ExternalLink size={16} className="mr-2" /> Website
+                      </a>
+                    )}
+                    {award.links && 'certificate' in award.links && typeof award.links.certificate === 'string' && (
+                      <a 
+                        href={award.links.certificate} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        <ExternalLink size={16} className="mr-2" /> Certificate
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
-            }
-          >
-            <p className="text-gray-600 dark:text-gray-300 ml-11">
-              {award.description[lang] || award.description.en}
-            </p>
-          </Collapse>
-        ))}
+            </Collapse>
+          );
+        })}
       </div>
     </section>
   );

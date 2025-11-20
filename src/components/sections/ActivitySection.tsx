@@ -32,9 +32,19 @@ const ActivitySection: React.FC = () => {
             }
             defaultOpen={activity.id === 1}
           >
-            <p className="text-gray-600 dark:text-gray-300">
-              {activity.description[lang] || activity.description.en}
-            </p>
+            {activity.papers ? (
+              <div className="space-y-2">
+                {activity.papers.map((paper, index) => (
+                  <p key={index} className="text-gray-600 dark:text-gray-300">
+                    {paper[lang] || paper.en}
+                  </p>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-600 dark:text-gray-300">
+                {activity.description?.[lang] || activity.description?.en}
+              </p>
+            )}
           </Collapse>
         ))}
       </div>
