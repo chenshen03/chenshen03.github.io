@@ -52,30 +52,6 @@ const AwardsSection: React.FC = () => {
                   </p>
                 )}
 
-                {award.links && (
-                  <div className="flex flex-wrap gap-3 pt-2">
-                    {award.links.website && (
-                      <a 
-                        href={award.links.website} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                      >
-                        <ExternalLink size={16} className="mr-2" /> Website
-                      </a>
-                    )}
-                    {award.links && 'certificate' in award.links && typeof award.links.certificate === 'string' && (
-                      <a 
-                        href={award.links.certificate} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                      >
-                        <ExternalLink size={16} className="mr-2" /> Certificate
-                      </a>
-                    )}
-                  </div>
-                )}
               </div>
             </Collapse>
           );
