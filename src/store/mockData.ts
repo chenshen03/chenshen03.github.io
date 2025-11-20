@@ -472,7 +472,7 @@ export const awards = [
     id: 1,
     title: {
       en: "Second Place, Video Generation Method Recognition Track",
-      zh: "视频生成方法识别赛道二等奖"
+      zh: "视频生成方法识别赛道亚军"
     },
     authors: "S Chen, Z Sun, B Yin, T Yao",
     organization: "The 4th China AI Competition",
@@ -540,7 +540,7 @@ export const awards = [
     id: 5,
     title: {
       en: "Second Place, 3D High-Fidelity Mask Attack Detection Challenge",
-      zh: "3D 高保真面具攻击检测挑战赛二等奖"
+      zh: "3D 高保真面具攻击检测挑战赛亚军"
     },
     authors: "S Chen, K Zhang, Y Chen, T Yao",
     organization: "ICCV 2021",
