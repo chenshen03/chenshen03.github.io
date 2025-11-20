@@ -34,11 +34,6 @@ const PublicationsSection: React.FC = () => {
             }
           >
             <div className="space-y-4">
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                <span className="font-semibold text-gray-900 dark:text-white mr-2">Abstract:</span>
-                {pub.abstract[lang] || pub.abstract.en}
-              </p>
-
               {/* @ts-ignore - image property might not exist on all items yet */}
               {pub.image && (
                 <div className="mt-4 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
@@ -49,6 +44,11 @@ const PublicationsSection: React.FC = () => {
                   />
                 </div>
               )}
+              
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                <span className="font-semibold text-gray-900 dark:text-white mr-2">Abstract:</span>
+                {pub.abstract[lang] || pub.abstract.en}
+              </p>
               
               <div className="flex flex-wrap gap-3 pt-2">
                 {pub.links.pdf && (

@@ -5,7 +5,9 @@ import paper2025CVPRVLFFD from '../assets/paper/2025-CVPR-VLFFD.png';
 import paper2025IJCVHDP from '../assets/paper/2025-IJCV-HDP.png';
 import paper2025IJCVMPSL from '../assets/paper/2025-IJCV-MPSL.png';
 import paper2024NeurIPSDF40 from '../assets/paper/2024-NeurIPS-DF40.png';
+import paper2024DiffusionFake from '../assets/paper/2024-NeurIPS-DiffusionFake.png';
 import paper2024ECCVFFDN from '../assets/paper/2024-ECCV-FFDN.png';
+import paper2022CVPRRECCE from '../assets/paper/2022-CVPR-RECCE.png';
 import paper2021AAAILRL from '../assets/paper/2021-AAAI-LRL.png';
 import paper2020IJCVHMOH from '../assets/paper/2020-IJCV-HMOH.png';
 import paper2020TIPSOH from '../assets/paper/2020-TIP-SOH.png';
@@ -378,7 +380,8 @@ export const publications = [
       pdf: "https://arxiv.org/pdf/2410.04372",
       code: "https://github.com/skJack/DiffusionFake"
     },
-    tags: ["Deepfake", "Stable Diffusion"]
+    image: paper2024DiffusionFake,
+    tags: ["Deepfake Detection"]
   },
   {
     id: "p2024_3",
@@ -417,6 +420,7 @@ export const publications = [
       pdf: "https://openaccess.thecvf.com/content/CVPR2022/papers/Cao_End-to-End_Reconstruction-Classification_Learning_for_Face_Forgery_Detection_CVPR_2022_paper.pdf",
       code: "https://github.com/VISION-SJTU/RECCE"
     },
+    image: paper2022CVPRRECCE,
     tags: ["Face Forgery Detection", "Reconstruction"]
   },
   {
