@@ -1,0 +1,402 @@
+{
+  "profile": {
+    "name": "Shen Chen (陈燊)",
+    "title": "Researcher",
+    "affiliation": "Tencent Youtu Lab",
+    "bio": [
+      "I am a Researcher at Tencent Youtu Lab, where I work on computer vision and machine learning. And my research interests are deepfake detection, face anti-spoofing and image forensics.",
+      "I finished the master's study and obtained my M.S. degree from Xiamen University in 2021, advised by Prof. Rongrong Ji. Earlier, I received the B.S.degree from Fuzhou University in 2018."
+    ],
+    "advisor": {
+      "name": "Prof. Rongrong Ji",
+      "url": "https://mac.xmu.edu.cn/rrji_en/"
+    },
+    "image": {
+      "src": "./projects/personal.jpg",
+      "alt": "profile photo",
+      "link": "./projects/dog&me.jpg"
+    },
+    "contacts": [
+      {
+        "label": "Email",
+        "url": "mailto:chenshen003@gmail.com"
+      },
+      {
+        "label": "Google Scholar",
+        "url": "https://scholar.google.com/citations?user=xMpvoLMAAAAJ&hl=en"
+      },
+      {
+        "label": "Github",
+        "url": "https://github.com/chenshen03/"
+      }
+    ]
+  },
+  "news": [
+    {
+      "date": "07/2024",
+      "content": "1 paper accepted by ECCV 2024, with the acceptance rate to be <b>18%</b>"
+    },
+    {
+      "date": "06/2024",
+      "content": "2 paper accepted by IJCV 2023"
+    },
+    {
+      "date": "07/2023",
+      "content": "Our Team won the <b>second place</b> in <a href=\"https://ai.xm.gov.cn/competition/project-detail.html?id=45a538a0e9e248c29a03c2b8aa66361b&competeId=2022c40dbb2347fba8b3c9a6294efa5b\">Deepfake Video Generation Methods Identify Track (The 4'th China AI Competition 2023)</a>"
+    },
+    {
+      "date": "07/2023",
+      "content": "1 paper accepted by ICCV 2023"
+    },
+    {
+      "date": "09/2022",
+      "content": "Our Team won the <b>first place</b> in <a href=\"https://www.zgc-aisc.com/\">Deepfake Security Challenge (ASIC2022)</a>"
+    },
+    {
+      "date": "07/2022",
+      "content": "1 paper accepted by ECCV 2022, with the acceptance rate to be <b>26%</b>"
+    },
+    {
+      "date": "03/2022",
+      "content": "1 paper accepted by CVPR 2022, with the acceptance rate to be <b>25.33%</b>"
+    },
+    {
+      "date": "12/2021",
+      "content": "2 papers accepted by AAAI 2022, with the acceptance rate to be <b>15%</b>"
+    },
+    {
+      "date": "07/2021",
+      "content": "1 paper accepted by ICCV Workshop 2021"
+    },
+    {
+      "date": "07/2021",
+      "content": "Our Team won the <b>second place</b> in <a href=\"https://competitions.codalab.org/competitions/30910\">3D High-Fidelity Mask Attack Detection Challenge (ICCV2021)</a>"
+    },
+    {
+      "date": "12/2020",
+      "content": "1 paper accepted by AAAI 2021, with the acceptance rate to be <b>21%</b>"
+    },
+    {
+      "date": "11/2020",
+      "content": "Our Team won the <b>second place</b> in <a href=\"https://competitions.codalab.org/competitions/25228\">DeeperForensics Challenge (ECCV 2020)</a>"
+    },
+    {
+      "date": "06/2020",
+      "content": "Our Team won the <b>gold medal</b> in <a href=\"https://www.kaggle.com/c/deepfake-detection-challenge\">Deepfake Detection Challenge</a>"
+    },
+    {
+      "date": "12/2020",
+      "content": "1 paper accepted by IJCV 2020"
+    }
+  ],
+  "publications": {
+    "note": "(* equal contribution, # corresponding author)",
+    "papers": [
+      {
+        "image": "./projects/ECCV2024_FFDN.png",
+        "title": "Enhancing Tampered Text Detection through Frequency Feature Fusion and Decomposition",
+        "authors": "Z. Chen<sup>*</sup>, <b>S. Chen</b><sup>*</sup>, T. Yao, K. Sun, S. Ding<sup>#</sup>, X. Lin, L. Cao, R. Ji<sup>#</sup>",
+        "venue": "European Conference on Computer Vision (<b>ECCV</b>)",
+        "year": "2024",
+        "links": [
+          {
+            "label": "Paper",
+            "url": "",
+            "note": "Coming soon"
+          }
+        ]
+      },
+      {
+        "image": "./projects/IJCV2023_MPSL.png",
+        "title": "Rethinking Open-World DeepFake Attribution with Multi-Perspective Sensory Learning",
+        "authors": "Z. Sun<sup>*</sup>, <b>S. Chen<sup>*</sup></b>, T. Yao, R. Yi<sup>#</sup>, S. Ding<sup>#</sup>, L. Ma",
+        "venue": "International Journal of Computer Vision (<b>IJCV</b>)",
+        "year": "2023",
+        "links": [
+          {
+            "label": "Paper",
+            "url": "",
+            "note": "Coming soon"
+          }
+        ]
+      },
+      {
+        "image": "./projects/arXiv2023_CFFD.png",
+        "title": "Continual Face Forgery Detection via Historical Distribution Preserving",
+        "authors": "K. Sun, <b>S. Chen</b>, T. Yao, X. Sun, S. Ding, R. Ji<sup>#</sup>",
+        "venue": "International Journal of Computer Vision (<b>IJCV</b>)",
+        "year": "2023",
+        "links": [
+          {
+            "label": "arXiv",
+            "url": "https://arxiv.org/abs/2308.06217"
+          }
+        ]
+      },
+      {
+        "image": "./projects/ICCV2023_CPL.png",
+        "title": "Contrastive Pseudo Learning for Open-World DeepFake Attribution",
+        "authors": "Z. Sun<sup>*</sup>, <b>S. Chen<sup>*</sup></b>, T. Yao, B. Yin, R. Yi<sup>#</sup>, S. Ding<sup>#</sup>, L. Ma",
+        "venue": "International Conference on Computer Vision (<b>ICCV</b>)",
+        "year": "2023",
+        "links": [
+          {
+            "label": "Paper",
+            "url": "https://arxiv.org/pdf/2309.11132.pdf"
+          },
+          {
+            "label": "Code",
+            "url": "https://github.com/TencentYoutuResearch/OpenWorld-DeepFakeAttribution"
+          }
+        ]
+      },
+      {
+        "image": "./projects/ECCV2022_SIA.png",
+        "title": "An Information Theoretic Approach for Attention-Driven Face Forgery Detection",
+        "authors": "K. Sun, H. Liu, T. Yao, X. Sun, <b>S. Chen</b>, S. Ding and R. Ji<sup>#</sup>",
+        "venue": "European Conference on Computer Vision (<b>ECCV</b>)",
+        "year": "2022",
+        "links": [
+          {
+            "label": "Paper",
+            "url": "https://www.ecva.net/papers/eccv_2022/papers_ECCV/papers/136740105.pdf"
+          }
+        ]
+      },
+      {
+        "image": "./projects/CVPR2022_RECCE.png",
+        "title": "End-to-End Reconstruction-Classification Learning for Face Forgery Detection",
+        "authors": "J. Cao, C. Ma<sup>#</sup>, T. Yao, <b>S. Chen</b>, S. Ding and X. Yang",
+        "venue": "IEEE/CVF Conference on Computer Vision and Pattern Recognition (<b>CVPR</b>)",
+        "year": "2022",
+        "links": [
+          {
+            "label": "Paper",
+            "url": "https://openaccess.thecvf.com/content/CVPR2022/papers/Cao_End-to-End_Reconstruction-Classification_Learning_for_Face_Forgery_Detection_CVPR_2022_paper.pdf"
+          },
+          {
+            "label": "Code",
+            "url": "https://github.com/VISION-SJTU/RECCE"
+          }
+        ]
+      },
+      {
+        "image": "./projects/AAAI2021_DCL.png",
+        "title": "Dual contrastive learning for general face forgery detection",
+        "authors": "K. Sun, T. Yao, <b>S. Chen</b>, S. Ding<sup>#</sup>, J. Li and R. Ji<sup>#</sup>",
+        "venue": "Proceedings of the AAAI Conference on Artificial Intelligence (<b>AAAI</b>)",
+        "year": "2021",
+        "links": [
+          {
+            "label": "Paper",
+            "url": "https://ojs.aaai.org/index.php/AAAI/article/download/20130/19889"
+          },
+          {
+            "label": "Code",
+            "url": "https://github.com/Tencent/TFace/tree/master/security/tasks/Face-Forgery-Detection/DCL"
+          }
+        ]
+      },
+      {
+        "image": "./projects/AAAI2021_PCL.png",
+        "title": "Exploiting fine-grained face forgery clues via progressive enhancement learning",
+        "authors": "Q. Gu<sup>*</sup>, <b>S. Chen<sup>*</sup></b>, T. Yao, Y. Chen, S. Ding<sup>#</sup> and R. Yi",
+        "venue": "Proceedings of the AAAI Conference on Artificial Intelligence (<b>AAAI</b>)",
+        "year": "2021",
+        "links": [
+          {
+            "label": "Paper",
+            "url": "https://ojs.aaai.org/index.php/AAAI/article/download/19954/19713"
+          }
+        ]
+      },
+      {
+        "image": "./projects/ICCVW201_dual_stream.png",
+        "title": "A Dual-stream Framework for 3D Mask Face Presentation Attack Detection",
+        "authors": "<b>S. Chen</b>, T. Yao, K. Zhang, Y. Chen, K. Sun, S. Ding<sup>#</sup>, J. Li, F. Huang and R. Ji",
+        "venue": "Proceedings of the IEEE/CVF International Conference on Computer Vision Workshop (<b>ICCVW</b>)",
+        "year": "2021",
+        "links": [
+          {
+            "label": "Paper",
+            "url": "https://openaccess.thecvf.com/content/ICCV2021W/ChaLearn_FAS/papers/Chen_A_Dual-Stream_Framework_for_3D_Mask_Face_Presentation_Attack_Detection_ICCVW_2021_paper.pdf"
+          }
+        ]
+      },
+      {
+        "image": "./projects/AAAI2021_deepfake_detection.png",
+        "title": "Local Relation Learning for Face Forgery Detection",
+        "authors": "<b>S. Chen</b>, T. Yao*, Y. Chen, S. Ding<sup>#</sup>, J. Li, and R. ji<sup>#</sup>.",
+        "venue": "AAAI Conference on Artificial Intelligence (<b>AAAI</b>)",
+        "year": "2021",
+        "links": [
+          {
+            "label": "Paper",
+            "url": "https://arxiv.org/abs/2105.02577"
+          }
+        ]
+      },
+      {
+        "image": "./projects/TIP2020_splh.png",
+        "title": "Similarity-preserving linkage hashing for online image retrieval",
+        "authors": "M. Lin, R. Ji<sup>#</sup>, <b>S. Chen</b>, X. Sun and CW. Lin",
+        "venue": "IEEE Transactions on Image Processing (<b>TIP</b>)",
+        "year": "2020",
+        "links": [
+          {
+            "label": "Paper",
+            "url": "https://www.ee.nthu.edu.tw/cwlin/pub/tip_hashing_2020.pdf"
+          }
+        ]
+      },
+      {
+        "image": "./projects/IJCV2020_HMOH.png",
+        "title": "Hadamard Matrix Guided Online Hashing",
+        "authors": "M. Lin, R. Ji<sup>#</sup>, H. Liu, X. Sun, <b>S. Chen</b> and Q. Tian",
+        "venue": "International Journal of Computer Vision (<b>IJCV</b>)",
+        "year": "2020",
+        "links": [
+          {
+            "label": "Paper",
+            "url": "https://arxiv.org/pdf/1905.04454.pdf"
+          },
+          {
+            "label": "Code",
+            "url": "https://github.com/lmbxmu/mycode/tree/master/2020IJCV_HMOH"
+          }
+        ]
+      }
+    ],
+    "preprints": [
+      {
+        "image": "./projects/arXiv2024_DF40.png",
+        "title": "DF40: Toward Next-Generation Deepfake Detection",
+        "authors": "Z. Yan, T. Yao, <b>S. Chen</b>, Y. Zhao, X. Fu, J. Zhu, D. Luo, L. Yuan, C. Wang, S. Ding, Y. Wu",
+        "venue": "arXiv",
+        "year": "2024",
+        "links": [
+          {
+            "label": "arXiv",
+            "url": "https://arxiv.org/pdf/2406.13495"
+          }
+        ]
+      },
+      {
+        "image": "./projects/arXiv2024_NRIQA.png",
+        "title": "Rank-based No-reference Quality Assessment for Face Swapping",
+        "authors": "X. Zhou, W. Zhou, T. Wei, <b>S. Chen</b>, T. Yao, S. Ding, W. Zhang, N. Yu",
+        "venue": "arXiv",
+        "year": "2024",
+        "links": [
+          {
+            "label": "arXiv",
+            "url": "https://arxiv.org/pdf/2406.01884"
+          }
+        ]
+      },
+      {
+        "image": "./projects/arXiv2023_VLFFD.png",
+        "title": "Towards General Visual-Linguistic Face Forgery Detection",
+        "authors": "K. Sun, <b>S. Chen</b>, T. Yao, X. Sun, S. Ding, R. Ji<sup>#</sup>",
+        "venue": "arXiv",
+        "year": "2023",
+        "links": [
+          {
+            "label": "arXiv",
+            "url": "https://arxiv.org/abs/2307.16545"
+          }
+        ]
+      },
+      {
+        "image": "./projects/ECCV_Challenge.png",
+        "title": "DeeperForensics Challenge 2020 on Real-World Face Forgery Detection: Methods and Results",
+        "authors": "<b>S. Chen</b>, T. Yao, S. Ding<sup>#</sup>, J. Li, F. Huang and R. Ji",
+        "venue": "arXiv",
+        "year": "2021",
+        "links": [
+          {
+            "label": "arXiv",
+            "url": "https://arxiv.org/abs/2102.09471"
+          }
+        ]
+      },
+      {
+        "image": "./projects/arXiv2019_HCDH.png",
+        "title": "Hadamard Codebook Based Deep Hashing",
+        "authors": "<b>S. Chen</b>, L. Cao, M. Lin, Y. Wang, X. Sun, C. Wu, J. Qiu and R. Ji<sup>#</sup>",
+        "venue": "arXiv",
+        "year": "2019",
+        "links": [
+          {
+            "label": "arXiv",
+            "url": "https://arxiv.org/pdf/1910.09182.pdf"
+          },
+          {
+            "label": "Code",
+            "url": "https://github.com/chenshen03/HCDH"
+          }
+        ]
+      },
+      {
+        "image": "./projects/arXiv2019_SOH.png",
+        "title": "Supervised Online Hashing via Similarity Distribution Learning",
+        "authors": "M. Lin, R. Ji<sup>#</sup>, <b>S. Chen</b>, F. Zheng, X. Sun, B. Zhang, L. Cao, G. Guo and F. Huang",
+        "venue": "arXiv",
+        "year": "2019",
+        "links": [
+          {
+            "label": "arXiv",
+            "url": "https://arxiv.org/pdf/1905.13382.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  "awards": [
+    {
+      "rank": "Second Place",
+      "title": "Deepfake Video Generation Methods Identify Track, The 4'th China AI Competition 2023",
+      "note": "(Team leader: Shen Chen)"
+    },
+    {
+      "rank": "First Place",
+      "title": "Deepfake Security Challenge, AISC 2022",
+      "note": "(Team leader: Shen Chen)"
+    },
+    {
+      "rank": "Third Place",
+      "title": "ForgeryNet: Face Forgery Analysis Challenge 2021 Track 1: Forgery Image Analysis, CVPR 2021",
+      "note": "(Team leader: Shen Chen)"
+    },
+    {
+      "rank": "Second Place",
+      "title": "ForgeryNet: Face Forgery Analysis Challenge 2021 Track 2: Forgery Video Analysis, CVPR 2021"
+    },
+    {
+      "rank": "Second Place",
+      "title": "3D High-Fidelity Mask Attack Detection Challenge, ICCV 2021",
+      "note": "(Team leader: Shen Chen)"
+    },
+    {
+      "rank": "Second Place",
+      "title": "DeeperForensics Challenge, ECCV 2020",
+      "note": "(Team leader: Shen Chen)"
+    },
+    {
+      "rank": "Gold Medal",
+      "title": "Deepfake Detection Challenge (DFDC), Kaggle 2019",
+      "note": "(Team leader: Shen Chen)"
+    }
+  ],
+  "activities": {
+    "conferences": ["CVPR", "ICCV", "ECCV", "AAAI", "NIPS", "IJCAI"],
+    "journals": ["TPAMI", "TIP", "TIFS"]
+  },
+  "opensource": [
+    {
+      "text": "人脸安全技术开源",
+      "url": "https://github.com/Tencent/TFace/tree/master/security"
+    }
+  ]
+}
+
