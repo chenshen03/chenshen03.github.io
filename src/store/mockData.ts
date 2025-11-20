@@ -1,8 +1,20 @@
+import avatarImg from '../assets/avatar.jpg';
+import paper2025ACMMMDITL from '../assets/paper/2025-ACMMM-DITL.png';
+import paper2025ICMLEffort from '../assets/paper/2025-ICML-Effort.png';
+import paper2025CVPRVLFFD from '../assets/paper/2025-CVPR-VLFFD.png';
+import paper2025IJCVHDP from '../assets/paper/2025-IJCV-HDP.png';
+import paper2025IJCVMPSL from '../assets/paper/2025-IJCV-MPSL.png';
+import paper2024NeurIPSDF40 from '../assets/paper/2024-NeurIPS-DF40.png';
+import paper2024ECCVFFDN from '../assets/paper/2024-ECCV-FFDN.png';
+import paper2021AAAILRL from '../assets/paper/2021-AAAI-LRL.png';
+import paper2020IJCVHMOH from '../assets/paper/2020-IJCV-HMOH.png';
+import paper2020TIPSOH from '../assets/paper/2020-TIP-SOH.png';
+
 export const profileData = {
   name: "Shen Chen (陈燊)",
   title: "Researcher at Tencent Youtu Lab",
   university: "Tencent Youtu Lab",
-  avatar: "src/assets/avatar.jpg",
+  avatar: avatarImg,
   about: {
     en: "I am a Researcher at Tencent Youtu Lab, where I work on computer vision and machine learning. My research interests include image forensics, deepfake detection and face anti-spoofing. I have published over 20 papers in top-tier conferences and journals (CVPR, ICCV, ECCV, AAAI, IJCV, etc.) with 2000+ citations.",
     zh: "我是腾讯优图实验室的研究员，从事计算机视觉和机器学习方面的研究。我的研究兴趣包括图像取证、深度伪造检测和人脸活体检测。我在顶级会议和期刊（CVPR, ICCV, ECCV, AAAI, IJCV 等）发表了 20 多篇论文，引用次数超过 2000 次。"
@@ -246,7 +258,7 @@ export const publications = [
     links: {
       pdf: "https://dl.acm.org/doi/pdf/10.1145/3746027.3754857",
     },
-    image: "src/assets/paper/2025-ACMMM-DITL.png",
+    image: paper2025ACMMMDITL,
     tags: ["Document Tamper Detection"]
   },
   {
@@ -266,7 +278,7 @@ export const publications = [
       pdf: "https://arxiv.org/pdf/2411.15633v1",
       code: "https://github.com/YZY-stack/Effort-AIGI-Detection"
     },
-    image: "src/assets/paper/2025-ICML-Effort.png",
+    image: paper2025ICMLEffort,
     tags: ["AIGI Detection"]
   },
   {
@@ -286,7 +298,7 @@ export const publications = [
       pdf: "https://openaccess.thecvf.com/content/CVPR2025/papers/Sun_Towards_General_Visual-Linguistic_Face_Forgery_Detection_CVPR_2025_paper.pdf",
       code: "https://github.com/skJack/VLFFD"
     },
-    image: "src/assets/paper/2025-CVPR-VLFFD.png",
+    image: paper2025CVPRVLFFD,
     tags: ["Deepfake Detection", "Visual-Linguistic"]
   },
   {
@@ -306,7 +318,7 @@ export const publications = [
       pdf: "https://arxiv.org/pdf/2308.06217",
       code: "https://github.com/skJack/HDP"
     },
-    image: "src/assets/paper/2025-IJCV-HDP.png",
+    image: paper2025IJCVHDP,
     tags: ["Deepfake Detection", "Continual Learning"]
   },
   {
@@ -326,7 +338,7 @@ export const publications = [
       pdf: "https://link.springer.com/article/10.1007/s11263-024-02184-7",
       code: "https://github.com/TencentYoutuResearch/OpenWorld-DeepFakeAttribution"
     },
-    image: "src/assets/paper/2025-IJCV-MPSL.png",
+    image: paper2025IJCVMPSL,
     tags: ["Deepfake Attribution"]
   },
   {
@@ -346,7 +358,7 @@ export const publications = [
       pdf: "https://proceedings.neurips.cc/paper_files/paper/2024/file/34239f60eca7ce9bee5280aaf81362d8-Paper-Datasets_and_Benchmarks_Track.pdf",
       code: "https://github.com/YZY-stack/DF40"
     },
-    image: "src/assets/paper/2024-NeurIPS-DF40.png",
+    image: paper2024NeurIPSDF40,
     tags: ["Deepfake Detection Benchmark"]
   },
   {
@@ -385,7 +397,7 @@ export const publications = [
       pdf: "https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/04834.pdf",
       code: "https://github.com/Rapisurazurite/FFDN"
     },
-    image: "src/assets/paper/2024-ECCV-FFDN.png",
+    image: paper2024ECCVFFDN,
     tags: ["Document Tamper Detection"]
   },
   {
@@ -423,7 +435,7 @@ export const publications = [
     links: {
       pdf: "https://arxiv.org/abs/2105.02577"
     },
-    image: "src/assets/paper/2021-AAAI-LRL.png",
+    image: paper2021AAAILRL,
     tags: ["Deepfake Detection", "Local Relation Learning"]
   },
   {
@@ -443,7 +455,7 @@ export const publications = [
       pdf: "https://arxiv.org/pdf/1905.04454",
       code: "https://github.com/lmbxmu/mycode"
     },
-    image: "src/assets/paper/2020-IJCV-HMOH.png",
+    image: paper2020IJCVHMOH,
     tags: ["Image Retrieval", "Hashing"]
   },
   {
@@ -462,7 +474,7 @@ export const publications = [
     links: {
       pdf: "https://www.ee.nthu.edu.tw/cwlin/pub/tip_hashing_2020.pdf",
     },
-    image: "src/assets/paper/2020-TIP-SOH.png",
+    image: paper2020TIPSOH,
     tags: ["Image Retrieval", "Hashing"]
   }
 ];
