@@ -18,12 +18,12 @@ export const profileData = {
   university: "Tencent Youtu Lab",
   avatar: avatarImg,
   about: {
-    en: "I am a Researcher at Tencent Youtu Lab, where I work on computer vision and machine learning. My research interests include image forensics, deepfake detection and face anti-spoofing. I have published over 20 papers in top-tier conferences and journals (CVPR, ICCV, ECCV, AAAI, IJCV, etc.) with 2000+ citations.",
-    zh: "我是腾讯优图实验室的研究员，从事计算机视觉和机器学习方面的研究。我的研究兴趣包括图像取证、深度伪造检测和人脸活体检测。我在顶级会议和期刊（CVPR, ICCV, ECCV, AAAI, IJCV 等）发表了 20 多篇论文，引用次数超过 2000 次。"
+    en: "I am a Researcher at Tencent Youtu Lab, where I work on computer vision and machine learning. My research interests include multimodal large language models, image forensics, deepfake detection and AIGC generation. I have published over 20 papers in top-tier conferences and journals (CVPR, ICCV, ECCV, AAAI, IJCV, etc.) with 2000+ citations.",
+    zh: "我是腾讯优图实验室的研究员，从事计算机视觉和机器学习方面的研究。我的研究兴趣包括多模态大模型、图像取证、深度伪造检测、AIGC生成。我在顶级会议和期刊（CVPR, ICCV, ECCV, AAAI, IJCV 等）发表了 20 多篇论文，引用次数超过 2000 次。"
   },
   interests: {
-    en: ["Image Forensics", "Deepfake Detection", "Face Anti-spoofing"],
-    zh: ["图像取证", "深度伪造检测", "人脸活体检测"]
+    en: ["Multimodal Large Language Models", "Image Forensics", "Deepfake Detection", "AIGC Generation"],
+    zh: ["多模态大模型", "图像取证", "深度伪造检测", "AIGC生成"]
   },
   education: [
     {
@@ -47,6 +47,24 @@ export const profileData = {
 };
 
 export const activities = [
+  {
+    id: 4,
+    date: "2025",
+    title: {
+      en: "2 paper accepted by AAAI 2026",
+      zh: "2 篇论文被 ACMMM 2026 接收"
+    },
+    papers: [
+      {
+        en: "TripleFDS: Triple Feature Disentanglement and Synthesis for Scene Text Editing",
+        zh: "TripleFDS：三特征解耦和合成用于场景文本编辑"
+      },
+      {
+        en: "Zooming In on Fakes: A Novel Dataset for Localized AI-Generated Image Detection with Forgery Amplification Approach",
+        zh: "聚焦于伪造：一个用于局部AI生成图像检测的新数据集，采用伪造放大方法"
+      }
+    ]
+  },
   {
     id: 1,
     date: "2025",
