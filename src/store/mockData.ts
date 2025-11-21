@@ -52,7 +52,7 @@ export const activities = [
     date: "2025",
     title: {
       en: "2 paper accepted by AAAI 2026",
-      zh: "2 篇论文被 ACMMM 2026 接收"
+      zh: "2 篇论文被 AAAI 2026 接收"
     },
     papers: [
       {
