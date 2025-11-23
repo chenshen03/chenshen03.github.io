@@ -18,7 +18,6 @@ const AwardsSection: React.FC = () => {
       <div className="space-y-4">
         {awards.map((award) => {
           const titleText = award.title[lang] || award.title.en;
-          const organizationInfo = award.organization ? `${award.organization} · ${award.year}` : String(award.year);
           
           return (
             <Collapse 
@@ -39,7 +38,7 @@ const AwardsSection: React.FC = () => {
                     </div>
                   )}
                   <div className="text-sm text-yellow-600 dark:text-yellow-400 font-medium ml-11">
-                    {organizationInfo}
+                    {award.organization.replace(String(award.year), '').trim()} · {award.year}
                   </div>
                 </div>
               }
