@@ -27,16 +27,22 @@ export const profileData = {
   },
   education: [
     {
+      school: "Tencent Youtu Lab",
+      degree: {
+        en: "Senior Researcher",
+        zh: "高级研究员"
+      },
+      year: {
+        en: "2021 - Present",
+        zh: "2021 - 至今"
+      }
+    },
+    {
       school: "Xiamen University",
       degree: "M.S. in Computer Science",
       year: "2018 - 2021",
       lab: { name: "MAC Lab", url: "https://mac.xmu.edu.cn/" },
       supervisor: { name: "Rongrong Ji", url: "https://mac.xmu.edu.cn/rrji/" }
-    },
-    {
-      school: "Fuzhou University",
-      degree: "B.S. in Computer Science",
-      year: "2014 - 2018"
     }
   ],
   social: {

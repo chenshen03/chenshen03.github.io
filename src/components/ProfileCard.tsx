@@ -92,8 +92,14 @@ const ProfileCard: React.FC = () => {
               {profileData.education.map((edu, idx) => (
                 <div key={idx} className="flex flex-col">
                   <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{edu.school}</span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">{edu.degree}</span>
-                  <span className="text-xs text-gray-400 dark:text-gray-500">{edu.year}</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    {/* @ts-ignore */}
+                    {typeof edu.degree === 'object' ? (edu.degree[lang] || edu.degree.en) : edu.degree}
+                  </span>
+                  <span className="text-xs text-gray-400 dark:text-gray-500">
+                    {/* @ts-ignore */}
+                    {typeof edu.year === 'object' ? (edu.year[lang] || edu.year.en) : edu.year}
+                  </span>
                   
                   {/* @ts-ignore */}
                   {(edu.lab || edu.supervisor) && (

@@ -30,7 +30,6 @@ const ActivitySection: React.FC = () => {
                 </span>
               </div>
             }
-            defaultOpen={activity.id === 1}
           >
             {activity.papers ? (
               <div className="space-y-2">
