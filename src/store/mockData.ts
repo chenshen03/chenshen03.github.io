@@ -11,6 +11,7 @@ import paper2022CVPRRECCE from '../assets/paper/2022-CVPR-RECCE.png';
 import paper2021AAAILRL from '../assets/paper/2021-AAAI-LRL.png';
 import paper2020IJCVHMOH from '../assets/paper/2020-IJCV-HMOH.png';
 import paper2020TIPSOH from '../assets/paper/2020-TIP-SOH.png';
+import paper2026ICMLGenShield from '../assets/paper/2026-ICML-GenShield.png';
 
 export const profileData = {
   name: "Shen Chen (陈燊)",
@@ -18,12 +19,12 @@ export const profileData = {
   university: "Tencent Youtu Lab",
   avatar: avatarImg,
   about: {
-    en: "I am a Researcher at Tencent Youtu Lab, where I work on computer vision and machine learning. My research interests include multimodal large language models, image forensics, deepfake detection and AIGC generation. I have published over 20 papers in top-tier conferences and journals (CVPR, ICCV, ECCV, AAAI, IJCV, etc.) with 2000+ citations.",
-    zh: "我是腾讯优图实验室的研究员，从事计算机视觉和机器学习方面的研究。我的研究兴趣包括多模态大模型、图像取证、深度伪造检测、AIGC生成。我在顶级会议和期刊（CVPR, ICCV, ECCV, AAAI, IJCV 等）发表了 20 多篇论文，引用次数超过 2000 次。"
+    en: "I am a Researcher at Tencent Youtu Lab, where I work on computer vision and machine learning. My research interests include multimodal large language models, image forensics, deepfake detection and AIGC detection. I have published over 20 papers in top-tier conferences and journals (CVPR, ICCV, ECCV, AAAI, IJCV, etc.) with 2000+ citations.",
+    zh: "我是腾讯优图实验室的研究员，从事计算机视觉和机器学习方面的研究。我的研究兴趣包括多模态大模型、图像取证、深度伪造检测、AIGC检测。我在顶级会议和期刊（CVPR, ICCV, ECCV, AAAI, IJCV 等）发表了 20 多篇论文，引用次数超过 2000 次。"
   },
   interests: {
-    en: ["Multimodal Large Language Models", "Image Forensics", "Deepfake Detection", "AIGC Generation"],
-    zh: ["多模态大模型", "图像取证", "深度伪造检测", "AIGC生成"]
+    en: ["MLLM", "Agent", "Image Forensics", "Deepfake Detection", "AIGC Detection"],
+    zh: ["多模态大模型", "图像取证", "深度伪造检测", "AIGC检测"]
   },
   education: [
     {
@@ -54,8 +55,22 @@ export const profileData = {
 
 export const activities = [
   {
+    id: 5,
+    date: "2026",
+    title: {
+      en: "1 paper accepted by ICML 2026",
+      zh: "1 篇论文被 ICML 2026 接收"
+    },
+    papers: [
+      {
+        en: "GenShield: Unified Detection and Artifact Correction for AI-Generated Images",
+        zh: "GenShield：面向 AI 生成图像的统一检测与伪影修正"
+      }
+    ]
+  },
+  {
     id: 4,
-    date: "2025",
+    date: "2026",
     title: {
       en: "2 paper accepted by AAAI 2026",
       zh: "2 篇论文被 AAAI 2026 接收"
@@ -268,6 +283,26 @@ export const activities = [
 ];
 
 export const publications = [
+  {
+    id: "p2026_1",
+    title: {
+      en: "GenShield: Unified Detection and Artifact Correction for AI-Generated Images",
+      zh: "GenShield：面向 AI 生成图像的统一检测与伪影修正"
+    },
+    authors: "Z Xu, X Zhang, Y Xu, Q Huang, S Chen, T Yao, S Ding, J Zhang",
+    conference: "ICML 2026",
+    year: 2026,
+    abstract: {
+      en: "Diffusion-based image synthesis has made AI-generated images (AIGI) increasingly photorealistic, raising urgent concerns about authenticity in applications such as misinformation detection, digital forensics, and content moderation. Despite the substantial advances in AIGI detection, how to correct detected AI-generated images with visible artifacts and restore realistic appearance remains largely underexplored. Moreover, few existing work has established the connection between AIGI detection and artifact correction. To fill this gap, we propose GenShield, a unified autoregressive framework that jointly performs explainable AIGI detection and controllable artifact correction in a closed loop from diagnosis to restoration, revealing a mutually reinforcing relationship between these two tasks. We further introduce a Visual Chain-of-Thought based curriculum learning strategy that enables self-explained, multi-step ``diagnose-then-repair'' correction with an explicit stopping criterion. A high-quality dataset with large-scale ``artifact-restored'' pairs is also constructed alongside a unified evaluation pipeline. Extensive experiments on our correction benchmark and mainstream AIGI detection benchmarks demonstrate state-of-the-art performance and strong generalization of our method.",
+      zh: "基于扩散模型的图像合成技术，让人工智能生成图像（AIGI）的真实感不断提升，也给虚假信息甄别、数字取证、内容审核等应用场景带来了严峻的真实性挑战。目前 AI 生成图像检测技术已取得长足进展，但针对带有明显伪影的 AI 生成图像进行修复、还原真实视觉效果的相关研究仍较为匮乏。此外，现有工作也极少将 AI 生成图像检测与伪影修复两项任务建立关联。针对这一研究空白，本文提出GenShield—— 一套统一的自回归框架。该框架以 “诊断 - 修复” 闭环形式，同步实现可解释的 AI 生成图像检测与可控伪影修复，同时验证了两项任务之间存在相互促进的协同关系。我们进一步引入基于视觉思维链的课程学习策略，实现具备自解释能力、遵循 “先诊断、后修复” 逻辑的多步修复流程，并设置明确的终止判定条件。本文还构建了包含大规模 “伪影图像 - 修复图像” 配对样本的高质量数据集，同时配套搭建了一体化评测流程。在自建修复评测基准与主流 AI 生成图像检测基准上开展的大量实验表明，该方法具备当前最优的综合性能与出色的泛化能力。"
+    },
+    links: {
+      pdf: "https://arxiv.org/pdf/2605.16122",
+      code: "https://github.com/zhipeixu/GenShield"
+    },
+    image: paper2026ICMLGenShield,
+    tags: ["AIGC Generation and Detection"]
+  },
   {
     id: "p2025_1",
     title: {
@@ -514,7 +549,7 @@ export const awards = [
       en: "Second Place, Video Generation Method Recognition Track",
       zh: "视频生成方法识别赛道亚军"
     },
-    authors: "S Chen, Z Sun, B Yin, T Yao",
+    authors: "S Chen, Z Sun, B Yin",
     organization: "The 4th China AI Competition",
     year: 2023,
     abstract: {
