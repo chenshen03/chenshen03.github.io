@@ -22,7 +22,7 @@ const Header: React.FC = () => {
         </Link>
 
         <nav className="hidden md:flex items-center space-x-8">
-          {['home', 'publications', 'awards', 'services'].map((item) => (
+          {['home', 'publications', 'awards', 'opensource', 'services'].map((item) => (
             <a
               key={item}
               href={`#${item}`}

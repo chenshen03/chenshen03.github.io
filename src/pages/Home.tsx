@@ -4,6 +4,7 @@ import ProfileCard from '../components/ProfileCard';
 import ActivitySection from '../components/sections/ActivitySection';
 import PublicationsSection from '../components/sections/PublicationsSection';
 import AwardsSection from '../components/sections/AwardsSection';
+import OpenSourceSection from '../components/sections/OpenSourceSection';
 import ServicesSection from '../components/sections/ServicesSection';
 
 const Home: React.FC = () => {
@@ -45,6 +46,14 @@ const Home: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <OpenSourceSection />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
           >
             <ServicesSection />
           </motion.div>

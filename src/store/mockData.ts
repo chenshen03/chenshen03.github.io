@@ -15,12 +15,12 @@ import paper2026ICMLGenShield from '../assets/paper/2026-ICML-GenShield.png';
 
 export const profileData = {
   name: "Shen Chen (陈燊)",
-  title: "Researcher at Tencent Youtu Lab",
+  title: "Senior Algorithm Researcher at Tencent Youtu Lab",
   university: "Tencent Youtu Lab",
   avatar: avatarImg,
   about: {
-    en: "I am a Researcher at Tencent Youtu Lab, where I work on computer vision and machine learning. My research interests include multimodal large language models, image forensics, deepfake detection and AIGC detection. I have published over 20 papers in top-tier conferences and journals (CVPR, ICCV, ECCV, AAAI, IJCV, etc.) with 2000+ citations.",
-    zh: "我是腾讯优图实验室的研究员，从事计算机视觉和机器学习方面的研究。我的研究兴趣包括多模态大模型、图像取证、深度伪造检测、AIGC检测。我在顶级会议和期刊（CVPR, ICCV, ECCV, AAAI, IJCV 等）发表了 20 多篇论文，引用次数超过 2000 次。"
+    en: "Senior Algorithm Researcher at Tencent Youtu Lab, working on image forensics, deepfake detection, AIGC content detection, multimodal large language models, and AI agents.\n\nI lead a 10+ member team (full-time researchers and interns) and own the end-to-end technical stack — data, modeling, and deployment — for image authentication algorithms. My work powers Tencent Cloud's commercial products including Text Image Authentication and FaceID, and I open-sourced TFace (1.5K stars).\n\nI have published 20+ papers at top venues including CVPR, ICCV, ECCV, AAAI, ICML, and IJCV, with a Google Scholar citation count approaching 3,000. In the image forensics community, I have earned 2 first-place finishes and 4 runner-up awards in international competitions, including the Deepfake Detection and Deepfake Attribution challenges.",
+    zh: "腾讯优图实验室高级算法研究员，主要研究方向为图像取证、深度伪造检测、AIGC 检测、多模态大模型及智能体。\n\n带领 10+ 人团队（含正式员工与实习生），推动图像鉴伪算法的前沿研究与业务落地，主导构建数据、模型、部署全链路技术能力建设。相关技术落地支撑腾讯云文本图像核验、人脸核身等商业化产品，开源TFace项目（1.5K stars）。\n\n在 CVPR、ICCV、ECCV、AAAI、ICML、IJCV 等顶级会议和期刊发表论文 20 余篇，Google Scholar 引用量近 3000 次。在图像取证领域累计获得 2 次国际竞赛冠军、4 次竞赛亚军，包括 Deepfake 检测、Deepfake 溯源等赛事冠军。"
   },
   interests: {
     en: ["MLLM", "Agent", "Image Forensics", "Deepfake Detection", "AIGC Detection"],
@@ -544,6 +544,23 @@ export const publications = [
 
 export const awards = [
   {
+    id: 7,
+    title: {
+      en: "Second Place & Best Solution Award, Track 1: Global AI Security Challenge",
+      zh: "全球AI攻防挑战赛-赛道一 亚军&最佳方案奖"
+    },
+    authors: "Y Guo, Z Chen, Z Chen, S Chen",
+    organization: "China Society of Image and Graphics",
+    year: 2025,
+    abstract: {
+      en: "",
+      zh: ""
+    },
+    links: {
+      website: "https://securitylab.antgroup.com/newAiChallenge",
+    }
+  },
+  {
     id: 1,
     title: {
       en: "Second Place, Video Generation Method Recognition Track",
@@ -643,6 +660,37 @@ export const awards = [
     },
     links: {
       website: "https://www.kaggle.com/c/deepfake-detection-challenge",
+    }
+  }
+];
+
+export const openSourceProjects = [
+  {
+    id: 1,
+    name: "TFace",
+    url: "https://github.com/Tencent/TFace",
+    stars: "1.5k",
+    role: {
+      en: "Core Contributor",
+      zh: "核心贡献者"
+    },
+    description: {
+      en: "A trustworthy face recognition research platform open-sourced by Tencent Youtu Lab, featuring capabilities such as face recognition, and face security.",
+      zh: "腾讯优图开源的可信人脸识别研究平台，包括人脸识别、人脸安全等能力。"
+    }
+  },
+  {
+    id: 2,
+    name: "DeepFakeAttribution",
+    url: "https://github.com/TencentYoutuResearch/OpenWorld-DeepFakeAttribution",
+    stars: "~100",
+    role: {
+      en: "Core Contributor",
+      zh: "核心贡献者"
+    },
+    description: {
+      en: "Open-world deepfake attribution research codebase by Tencent Youtu Research.",
+      zh: "腾讯优图开源的开放世界 Deepfake 溯源研究代码库。"
     }
   }
 ];
