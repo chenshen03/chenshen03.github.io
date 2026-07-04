@@ -22,7 +22,7 @@ const ProfileCard: React.FC = () => {
             <div className="w-24 h-24 rounded-full border-4 border-white dark:border-gray-800 overflow-hidden bg-gray-200">
               <img
                 src={profileData.avatar}
-                alt={profileData.name}
+                alt={profileData.name[lang] || profileData.name.en}
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150';
@@ -54,18 +54,31 @@ const ProfileCard: React.FC = () => {
 
         <div className="space-y-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{profileData.name}</h1>
-            <p className="text-blue-600 dark:text-blue-400 font-medium">{t('profile.role')}</p>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">{profileData.university}</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{profileData.name[lang] || profileData.name.en}</h1>
+            <p className="text-blue-600 dark:text-blue-400 font-medium">{profileData.title[lang] || profileData.title.en}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">{profileData.university[lang] || profileData.university.en}</p>
           </div>
 
           <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-200 uppercase tracking-wider mb-2">
               {t('profile.about')}
             </h3>
-            <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm">
-              {profileData.about[lang] || profileData.about.en}
-            </p>
+            <div className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm space-y-2">
+              {(profileData.about[lang] || profileData.about.en).map((para, i) => (
+                <p key={i}>
+                  {para.map((seg, j) =>
+                    seg.url ? (
+                      <a key={j} href={seg.url} target="_blank" rel="noopener noreferrer"
+                        className="text-blue-600 dark:text-blue-400 hover:underline">
+                        {seg.text}
+                      </a>
+                    ) : (
+                      <span key={j}>{seg.text}</span>
+                    )
+                  )}
+                </p>
+              ))}
+            </div>
           </div>
 
           <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
@@ -91,7 +104,10 @@ const ProfileCard: React.FC = () => {
             <div className="space-y-3">
               {profileData.education.map((edu, idx) => (
                 <div key={idx} className="flex flex-col">
-                  <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{edu.school}</span>
+                  <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                    {/* @ts-ignore */}
+                    {typeof edu.school === 'object' ? (edu.school[lang] || edu.school.en) : edu.school}
+                  </span>
                   <span className="text-xs text-gray-500 dark:text-gray-400">
                     {/* @ts-ignore */}
                     {typeof edu.degree === 'object' ? (edu.degree[lang] || edu.degree.en) : edu.degree}
@@ -107,13 +123,15 @@ const ProfileCard: React.FC = () => {
                       {/* @ts-ignore */}
                       {edu.lab && (
                         <div>
-                          Lab: <a href={edu.lab.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">{edu.lab.name}</a>
+                          {lang === 'zh' ? '实验室：' : 'Lab: '}
+                          <a href={edu.lab.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">{edu.lab.name}</a>
                         </div>
                       )}
                       {/* @ts-ignore */}
                       {edu.supervisor && (
                         <div>
-                          Supervisor: <a href={edu.supervisor.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">{edu.supervisor.name}</a>
+                          {lang === 'zh' ? '导师：' : 'Supervisor: '}
+                          <a href={edu.supervisor.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">{edu.supervisor.name}</a>
                         </div>
                       )}
                     </div>
