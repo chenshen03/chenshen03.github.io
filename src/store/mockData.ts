@@ -12,6 +12,7 @@ import paper2021AAAILRL from '../assets/paper/2021-AAAI-LRL.png';
 import paper2020IJCVHMOH from '../assets/paper/2020-IJCV-HMOH.png';
 import paper2020TIPSOH from '../assets/paper/2020-TIP-SOH.png';
 import paper2026ICMLGenShield from '../assets/paper/2026-ICML-GenShield.png';
+import paper2026ACMMMForgeryVCR from '../assets/paper/2026-ACMMM-ForgeryVCR.png';
 
 export const profileData = {
   name: {
@@ -96,6 +97,20 @@ export const profileData = {
 };
 
 export const activities = [
+  {
+    id: 14,
+    date: "2026",
+    title: {
+      en: "1 paper accepted by ACM MM 2026 (Oral)",
+      zh: "1 篇论文被 ACM MM 2026 接收（Oral）"
+    },
+    papers: [
+      {
+        en: "ForgeryVCR: Visual-Centric Reasoning via Efficient Forensic Tools in MLLMs for Image Forgery Detection and Localization",
+        zh: "ForgeryVCR：通过 MLLM 中高效取证工具进行视觉中心推理的图像伪造检测与定位"
+      }
+    ]
+  },
   {
     id: 5,
     date: "2026",
@@ -325,6 +340,28 @@ export const activities = [
 ];
 
 export const publications = [
+  {
+    id: "p2026_2",
+    title: {
+      en: "ForgeryVCR: Visual-Centric Reasoning via Efficient Forensic Tools in MLLMs for Image Forgery Detection and Localization",
+      zh: "ForgeryVCR：通过 MLLM 中高效取证工具进行视觉中心推理的图像伪造检测与定位"
+    },
+    authors: "Y Wang, S Chen, H Wang, R Peng, T Yao, S Tan, C Chen, B Li, S Ding",
+    conference: "ACM MM 2026 (Oral)",
+    year: 2026,
+    abstract: {
+      en: "Existing Multimodal Large Language Models (MLLMs) for image forgery detection and localization predominantly operate under a text-centric Chain-of-Thought (CoT) paradigm. However, forcing these models to textually characterize imperceptible low-level tampering traces inevitably leads to hallucinations, as linguistic modalities are insufficient to capture such fine-grained pixel-level inconsistencies. To overcome this, we propose ForgeryVCR, a framework that incorporates a forensic toolbox to materialize imperceptible traces into explicit visual intermediates via Visual-Centric Reasoning. To enable efficient tool utilization, we introduce a Strategic Tool Learning post-training paradigm, encompassing gain-driven trajectory construction for Supervised Fine-Tuning (SFT) and subsequent Reinforcement Learning (RL) optimization guided by a tool utility reward. This paradigm empowers the MLLM to act as a proactive decision-maker, learning to spontaneously invoke multi-view reasoning paths including local zoom-in for fine-grained inspection and the analysis of invisible inconsistencies in compression history, noise residuals, and frequency domains. Extensive experiments reveal that ForgeryVCR achieves state-of-the-art (SOTA) performance in both detection and localization tasks, demonstrating superior generalization and robustness with minimal tool redundancy.",
+      zh: "现有的面向图像伪造检测与定位的多模态大语言模型（MLLM）大多采用以文本为中心的思维链（CoT）范式。然而，强制这类模型用文字描述难以察觉的底层篡改痕迹，不可避免会产生幻觉问题 —— 文本模态不足以捕捉像素级的细粒度不一致特征。为解决该问题，本文提出 ForgeryVCR 框架。该框架搭载取证工具箱，通过**以视觉为中心的推理**，将隐蔽的篡改痕迹转化为直观的视觉中间表征。\n为实现工具的高效调用，我们提出一种**策略化工具学习**后训练范式：包含基于收益驱动轨迹构建的有监督微调（SFT）阶段，以及后续由工具效用奖励引导的强化学习（RL）优化阶段。该范式让多模态大模型转变为主动决策者，自主调用多视角推理路径，例如局部放大开展细粒度检查，以及对压缩历史、噪声残差、频域当中的隐性不一致特征进行分析。大量实验结果表明，ForgeryVCR 在伪造检测与定位两项任务上均取得当前最优（SOTA）性能，在工具调用冗余度极低的前提下，展现出优异的泛化能力与鲁棒性。"
+    },
+    links: {
+      project: "https://youqiwong.github.io/projects/ForgeryVCR/",
+      pdf: "https://huggingface.co/papers/2602.14098",
+      code: "https://github.com/youqiwong/ForgeryVCR",
+      demo: "https://huggingface.co/spaces/youqiwong/ForgeryVCR-Demo"
+    },
+    image: paper2026ACMMMForgeryVCR,
+    tags: ["Image Forgery Detection", "MLLM"]
+  },
   {
     id: "p2026_1",
     title: {
