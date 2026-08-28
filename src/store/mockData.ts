@@ -30,7 +30,7 @@ export const profileData = {
   avatar: avatarImg,
   about: {
     en: [
-      [{ text: "Senior Algorithm Researcher at Tencent Youtu Lab, working on image forensics, deepfake detection, AIGC content detection, multimodal large language models, and AI agents." }],
+      [{ text: "Security Forensics Algorithm Owner at Tencent Youtu Lab, working on image forensics, deepfake detection, AIGC content detection, multimodal large language models, and AI agents." }],
       [
         { text: "I lead a 10+ member team (full-time researchers and interns) and own the end-to-end technical stack — data, modeling, and deployment — for image authentication algorithms. My work powers Tencent Cloud's commercial products including " },
         { text: "Text Image Authentication", url: "https://cloud.tencent.com/product/tiauth" },
@@ -43,7 +43,7 @@ export const profileData = {
       [{ text: "I have published 20+ papers at top venues including CVPR, ICCV, ECCV, AAAI, ICML, and IJCV, with a Google Scholar citation count approaching 3,000. In the image forensics community, I have earned 2 first-place finishes and 4 runner-up awards in international competitions, including the Deepfake Detection and Deepfake Attribution challenges." }]
     ],
     zh: [
-      [{ text: "腾讯优图实验室高级算法研究员，主要研究方向为图像取证、深度伪造检测、AIGC 检测、多模态大模型及智能体。" }],
+      [{ text: "腾讯优图实验室安全鉴伪算法负责人，主要研究方向为图像取证、深度伪造检测、AIGC 检测、多模态大模型及智能体。" }],
       [
         { text: "带领 10+ 人团队（含正式员工与实习生），推动图像鉴伪算法的前沿研究与业务落地，主导构建数据、模型、部署全链路技术能力建设。相关技术落地支撑腾讯云" },
         { text: "文本图像鉴伪", url: "https://cloud.tencent.com/product/tiauth" },
